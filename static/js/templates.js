@@ -1,44 +1,44 @@
 export const loginTemplate = () => `
-   <div class="login-form-container">
+  <div class="login-form-container">
     <h1>Login</h1>
-    <input type="text" placeholder="Username or Email" class="input-field" />
+    <input type="text" id="login-username" placeholder="Username or Email" class="input-field" />
     <br /><br />
-    <input type="password" placeholder="Password" class="input-field" />
+    <input type="password" id="login-password" placeholder="Password" class="input-field" />
     <br /><br />
-    <button class="login-button" type="button">Login</button>
-   </div>
+    <button id="login-button" class="login-button" type="button">Login</button>
+  </div>
 `;
 
 export const signupTemplate = () => `
-    <div class="signup-form-container">
-      <h1>Sign Up</h1>
-      <input type="text" placeholder="First Name" class="input-field" />
-      <br /><br />
-      <input type="text" placeholder="Second Name" class="input-field" />
-      <br /><br />
-      <input type="text" placeholder="Username" class="input-field" />
-      <br /><br />
-      <input type="email" placeholder="Email" class="input-field" />
-      <br /><br />
-      <div class="gender-container">
-        <label for="Gender" class="gender-label">Gender:</label>
-        <select name="Gender" id="Gender" class="gender">
-         <option value="male">Male</option>
-         <option value="female">Female</option>
-        </select>
-      </div>
-     <br /><br />
+  <div class="signup-form-container">
+    <h1>Sign Up</h1>
+    <input type="text" id="first-name" placeholder="First Name" class="input-field" />
+    <br /><br />
+    <input type="text" id="second-name" placeholder="Second Name" class="input-field" />
+    <br /><br />
+    <input type="text" id="signup-username" placeholder="Username" class="input-field" />
+    <br /><br />
+    <input type="email" id="signup-email" placeholder="Email" class="input-field" />
+    <br /><br />
+    <div class="gender-container">
+      <label for="Gender" class="gender-label">Gender:</label>
+      <select name="Gender" id="gender" class="gender">
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+      </select>
+    </div>
+    <br /><br />
     <!-- Age Input -->
-       <input type="number" id="age" class="input-field" placeholder="Enter age" />
-  
-   <br /><br />
-   <input type="password" placeholder="Password" class="input-field" />
-   <br /><br />
-   <input type="password" placeholder="Confirm Password" class="input-field" />
-   <br /><br />
-   <button class="signup-button" type="button">Sign Up</button>
-   </div>
+    <input type="number" id="age" class="input-field" placeholder="Enter age" />
+    <br /><br />
+    <input type="password" id="signup-password" placeholder="Password" class="input-field" />
+    <br /><br />
+    <input type="password" id="confirm-password" placeholder="Confirm Password" class="input-field" />
+    <br /><br />
+    <button id="signup-button" class="signup-button" type="button">Sign Up</button>
+  </div>
 `;
+
 
 export const loggedInTemplate = (username) => `
     <h1>Welcome, ${username}!</h1>
