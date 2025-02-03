@@ -5,6 +5,7 @@
 
 body {
   font-family: Arial, Helvetica, sans-serif;
+  background: linear-gradient(to right, rgb(6, 108, 100), rgb(14, 48, 122));
 }
 
 /* Header Styles */
@@ -68,7 +69,7 @@ body {
   background-color: rgb(11, 38, 98);
 }
 
-.container {
+.authentication {
   display: grid;
   grid-template-columns: 1fr 2fr;
   background: linear-gradient(to bottom, rgb(6, 108, 100), rgb(14, 48, 122));
@@ -76,6 +77,102 @@ body {
   height: 500px;
   margin: 10% auto;
   border-radius: 5px;
+}
+
+/* Container Layout */
+.container {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr; /* Left, Middle, Right */
+  gap: 1rem;
+  background: linear-gradient(to bottom, rgb(6, 108, 100), rgb(14, 48, 122));
+  margin: 2% auto;
+  padding: 1rem;
+  border-radius: 5px;
+  color: white;
+}
+
+/* Sidebar Styles */
+.sidebar-left,
+.sidebar-right {
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 1rem;
+  border-radius: 7px;
+}
+
+.sidebar-left h3,
+.sidebar-right h3 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: white;
+}
+
+.sidebar-left ul,
+.sidebar-right ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar-left ul li,
+.sidebar-right ul li {
+  margin: 0.5rem 0;
+}
+
+.sidebar-left ul li a {
+  color: white;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.sidebar-left ul li a:hover {
+  color: rgb(56, 189, 149);
+}
+
+.sidebar-left ul li a.active {
+  color: rgb(56, 189, 149);
+  font-weight: bold;
+}
+
+/* Main Content Styles */
+.main-content {
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 1rem;
+  border-radius: 7px;
+}
+
+.main-content h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: white;
+}
+
+.post {
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 7px;
+}
+
+.post h4 {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  color: white;
+}
+
+.post p {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 0.5rem;
+}
+
+.post-author {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Right Sidebar Styles */
+.sidebar-right ul li {
+  color: white;
+  font-size: 0.9rem;
 }
 .gender-container {
   display: inline-flex;
