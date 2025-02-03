@@ -39,9 +39,25 @@ export const signupTemplate = () => `
   </div>
 `;
 
-
 export const loggedInTemplate = (username) => `
     <h1>Welcome, ${username}!</h1>
     <p>You're successfully logged in.</p>
     <button class="logout-button" onclick="logout()">Log Out</button>
 `;
+
+export const headerTemplate = (username) => `
+    <div class="header-content">
+      <div class="logo">
+        <a href="/">
+          <h1>Forum</h1>
+        </a>
+      </div>
+      <div class="header-actions">
+        <div class="user-menu">
+          <span class="username">Welcome, ${username}</span>
+          <button class="btn" id="create-post-btn">Create Post</button>
+          <button class="btn" id="logout-btn">Logout</button>
+        </div>
+      </div>
+    </div>
+  `;
