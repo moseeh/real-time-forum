@@ -278,7 +278,7 @@ body {
   outline: none;
 }
 
-.login-button {
+.login-form-button {
   box-sizing: border-box;
   color: white;
   font-size: 14px;
@@ -288,6 +288,12 @@ body {
   width: 250px;
   outline: none;
   background-color: rgb(56, 102, 189);
+  cursor: pointer;
+
+}
+
+.login-form-button:hover {
+  background-color: rgb(30, 80, 169); /* Example hover color change */
 }
 
 .signup-form-container {
@@ -306,7 +312,7 @@ body {
   padding: 20px;
 }
 
-.signup-button {
+.signup-form-button {
   box-sizing: border-box;
   color: white;
   font-size: 14px;
@@ -316,4 +322,8 @@ body {
   width: 250px;
   outline: none;
   background-color: rgb(56, 189, 149);
+  cursor: pointer;
+}
+.signup-form-button:hover {
+  background-color: rgb(30, 150, 129); /* Example hover color change */
 }
