@@ -5,7 +5,7 @@ export const loginTemplate = () => `
     <br /><br />
     <input type="password" id="login-password" placeholder="Password" class="input-field" />
     <br /><br />
-    <button class="login-button" type="button">Login</button>
+    <button id="login-form-button" class="login-form-button" type="button">Login</button>
   </div>
 `;
 
@@ -21,8 +21,8 @@ export const signupTemplate = () => `
     <input type="email" id="signup-email" placeholder="Email" class="input-field" />
     <br /><br />
     <div class="gender-container">
-      <label for="Gender" class="gender-label">Gender:</label>
-      <select name="Gender" id="gender" class="gender">
+      <label for="gender" class="gender-label">Gender:</label>
+      <select name="gender" id="gender" class="gender">
         <option value="male">Male</option>
         <option value="female">Female</option>
       </select>
@@ -35,7 +35,7 @@ export const signupTemplate = () => `
     <br /><br />
     <input type="password" id="confirm-password" placeholder="Confirm Password" class="input-field" />
     <br /><br />
-    <button class="signup-button" type="button">Sign Up</button>
+    <button id="signup-form-button" class="signup-form-button" type="button">Sign Up</button>
   </div>
 `;
 
