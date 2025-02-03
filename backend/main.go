@@ -38,7 +38,7 @@ func main() {
 	}
 	router := mwApp.RouteChecker(mwApp.Routes())
 
-	log.Println("Server started on :8000")
+	log.Println("Server started on http://localhost:8000")
 
 	if err := http.ListenAndServe(":8000", router); err != nil {
 		log.Fatalf("server failed: %v", err)
