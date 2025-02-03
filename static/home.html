@@ -22,15 +22,43 @@
       </div>
     </header>
     <div class="container">
-      <div class="box-1">
-        <div class="content-holder">
-          <h2>Hello!</h2>
-          <button class="button-1" id="signup-button">Sign up</button>
-          <button class="button-2" id="login-button">Login</button>
+        <!-- Left Sidebar -->
+        <div class="sidebar-left">
+          <div class="posts-section">
+            <h3>Posts</h3>
+            <ul>
+              <li><a href="#" class="active">All Posts</a></li>
+              <li><a href="#">Created Posts</a></li>
+              <li><a href="#">Liked Posts</a></li>
+            </ul>
+          </div>
+          <div class="categories-section">
+            <h3>Categories</h3>
+            <ul id="category">
+              <li><a href="#">Technology</a></li>
+            </ul>
+          </div>
+        </div>
+      
+        <!-- Middle Section (All Posts) -->
+        <div class="main-content">
+          <h2>All Posts</h2>
+          <div class="post">
+            <h4>Post Title 1</h4>
+            <p>This is the content of the first post.</p>
+            <span class="post-author">By User1</span>
+          </div>
+
+        </div>
+      
+        <!-- Right Sidebar (All Users) -->
+        <div class="sidebar-right">
+          <h3>All Users</h3>
+          <ul id="users">
+            <li>User1</li>
+          </ul>
         </div>
       </div>
-      <div class="box-2"></div>
-    </div>
     <script type="module" src="/static/js/app.js"></script>
   </body>
 </html>
