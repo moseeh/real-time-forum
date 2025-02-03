@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+
 	"real-time-forum/backend/database"
 )
 
@@ -14,6 +15,5 @@ func NewHandler(users *database.UserModel) *Handler {
 }
 
 func (h *Handler) ServeIndex(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w,r, "./static/index.html")
-	
+	http.ServeFile(w, r, "./static/index.html")
 }

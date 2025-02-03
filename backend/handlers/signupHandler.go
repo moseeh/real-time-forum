@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+
+	"real-time-forum/backend/utils"
 )
 
 type SignupRequest struct {
@@ -28,6 +30,16 @@ func (h *Handler) SignupHandler(w http.ResponseWriter, r *http.Request) {
 			Message: "Invalid request format",
 		})
 		return
+	}
+	userID := utils.UUIDGen()
+	req.Password, err = utils.HashPassword(req.Password)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	err = h.Users.InsertUser(userID, req.FirstName, req.LastName, req.Username, req.Email, req.Gender, req.Password, req.Age)
+	if err != nil {
+		fmt.Println(err)
 	}
 
 	json.NewEncoder(w).Encode(ApiResponse{
