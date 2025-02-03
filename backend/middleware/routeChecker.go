@@ -11,7 +11,7 @@ import (
 )
 
 type App struct {
-	Users *database.UserModel
+	Users    *database.UserModel
 	Handlers *handlers.Handler
 }
 
@@ -26,6 +26,10 @@ func (app *App) Routes() http.Handler {
 	mux := http.NewServeMux()
 	mux.Handle("GET /static/", http.StripPrefix("/static/", fs))
 	mux.HandleFunc("GET /", app.Handlers.ServeIndex)
+
+	//
+	mux.HandleFunc("POST /api/login", app.Handlers.LoginHandler)
+	mux.HandleFunc("POST /api/signup", app.Handlers.SignupHandler)
 
 	return mux
 }
