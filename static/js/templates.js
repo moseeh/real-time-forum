@@ -5,7 +5,7 @@ export const loginTemplate = () => `
     <br /><br />
     <input type="password" id="login-password" placeholder="Password" class="input-field" />
     <br /><br />
-    <button id="login-button" class="login-button" type="button">Login</button>
+    <button class="login-button" type="button">Login</button>
   </div>
 `;
 
@@ -35,7 +35,7 @@ export const signupTemplate = () => `
     <br /><br />
     <input type="password" id="confirm-password" placeholder="Confirm Password" class="input-field" />
     <br /><br />
-    <button id="signup-button" class="signup-button" type="button">Sign Up</button>
+    <button class="signup-button" type="button">Sign Up</button>
   </div>
 `;
 
