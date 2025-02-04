@@ -1,4 +1,4 @@
-import { render, hideBox1, showBox1 } from "./ui.js";
+import { render } from "./ui.js";
 import {
   signupTemplate,
   loginTemplate,
@@ -11,11 +11,10 @@ export function signup() {
   document.querySelector(".button-1").style.cssText = "display: none";
   document.querySelector(".button-2").style.cssText = "display: block";
 
-  const signupButton = document.getElementById("signup-form-button")
+  const signupButton = document.getElementById("signup-form-button");
   if (signupButton) {
-    signupButton.addEventListener('click', SignupAPi)
+    signupButton.addEventListener("click", SignupAPi);
   }
-
 }
 
 // Function to show the login form and hide the signup form
@@ -24,10 +23,10 @@ export function login() {
   document.querySelector(".button-2").style.cssText = "display: none";
   document.querySelector(".button-1").style.cssText = "display: block";
 
-  const loginButton = document.getElementById("login-form-button")
-  
+  const loginButton = document.getElementById("login-form-button");
+
   if (loginButton) {
-    loginButton.addEventListener('click', LoginApi)
+    loginButton.addEventListener("click", LoginApi);
   }
 }
 
@@ -35,5 +34,4 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("signup-button").addEventListener("click", signup);
   document.getElementById("login-button").addEventListener("click", login);
   login();
-
 });
