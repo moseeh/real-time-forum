@@ -21,7 +21,17 @@ const USERS_TABLE string = `CREATE TABLE IF NOT EXISTS USERS (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );`
 
-var Tables = []string{USERS_TABLE}
+const TOKENS = `
+    CREATE TABLE IF NOT EXISTS SESSIONS(
+        session_id VARCHAR(255) PRIMARY KEY NOT NULL UNIQUE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        expires_at TIMESTAMP NOT NULL,
+        user_id VARCHAR(255),
+        FOREIGN KEY (user_id) REFERENCES USERS(user_id)
+    );
+`
+
+var Tables = []string{USERS_TABLE, TOKENS}
 
 func (m *UserModel) InitTables() {
 	for _, statement := range Tables {
