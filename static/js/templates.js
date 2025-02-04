@@ -61,3 +61,47 @@ export const headerTemplate = (username) => `
       </div>
     </div>
   `;
+export const leftBar = (categories) => `
+      <div class="sidebar-left">
+          <div class="posts-section">
+            <h3>Posts</h3>
+            <ul>
+              <li><a href="#" class="active">All Posts</a></li>
+              <li><a href="#">Created Posts</a></li>
+              <li><a href="#">Liked Posts</a></li>
+            </ul>
+          </div>
+          <div class="categories-section">
+            <h3>Categories</h3>
+            <ul id="category">
+              ${categories.map((category) => `<li><a href="#">${category}</a></li>`).join("")}
+            </ul>
+          </div>
+        </div>
+`;
+
+export const rightBar = (users) => `
+        <div class="sidebar-right">
+          <h3>All Users</h3>
+          <ul id="users">
+            ${users.map((user) => `<li><a href="#">${user}</a></li>`).join("")}
+          </ul>
+        </div>
+`;
+
+export const allposts = (posts) => `
+        <div class="main-content">
+          <h2>All Posts</h2>
+        ${posts.map((post) => `<div class="post">
+          <h3>${post.title}</h3>
+          <p>${post.content}</p>
+          <div class="post-actions">
+            <span class="author">Author: ${post.author}</span>
+            <span class="likes">${post.likes} Likes</span>
+            <button class="btn">Like</button>
+            <span class="dislikes">${post.dislikes} Dislikes</span>
+            <button class="btn">Dislikes</button>
+          </div>
+        </div>`).join("")}
+        </div>
+`;
