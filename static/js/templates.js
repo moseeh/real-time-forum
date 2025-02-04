@@ -105,3 +105,33 @@ export const allposts = (posts) => `
         </div>`).join("")}
         </div>
 `;
+
+export const singlepost = (post) => `
+          <div class="post">
+            <h4>${post.title}</h4>
+            <p>${post.content}</p>
+            <span class="post-author">${post.author} at ${post.createdat}</span><br>
+            <div class="post-actions">
+              <span class="likes">${post.likes} Likes</span>
+              <button class="btn like-btn">Like</button>
+              <span class="dislikes">${post.dislikes} Dislikes</span>
+              <button class="btn dislike-btn">Dislike</button>
+            </div>
+          </div>
+        
+          <!-- Comments Section -->
+          <div class="comments-section">
+            <h3>Comments</h3>
+            ${post.contents.map((comment) => `<div class="comment">
+              <span class="comment-author">${comment.author}</span>
+              <p>${comment.content}</p>
+              <span class="comment-date">${comment.createdat}</span>
+            </div>`).join("")}
+        
+            <!-- Add Comment Form -->
+            <div class="add-comment">
+              <textarea placeholder="Add a comment..." rows="3"></textarea>
+              <button class="btn comment-btn">Submit</button>
+            </div>
+          </div>
+`;
