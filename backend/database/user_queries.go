@@ -18,3 +18,20 @@ func (m *UserModel) InsertUser(id, first_name, last_name, username, email, gende
 
 	return nil
 }
+
+func (m *UserModel) UserExists(email, username string) (bool, error) {
+	const USER_EXISTS string = `SELECT COUNT(1) FROM USERS WHERE email = ? OR username = ?;`
+
+	stmt, err := m.DB.Prepare(USER_EXISTS)
+	if err != nil {
+		return false, err
+	}
+	defer stmt.Close()
+
+	var count int
+	err = stmt.QueryRow(email, username).Scan(&count)
+	if err != nil {
+		return false, err
+	}
+	return count > 0, nil
+}
