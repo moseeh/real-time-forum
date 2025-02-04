@@ -327,3 +327,137 @@ body {
 .signup-form-button:hover {
   background-color: rgb(30, 150, 129); /* Example hover color change */
 }
+
+/*test ppost pafe*/
+/* Main Content Styles */
+.main-content {
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 1rem;
+  border-radius: 7px;
+  color: white;
+}
+
+.main-content h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: white;
+}
+
+/* Post Styles */
+.post {
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 1rem;
+  border-radius: 7px;
+  margin-bottom: 1rem;
+}
+
+.post h4 {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+  color: white;
+}
+
+.post p {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 0.5rem;
+}
+
+.post-author {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.post-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.likes,
+.dislikes {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.btn.like-btn {
+  background-color: rgb(56, 189, 149);
+}
+
+.btn.dislike-btn {
+  background-color: rgb(189, 56, 56);
+}
+
+.btn.like-btn:hover {
+  background-color: rgb(45, 158, 124);
+}
+
+.btn.dislike-btn:hover {
+  background-color: rgb(158, 45, 45);
+}
+
+/* Comments Section Styles */
+.comments-section {
+  margin-top: 1.5rem;
+}
+
+.comments-section h3 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: white;
+}
+
+.comment {
+  background-color: rgba(8, 6, 6, 0.1);
+  padding: 0.8rem;
+  border-radius: 7px;
+  margin-bottom: 0.5rem;
+}
+
+.comment-author {
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: white;
+}
+
+.comment p {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0.5rem 0;
+}
+
+.comment-date {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Add Comment Form Styles */
+.add-comment {
+  margin-top: 1rem;
+}
+
+.add-comment textarea {
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 7px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 0.9rem;
+  resize: vertical;
+  outline: none;
+}
+
+.add-comment textarea::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.add-comment .btn.comment-btn {
+  margin-top: 0.5rem;
+  background-color: rgb(56, 102, 189);
+}
+
+.add-comment .btn.comment-btn:hover {
+  background-color: rgb(45, 85, 158);
+}
