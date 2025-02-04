@@ -1,17 +1,24 @@
 import { API_ENDPOINTS } from "./constants.js";
+import { login, signup } from "./app.js";
+import { render } from "./ui.js";
+import { loggedInTemplate } from "./templates.js";
 
 export async function LoginApi(event) {
-  console.log(1);
   if (event) event.preventDefault();
 
   const username = document.getElementById("login-username").value;
   const password = document.getElementById("login-password").value;
 
   try {
-    const data = await fetchAPI(API_ENDPOINTS.login, {
+    const response = await fetchAPI(API_ENDPOINTS.login, {
       username,
       password,
     });
+    if (response.success) {
+      render(loggedInTemplate)
+    } else {
+      alert(response.message)
+    }
   } catch (error) {
     console.error("Login Failed", error);
   }
@@ -38,7 +45,13 @@ export async function SignupAPi(event) {
   };
 
   try {
-    const data = await fetchAPI(API_ENDPOINTS.signup, userData);
+    const response = await fetchAPI(API_ENDPOINTS.signup, userData);
+
+    if (response.success) {
+      login()
+    } else {
+      alert(response.message)
+    }
   } catch (error) {
     console.error("signup failed:", error);
   }
@@ -51,12 +64,16 @@ async function fetchAPI(url, data) {
       headers: {
         "Content-Type": "application/json",
       },
+      credentials: 'include',
       body: JSON.stringify(data),
     });
+
+    const responseData = await response.json()
+
     if (!response.ok) {
-      throw new Error(`HTTP ERROR! status: ${response.status}`);
+      throw new Error(responseData.message || `HTTP ERROR! status: ${response.status}`);
     }
-    return await response.json();
+    return responseData;
   } catch (error) {
     console.error("API error:", error);
     throw error;
