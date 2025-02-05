@@ -36,11 +36,15 @@ export function signup() {
       // Decode the JSON response
       const data = await response.json();
       console.log(data);
+      const available = document.getElementById("nameavailable");
       // Handle the response
       if (data.success) {
           console.log("Username is available!");
+          available.style.display = "none";
       } else {
           console.log("Error:", data.message);
+          available.textContent = data.message;
+          available.style.display = "block";
       }
   } catch (error) {
       console.error("Failed to fetch:", error);
