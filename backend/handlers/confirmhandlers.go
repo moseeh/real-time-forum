@@ -24,7 +24,7 @@ func (h *Handler) ConfirmName(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
-	exists, err := h.Users.UserExists("", data.Username)
+	exists, err := h.Users.UserExists(data.Email, data.Username)
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(w).Encode(ApiResponse{
