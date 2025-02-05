@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FORUM</title>
+    <link rel="stylesheet" href="/static/css/styles.css" />
+  </head>
+  <body>
+    <header class="card">
+      <div class="header-content">
+        <div class="logo">
+          <a href="/">
+            <h1>Forum</h1>
+          </a>
+        </div>
+        <div class="user-menu">
+          <span class="username">Welcome, ${username}</span>
+          <button class="btn" id="create-post-btn">Create Post</button>
+          <button class="btn" id="logout-btn">Logout</button>
+        </div>
+      </div>
+    </header>
+    <div class="container">
+        <!-- Left Sidebar -->
+        <div class="sidebar-left">
+          <div class="posts-section">
+            <h3>Posts</h3>
+            <ul>
+              <li><a href="#" class="active">All Posts</a></li>
+              <li><a href="#">Created Posts</a></li>
+              <li><a href="#">Liked Posts</a></li>
+            </ul>
+          </div>
+          <div class="categories-section">
+            <h3>Categories</h3>
+            <ul id="category">
+              <li><a href="#">Technology</a></li>
+            </ul>
+          </div>
+        </div>
+      
+        <!-- Middle Section (All Posts) -->
+        <div class="main-content">
+          <h2>All Posts</h2>
+          <div class="post">
+            <h4>Post Title 1</h4>
+            <p>This is the content of the first post.</p>
+            <span class="post-author">By User1</span>
+          </div>
+
+        </div>
+      
+        <!-- Right Sidebar (All Users) -->
+        <div class="sidebar-right">
+          <h3>All Users</h3>
+          <ul id="users">
+            <li>User1</li>
+          </ul>
+        </div>
+      </div>
+    <script type="module" src="/static/js/app.js"></script>
+  </body>
+</html>

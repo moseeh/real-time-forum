@@ -1,0 +1,463 @@
+* {
+  margin: 0px;
+  padding: 0px;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background: linear-gradient(to right, rgb(6, 108, 100), rgb(14, 48, 122));
+}
+
+/* Header Styles */
+.card {
+  background: linear-gradient(to right, rgb(6, 108, 100), rgb(14, 48, 122));
+  padding: 1rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.logo h1 {
+  color: white;
+  font-size: 2rem;
+  text-shadow: 2px 2px 3px rgba(14, 48, 122, 0.5);
+  letter-spacing: 1.5px;
+}
+
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.username {
+  color: white;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.btn {
+  padding: 10px 20px;
+  border-radius: 7px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  color: white;
+}
+
+#create-post-btn {
+  background-color: rgb(56, 189, 149);
+}
+
+#create-post-btn:hover {
+  background-color: rgb(45, 158, 124);
+}
+
+#logout-btn {
+  background-color: rgb(14, 48, 122);
+}
+
+#logout-btn:hover {
+  background-color: rgb(11, 38, 98);
+}
+
+.authentication {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  background: linear-gradient(to bottom, rgb(6, 108, 100), rgb(14, 48, 122));
+  width: 800px;
+  height: 500px;
+  margin: 10% auto;
+  border-radius: 5px;
+}
+
+/* Container Layout */
+.container {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr; /* Left, Middle, Right */
+  gap: 1rem;
+  background: linear-gradient(to bottom, rgb(6, 108, 100), rgb(14, 48, 122));
+  margin: 2% auto;
+  padding: 1rem;
+  border-radius: 5px;
+  color: white;
+}
+
+/* Sidebar Styles */
+.sidebar-left,
+.sidebar-right {
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 1rem;
+  border-radius: 7px;
+}
+
+.sidebar-left h3,
+.sidebar-right h3 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: white;
+}
+
+.sidebar-left ul,
+.sidebar-right ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar-left ul li,
+.sidebar-right ul li {
+  margin: 0.5rem 0;
+}
+
+.sidebar-left ul li a {
+  color: white;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.sidebar-left ul li a:hover {
+  color: rgb(56, 189, 149);
+}
+
+.sidebar-left ul li a.active {
+  color: rgb(56, 189, 149);
+  font-weight: bold;
+}
+
+/* Main Content Styles */
+.main-content {
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 1rem;
+  border-radius: 7px;
+}
+
+.main-content h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: white;
+}
+
+.post {
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 7px;
+}
+
+.post h4 {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  color: white;
+}
+
+.post p {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 0.5rem;
+}
+
+.post-author {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Right Sidebar Styles */
+.sidebar-right ul li {
+  color: white;
+  font-size: 0.9rem;
+}
+.gender-container {
+  display: inline-flex;
+  align-items: center;
+  width: 400px; /* Same as input-field width */
+  margin: 0 auto;
+}
+
+/* Style for the gender label */
+.gender-label {
+  margin-right: 10px;
+  color: #000;
+  white-space: nowrap;
+}
+
+/* Style for the gender select */
+.gender {
+  flex: 1;
+  box-sizing: border-box;
+  font-size: 14px;
+  padding: 10px;
+  border-radius: 7px;
+  border: 1px solid rgb(168, 168, 168);
+  outline: none;
+  width: 100%;
+}
+/* Style the select dropdown options */
+.gender option {
+  font-size: 14px;
+  padding: 10px;
+  background-color: white;
+}
+
+/* Style the select when opened (the dropdown) */
+.gender:focus {
+  border-color: rgb(6, 108, 100); /* Matches your gradient start color */
+  box-shadow: 0 0 3px rgba(6, 108, 100, 0.3);
+}
+
+/* Style for when hovering over options */
+.gender option:hover {
+  background-color: rgb(6, 108, 100);
+  color: white;
+}
+
+/* Style for when an option is checked/selected */
+.gender option:checked {
+  background-color: rgb(14, 48, 122); /* Matches your gradient end color */
+  color: white;
+}
+.content-holder {
+  text-align: center;
+  color: white;
+  font-size: 14px;
+  font-weight: lighter;
+  letter-spacing: 2px;
+  margin-top: 15%;
+  padding: 50px;
+}
+
+.content-holder h2 {
+  font-size: 34px;
+  margin: 20px auto;
+}
+
+.content-holder p {
+  margin: 30px auto;
+}
+
+.content-holder button {
+  border: none;
+  font-size: 15px;
+  padding: 10px;
+  border-radius: 6px;
+  background-color: white;
+  width: 150px;
+  margin: 20px auto;
+}
+
+.box-2 {
+  background-color: white;
+  margin: 5px;
+}
+
+.login-form-container {
+  text-align: center;
+  margin-top: 10%;
+}
+
+.login-form-container h1 {
+  color: black;
+  font-size: 24px;
+  padding: 20px;
+}
+
+.input-field {
+  box-sizing: border-box;
+  font-size: 14px;
+  padding: 10px;
+  border-radius: 7px;
+  border: 1px solid rgb(168, 168, 168);
+  width: 400px;
+  outline: none;
+}
+
+.login-form-button {
+  box-sizing: border-box;
+  color: white;
+  font-size: 14px;
+  padding: 13px;
+  border-radius: 7px;
+  border: none;
+  width: 250px;
+  outline: none;
+  background-color: rgb(56, 102, 189);
+  cursor: pointer;
+
+}
+
+.login-form-button:hover {
+  background-color: rgb(30, 80, 169); /* Example hover color change */
+}
+
+.signup-form-container {
+  position: relative;
+  top: 55%;
+  height: 450px;
+  overflow: auto;
+  left: 50%;
+  transform: translate(-50%, -60%);
+  text-align: center;
+}
+
+.signup-form-container h1 {
+  color: black;
+  font-size: 24px;
+  padding: 20px;
+}
+
+.signup-form-button {
+  box-sizing: border-box;
+  color: white;
+  font-size: 14px;
+  padding: 13px;
+  border-radius: 7px;
+  border: none;
+  width: 250px;
+  outline: none;
+  background-color: rgb(56, 189, 149);
+  cursor: pointer;
+}
+.signup-form-button:hover {
+  background-color: rgb(30, 150, 129); /* Example hover color change */
+}
+
+/*test ppost pafe*/
+/* Main Content Styles */
+.main-content {
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 1rem;
+  border-radius: 7px;
+  color: white;
+}
+
+.main-content h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: white;
+}
+
+/* Post Styles */
+.post {
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 1rem;
+  border-radius: 7px;
+  margin-bottom: 1rem;
+}
+
+.post h4 {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+  color: white;
+}
+
+.post p {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 0.5rem;
+}
+
+.post-author {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.post-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.likes,
+.dislikes {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.btn.like-btn {
+  background-color: rgb(56, 189, 149);
+}
+
+.btn.dislike-btn {
+  background-color: rgb(189, 56, 56);
+}
+
+.btn.like-btn:hover {
+  background-color: rgb(45, 158, 124);
+}
+
+.btn.dislike-btn:hover {
+  background-color: rgb(158, 45, 45);
+}
+
+/* Comments Section Styles */
+.comments-section {
+  margin-top: 1.5rem;
+}
+
+.comments-section h3 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: white;
+}
+
+.comment {
+  background-color: rgba(8, 6, 6, 0.1);
+  padding: 0.8rem;
+  border-radius: 7px;
+  margin-bottom: 0.5rem;
+}
+
+.comment-author {
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: white;
+}
+
+.comment p {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0.5rem 0;
+}
+
+.comment-date {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Add Comment Form Styles */
+.add-comment {
+  margin-top: 1rem;
+}
+
+.add-comment textarea {
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 7px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 0.9rem;
+  resize: vertical;
+  outline: none;
+}
+
+.add-comment textarea::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.add-comment .btn.comment-btn {
+  margin-top: 0.5rem;
+  background-color: rgb(56, 102, 189);
+}
+
+.add-comment .btn.comment-btn:hover {
+  background-color: rgb(45, 85, 158);
+}

@@ -1,0 +1,137 @@
+export const loginTemplate = () => `
+  <div class="login-form-container">
+    <h1>Login</h1>
+    <input type="text" id="login-username" placeholder="Username or Email" class="input-field" />
+    <br /><br />
+    <input type="password" id="login-password" placeholder="Password" class="input-field" />
+    <br /><br />
+    <button id="login-form-button" class="login-form-button" type="button">Login</button>
+  </div>
+`;
+
+export const signupTemplate = () => `
+  <div class="signup-form-container">
+    <h1>Sign Up</h1>
+    <input type="text" id="first-name" placeholder="First Name" class="input-field" />
+    <br /><br />
+    <input type="text" id="second-name" placeholder="Second Name" class="input-field" />
+    <br /><br />
+    <input type="text" id="signup-username" placeholder="Username" class="input-field" />
+    <br /><br />
+    <input type="email" id="signup-email" placeholder="Email" class="input-field" />
+    <br /><br />
+    <div class="gender-container">
+      <label for="gender" class="gender-label">Gender:</label>
+      <select name="gender" id="gender" class="gender">
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+      </select>
+    </div>
+    <br /><br />
+    <!-- Age Input -->
+    <input type="number" id="age" class="input-field" placeholder="Enter age" />
+    <br /><br />
+    <input type="password" id="signup-password" placeholder="Password" class="input-field" />
+    <br /><br />
+    <input type="password" id="confirm-password" placeholder="Confirm Password" class="input-field" />
+    <br /><br />
+    <button id="signup-form-button" class="signup-form-button" type="button">Sign Up</button>
+  </div>
+`;
+
+export const loggedInTemplate = (username) => `
+    <h1>Welcome, ${username}!</h1>
+    <p>You're successfully logged in.</p>
+    <button class="logout-button" onclick="logout()">Log Out</button>
+`;
+
+export const headerTemplate = (username) => `
+    <div class="header-content">
+      <div class="logo">
+        <a href="/">
+          <h1>Forum</h1>
+        </a>
+      </div>
+      <div class="header-actions">
+        <div class="user-menu">
+          <span class="username">Welcome, ${username}</span>
+          <button class="btn" id="create-post-btn">Create Post</button>
+          <button class="btn" id="logout-btn">Logout</button>
+        </div>
+      </div>
+    </div>
+  `;
+export const leftBar = (categories) => `
+      <div class="sidebar-left">
+          <div class="posts-section">
+            <h3>Posts</h3>
+            <ul>
+              <li><a href="#" class="active">All Posts</a></li>
+              <li><a href="#">Created Posts</a></li>
+              <li><a href="#">Liked Posts</a></li>
+            </ul>
+          </div>
+          <div class="categories-section">
+            <h3>Categories</h3>
+            <ul id="category">
+              ${categories.map((category) => `<li><a href="#">${category}</a></li>`).join("")}
+            </ul>
+          </div>
+        </div>
+`;
+
+export const rightBar = (users) => `
+        <div class="sidebar-right">
+          <h3>All Users</h3>
+          <ul id="users">
+            ${users.map((user) => `<li><a href="#">${user}</a></li>`).join("")}
+          </ul>
+        </div>
+`;
+
+export const allposts = (posts) => `
+        <div class="main-content">
+          <h2>All Posts</h2>
+        ${posts.map((post) => `<div class="post">
+          <h3>${post.title}</h3>
+          <p>${post.content}</p>
+          <div class="post-actions">
+            <span class="author">Author: ${post.author}</span>
+            <span class="likes">${post.likes} Likes</span>
+            <button class="btn">Like</button>
+            <span class="dislikes">${post.dislikes} Dislikes</span>
+            <button class="btn">Dislikes</button>
+          </div>
+        </div>`).join("")}
+        </div>
+`;
+
+export const singlepost = (post) => `
+          <div class="post">
+            <h4>${post.title}</h4>
+            <p>${post.content}</p>
+            <span class="post-author">${post.author} at ${post.createdat}</span><br>
+            <div class="post-actions">
+              <span class="likes">${post.likes} Likes</span>
+              <button class="btn like-btn">Like</button>
+              <span class="dislikes">${post.dislikes} Dislikes</span>
+              <button class="btn dislike-btn">Dislike</button>
+            </div>
+          </div>
+        
+          <!-- Comments Section -->
+          <div class="comments-section">
+            <h3>Comments</h3>
+            ${post.contents.map((comment) => `<div class="comment">
+              <span class="comment-author">${comment.author}</span>
+              <p>${comment.content}</p>
+              <span class="comment-date">${comment.createdat}</span>
+            </div>`).join("")}
+        
+            <!-- Add Comment Form -->
+            <div class="add-comment">
+              <textarea placeholder="Add a comment..." rows="3"></textarea>
+              <button class="btn comment-btn">Submit</button>
+            </div>
+          </div>
+`;
