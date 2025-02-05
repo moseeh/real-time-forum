@@ -17,8 +17,8 @@ export function signup() {
   // email.addEventListener("input", debounce(confirmEmail, 300));
 
   async function confirmName() {
-    const user = username.value
-    console.log(user)
+    const user = username.value.trim().toLowerCase();
+
     try {
       const response = await fetch('/check-username', {
           method: 'POST',
