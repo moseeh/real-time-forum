@@ -12,13 +12,14 @@ export const loginTemplate = () => `
 export const signupTemplate = () => `
   <div class="signup-form-container">
     <h1>Sign Up</h1>
-    <input type="text" id="first-name" placeholder="First Name" class="input-field" />
+    <input type="text" id="first-name" placeholder="First Name" class="input-field" required />
     <br /><br />
-    <input type="text" id="second-name" placeholder="Second Name" class="input-field" />
+    <input type="text" id="second-name" placeholder="Second Name" class="input-field" required />
     <br /><br />
-    <input type="text" id="signup-username" placeholder="Username" class="input-field" />
+    <input type="text" id="signup-username" placeholder="Username" class="input-field" required />
+    <div id="nameavailable" style="display:none;"></div>
     <br /><br />
-    <input type="email" id="signup-email" placeholder="Email" class="input-field" />
+    <input type="email" id="signup-email" placeholder="Email" class="input-field" required />
     <br /><br />
     <div class="gender-container">
       <label for="gender" class="gender-label">Gender:</label>
@@ -29,11 +30,11 @@ export const signupTemplate = () => `
     </div>
     <br /><br />
     <!-- Age Input -->
-    <input type="number" id="age" class="input-field" placeholder="Enter age" />
+    <input type="number" id="age" class="input-field" placeholder="Enter age" required />
     <br /><br />
-    <input type="password" id="signup-password" placeholder="Password" class="input-field" />
+    <input type="password" id="signup-password" placeholder="Password" class="input-field" required/>
     <br /><br />
-    <input type="password" id="confirm-password" placeholder="Confirm Password" class="input-field" />
+    <input type="password" id="confirm-password" placeholder="Confirm Password" class="input-field" required/>
     <br /><br />
     <button id="signup-form-button" class="signup-form-button" type="button">Sign Up</button>
   </div>
