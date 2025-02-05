@@ -17,9 +17,10 @@ export const signupTemplate = () => `
     <input type="text" id="second-name" placeholder="Second Name" class="input-field" required />
     <br /><br />
     <input type="text" id="signup-username" placeholder="Username" class="input-field" required />
-    <div id="nameavailable" style="display:none;color:red;"></div>
+    <div id="nameavailable" style="display:none;color:red;">Username not available</div>
     <br /><br />
     <input type="email" id="signup-email" placeholder="Email" class="input-field" required />
+    <div id="emailavailable" style="display:none;color:red;">Email not available</div>
     <br /><br />
     <div class="gender-container">
       <label for="gender" class="gender-label">Gender:</label>
