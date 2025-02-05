@@ -10,27 +10,27 @@ export function signup() {
   render(signupTemplate); // Render the signup template
   document.querySelector(".button-1").style.cssText = "display: none";
   document.querySelector(".button-2").style.cssText = "display: block";
-  const  username = document.getElementById("signup-username")
-  const  email = document.getElementById("signup-email")
+  const username = document.getElementById("signup-username");
+  const email = document.getElementById("signup-email");
 
   username.addEventListener("input", debounce(confirmName, 300));
-  // email.addEventListener("input", debounce(confirmEmail, 300));
+  email.addEventListener("input", debounce(confirmEmail, 300));
 
   async function confirmName() {
     const user = username.value.trim().toLowerCase();
 
     try {
-      const response = await fetch('/check-username', {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ username: user }),
+      const response = await fetch("/check-username", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username: user }),
       });
 
       // Check if the response is OK (status code 200-299)
       if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
+        throw new Error(`HTTP error! Status: ${response.status}`);
       }
 
       // Decode the JSON response
@@ -39,16 +39,49 @@ export function signup() {
       const available = document.getElementById("nameavailable");
       // Handle the response
       if (data.success) {
-          console.log("Username is available!");
-          available.style.display = "none";
+        console.log("Username is available!");
+        available.style.display = "none";
       } else {
-          console.log("Error:", data.message);
-          available.textContent = data.message;
-          available.style.display = "block";
+        console.log("Error:", data.message);
+        available.style.display = "block";
       }
-  } catch (error) {
+    } catch (error) {
       console.error("Failed to fetch:", error);
+    }
   }
+
+  async function confirmEmail() {
+    const mail = email.value.trim();
+
+    try {
+      const response = await fetch("/check-username", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: mail }),
+      });
+
+      // Check if the response is OK (status code 200-299)
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      // Decode the JSON response
+      const data = await response.json();
+      console.log(data);
+      const available = document.getElementById("emailavailable");
+      // Handle the response
+      if (data.success) {
+        console.log("Username is available!");
+        available.style.display = "none";
+      } else {
+        console.log("Error:", data.message);
+        available.style.display = "block";
+      }
+    } catch (error) {
+      console.error("Failed to fetch:", error);
+    }
   }
 
   const signupButton = document.getElementById("signup-form-button");
