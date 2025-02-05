@@ -66,6 +66,7 @@ func (m *UserModel) InitTables() {
 			log.Printf("Error creating table: %v%v", err, statement)
 		}
 	}
+	m.InitTriggers()
 }
 
 func (m *UserModel) executeStatement(statement string) error {
