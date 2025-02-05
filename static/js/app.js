@@ -39,7 +39,7 @@ export function signup() {
       const available = document.getElementById("nameavailable");
       // Handle the response
       if (data.success) {
-        console.log("Username is available!");
+        console.log("Username already exists");
         available.style.display = "none";
       } else {
         console.log("Error:", data.message);
@@ -69,16 +69,25 @@ export function signup() {
 
       // Decode the JSON response
       const data = await response.json();
-      console.log(data);
       const available = document.getElementById("emailavailable");
       // Handle the response
       if (data.success) {
-        console.log("Username is available!");
+        available.textContent = ""
         available.style.display = "none";
       } else {
-        console.log("Error:", data.message);
+         available.textContent = "Email already exists!"
         available.style.display = "block";
+        return
       }
+
+      if (validateEmail(mail)) {
+        available.textContent = ""
+        available.style.display = "none";
+      } else {
+        available.textContent = "Enter a valid email"
+        available.style.display = "block"
+      }
+
     } catch (error) {
       console.error("Failed to fetch:", error);
     }
@@ -115,4 +124,9 @@ function debounce(func, delay) {
     clearTimeout(timeoutId);
     timeoutId = setTimeout(() => func.apply(this, args), delay);
   };
+}
+
+function validateEmail(email) {
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  return emailRegex.test(email);
 }
