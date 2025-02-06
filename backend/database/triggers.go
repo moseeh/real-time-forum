@@ -73,12 +73,37 @@ const HANDLE_INTERACTION_TOGGLE_TRIGGER string = `
 		WHERE content_id = NEW.content_id;
 	END;`
 
+const INCREMENT_COMMENTS_COUNT_TRIGGER string = `
+	CREATE TRIGGER IF NOT EXISTS increment_comments_count
+	AFTER INSERT ON CONTENTS
+	WHEN NEW.parent_id IS NOT NULL
+	BEGIN
+		-- Update only the immediate parent's comments count
+		UPDATE CONTENTS
+		SET comments_count = comments_count + 1,
+			updated_at = CURRENT_TIMESTAMP
+		WHERE content_id = NEW.parent_id;
+	END;`
+
+const DECREMENT_COMMENTS_COUNT_TRIGGER string = `
+	CREATE TRIGGER IF NOT EXISTS decrement_comments_count
+	AFTER DELETE ON CONTENTS
+	WHEN OLD.parent_id IS NOT NULL
+	BEGIN
+		-- Update only the immediate parent's comments count
+		UPDATE CONTENTS
+		SET comments_count = MAX(0, comments_count - 1),
+			updated_at = CURRENT_TIMESTAMP
+		WHERE content_id = OLD.parent_id;
+	END;`
+
 var Triggers = []string{
 	INCREMENT_LIKES_COUNT_TRIGGER,
 	DECREMENT_LIKES_COUNT_TRIGGER,
 	INCREMENT_DISLIKES_COUNT_TRIGGER,
 	DECREMENT_DISLIKES_COUNT_TRIGGER,
 	HANDLE_INTERACTION_TOGGLE_TRIGGER,
+	INCREMENT_COMMENTS_COUNT_TRIGGER,
 }
 
 func (m *UserModel) InitTriggers() {
