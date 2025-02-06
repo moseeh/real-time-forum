@@ -1,7 +1,7 @@
 import { API_ENDPOINTS } from "./constants.js";
 import { login, signup } from "./app.js";
 import { render } from "./ui.js";
-import { loggedInTemplate } from "./templates.js";
+import { headerTemplate, loggedInTemplate } from "./templates.js";
 
 export async function LoginApi(event) {
   if (event) event.preventDefault();
@@ -82,8 +82,14 @@ async function fetchAPI(url, data) {
 }
 
 function Homepage() {
-  const authdiv = document.getElementById("authentication")
+  const authdiv = document.getElementById("authentication");
   if (authdiv) {
     authdiv.style.display = "none";
+  }
+
+  const header = document.querySelector("header.card");
+  if (header) {
+    const username = "Guest"; // Replace this with actual username logic
+    header.innerHTML = headerTemplate(username); // Correct way to insert HTML
   }
 }
