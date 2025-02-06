@@ -12,9 +12,39 @@ export function signup() {
   document.querySelector(".button-2").style.cssText = "display: block";
   const username = document.getElementById("signup-username");
   const email = document.getElementById("signup-email");
+  const first = document.getElementById("first-name");
+  const second = document.getElementById("second-name");
+  let ok;
 
   username.addEventListener("input", debounce(confirmName, 300));
   email.addEventListener("input", debounce(confirmEmail, 300));
+  first.addEventListener("input", debounce(confirmfirst, 300));
+  second.addEventListener("input", debounce(confirmsecond, 300));
+
+  function confirmfirst() {
+    const firstname = first.value.trim();
+    const available = document.getElementById("firstcheck");
+    if (validateUsername(firstname) === null){
+      available.style.display = "none";
+    } else {
+      available.textContent = validateUsername(firstname)
+      available.style.display = "block";
+      return
+    }
+  }
+
+  function confirmsecond() {
+    const secondname = second.value.trim();
+    const available = document.getElementById("secondcheck");
+    if (validateUsername(secondname) === null){
+      available.style.display = "none";
+    } else {
+      available.textContent = validateUsername(secondname)
+      available.style.display = "block";
+      return
+    }
+  }
+
 
   async function confirmName() {
     const user = username.value.trim().toLowerCase();
@@ -35,14 +65,25 @@ export function signup() {
 
       // Decode the JSON response
       const data = await response.json();
-      console.log(data);
+      console.log(data, user);
+
       const available = document.getElementById("nameavailable");
       // Handle the response
-      if (data.success) {
-        console.log("Username is available!");
+
+      if (validateUsername(user) === null){
+        available.textContent = ""
         available.style.display = "none";
       } else {
-        console.log("Error:", data.message);
+        available.textContent = validateUsername(user)
+        available.style.display = "block";
+        return
+      }
+
+      if (data.success) {
+        console.log(data.success)
+        available.style.display = "none";
+      } else {
+        available.textContent = "Username already exists";
         available.style.display = "block";
       }
     } catch (error) {
@@ -69,16 +110,25 @@ export function signup() {
 
       // Decode the JSON response
       const data = await response.json();
-      console.log(data);
       const available = document.getElementById("emailavailable");
-      // Handle the response
-      if (data.success) {
-        console.log("Username is available!");
+
+      if (validateEmail(mail)) {
+        available.textContent = ""
         available.style.display = "none";
       } else {
-        console.log("Error:", data.message);
+        available.textContent = "Enter a valid email"
+        available.style.display = "block"
+        return
+      }
+      // Handle the response
+      if (data.success) {
+        available.textContent = ""
+        available.style.display = "none";
+      } else {
+         available.textContent = "Email already exists!"
         available.style.display = "block";
       }
+
     } catch (error) {
       console.error("Failed to fetch:", error);
     }
@@ -115,4 +165,35 @@ function debounce(func, delay) {
     clearTimeout(timeoutId);
     timeoutId = setTimeout(() => func.apply(this, args), delay);
   };
+}
+
+function validateEmail(email) {
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  return emailRegex.test(email);
+}
+
+function validateUsername(username) {
+  // Ensure it starts with a letter
+  if (!/^[a-zA-Z]/.test(username)) {
+      return "username must start with a letter";
+  }
+
+  // Allow only letters, numbers, and underscores
+  if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+      return "username can only contain letters, numbers, and underscores";
+  }
+
+  // Avoid consecutive underscores
+  if (/__+/.test(username)) {
+      return "username cannot have consecutive underscores";
+  }
+
+  // Reserved usernames
+  const reserved = new Set(["admin", "root", "system", "test", "null", "localhost", "void", "guest"]);
+  if (reserved.has(username)) {
+      return "username is reserved";
+  }
+
+  // If all checks pass, return null (no error)
+  return null;
 }
