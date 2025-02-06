@@ -14,23 +14,21 @@ export function signup() {
   const email = document.getElementById("signup-email");
   const first = document.getElementById("first-name");
   const second = document.getElementById("second-name");
-  let ok = false;
+  let ok;
 
   username.addEventListener("input", debounce(confirmName, 300));
   email.addEventListener("input", debounce(confirmEmail, 300));
   first.addEventListener("input", debounce(confirmfirst, 300));
-  second.addEventListener("input", debounce(confirmpatern(second.value), 300));
+  second.addEventListener("input", debounce(confirmsecond, 300));
 
   function confirmfirst() {
     const firstname = first.value.trim();
     const available = document.getElementById("firstcheck");
     if (validateUsername(firstname) === null){
       available.style.display = "none";
-      ok = true;
     } else {
       available.textContent = "Enter a valid name"
       available.style.display = "block";
-      ok = false
       return
     }
   }
@@ -40,11 +38,9 @@ export function signup() {
     const available = document.getElementById("secondcheck");
     if (validateUsername(secondname) === null){
       available.style.display = "none";
-      ok = true;
     } else {
       available.textContent = "Enter a valid name"
       available.style.display = "block";
-      ok = false
       return
     }
   }
@@ -69,26 +65,25 @@ export function signup() {
 
       // Decode the JSON response
       const data = await response.json();
-      console.log(data);
+      console.log(data, user);
+
       const available = document.getElementById("nameavailable");
       // Handle the response
 
       if (validateUsername(user) === null){
         available.style.display = "none";
-        ok = true;
       } else {
         available.textContent = "Enter a valid name"
         available.style.display = "block";
-        ok = false
         return
       }
+
       if (data.success) {
+        console.log(data.success)
         available.style.display = "none";
-        ok = true;
       } else {
         available.textContent = "Username already exists";
         available.style.display = "block";
-        ok = false
       }
     } catch (error) {
       console.error("Failed to fetch:", error);
@@ -119,22 +114,18 @@ export function signup() {
       if (validateEmail(mail)) {
         available.textContent = ""
         available.style.display = "none";
-        ok = true;
       } else {
         available.textContent = "Enter a valid email"
         available.style.display = "block"
-        ok = false
         return
       }
       // Handle the response
       if (data.success) {
         available.textContent = ""
         available.style.display = "none";
-        ok = true;
       } else {
          available.textContent = "Email already exists!"
         available.style.display = "block";
-        ok = false
       }
 
     } catch (error) {
@@ -143,7 +134,7 @@ export function signup() {
   }
 
   const signupButton = document.getElementById("signup-form-button");
-  if (signupButton && ok) {
+  if (signupButton) {
     signupButton.addEventListener("click", SignupAPi);
   }
 }
