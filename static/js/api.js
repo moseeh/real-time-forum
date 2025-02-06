@@ -98,5 +98,5 @@ function Homepage() {
   content.innerHTML += leftBar(data)
   content.innerHTML += allposts(data)
   content.innerHTML += rightBar(data)
-  content.style.display = "block"
+  content.style.display = "grid"
 }
