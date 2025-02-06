@@ -27,7 +27,7 @@ export function signup() {
     if (validateUsername(firstname) === null){
       available.style.display = "none";
     } else {
-      available.textContent = "Enter a valid name"
+      available.textContent = validateUsername(firstname)
       available.style.display = "block";
       return
     }
@@ -39,7 +39,7 @@ export function signup() {
     if (validateUsername(secondname) === null){
       available.style.display = "none";
     } else {
-      available.textContent = "Enter a valid name"
+      available.textContent = validateUsername(secondname)
       available.style.display = "block";
       return
     }
@@ -71,9 +71,10 @@ export function signup() {
       // Handle the response
 
       if (validateUsername(user) === null){
+        available.textContent = ""
         available.style.display = "none";
       } else {
-        available.textContent = "Enter a valid name"
+        available.textContent = validateUsername(user)
         available.style.display = "block";
         return
       }
