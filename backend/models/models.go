@@ -22,3 +22,10 @@ type Content struct {
 	DislikeCount int    `json:"dislikecount"`
 	CommentCount int    `json:"commentcount"`
 }
+
+type UserInteraction struct {
+	InteractionID   string `json:"interactionid"`
+	UserID          string `json:"userid"`
+	ContentID       string `json:"contentid"`
+	InteractionType string `json:"interactiontype"`
+}
