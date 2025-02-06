@@ -36,6 +36,7 @@ const CONTENTS_TABLE string = ` CREATE TABLE IF NOT EXISTS CONTENTS (
 	user_id VARCHAR(255) NOT NULL,
 	parent_id VARCHAR(255),
 	content_type VARCHAR(10) NOT NULL CHECK (content_type IN ('post', 'comment', 'subcomment')),
+	title TEXT,
 	text TEXT NOT NULL,
 	likes_count INTEGER DEFAULT 0,
 	dislikes_count INTEGER DEFAULT 0, 
