@@ -44,7 +44,7 @@ func (h *Handler) ConfirmName(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(ApiResponse{
 			Success: true,
-			Message: "Username already exists",
+			Message: "Username does not exists",
 		})
 		return
 	}
