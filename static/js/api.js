@@ -16,6 +16,7 @@ export async function LoginApi(event) {
     });
     if (response.success) {
       render(loggedInTemplate)
+      setTimeout(Homepage, 2000)
     } else {
       alert(response.message)
     }
@@ -77,5 +78,12 @@ async function fetchAPI(url, data) {
   } catch (error) {
     console.error("API error:", error);
     throw error;
+  }
+}
+
+function Homepage() {
+  const authdiv = document.getElementById("authentication")
+  if (authdiv) {
+    authdiv.style.display = "none";
   }
 }
