@@ -1,7 +1,7 @@
 package models
 
 type User struct {
-	ID           string    `json:"id"`
+	ID           string `json:"id"`
 	FirstName    string `json:"firstName"`
 	LastName     string `json:"lastName"`
 	Username     string `json:"username"`
@@ -9,4 +9,16 @@ type User struct {
 	Gender       string `json:"gender"`
 	Age          int    `json:"age"`
 	PasswordHash string `json:"-"`
+}
+
+type Content struct {
+	ID           string `json:"id"`
+	Title        string `json:"title"`
+	Text         string `json:"text"`
+	AuthorID     string `json:"authorid"`
+	ContentType  string `json:"type"`
+	ParentID     string `json:"parentid"`
+	LikesCount   int    `json:"likescount"`
+	DislikeCount int    `json:"dislikecount"`
+	CommentCount int    `json:"commentcount"`
 }
