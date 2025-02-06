@@ -70,15 +70,6 @@ export function signup() {
       // Decode the JSON response
       const data = await response.json();
       const available = document.getElementById("emailavailable");
-      // Handle the response
-      if (data.success) {
-        available.textContent = ""
-        available.style.display = "none";
-      } else {
-         available.textContent = "Email already exists!"
-        available.style.display = "block";
-        return
-      }
 
       if (validateEmail(mail)) {
         available.textContent = ""
@@ -86,6 +77,15 @@ export function signup() {
       } else {
         available.textContent = "Enter a valid email"
         available.style.display = "block"
+        return
+      }
+      // Handle the response
+      if (data.success) {
+        available.textContent = ""
+        available.style.display = "none";
+      } else {
+         available.textContent = "Email already exists!"
+        available.style.display = "block";
       }
 
     } catch (error) {
