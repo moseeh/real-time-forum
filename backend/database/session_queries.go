@@ -31,3 +31,9 @@ func (m *UserModel) CreateSession(session_id, user_id string) error {
 	}
 	return nil
 }
+
+func (m *UserModel) DeleteSession(session_id string) error {
+	query := `DELETE FROM SESSIONS WHERE session_id = ?;`
+	_, err := m.DB.Exec(query, session_id)
+	return err
+}
