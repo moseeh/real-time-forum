@@ -31,6 +31,7 @@ func (app *App) Routes() http.Handler {
 	mux.HandleFunc("POST /api/login", app.Handlers.LoginHandler)
 	mux.HandleFunc("POST /api/signup", app.Handlers.SignupHandler)
 	mux.HandleFunc("POST /check-username", app.Handlers.ConfirmName)
+	mux.HandleFunc("POST /api/logout", app.Handlers.LogoutHandler)
 
 	return mux
 }
