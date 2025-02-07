@@ -1,7 +1,14 @@
 import { API_ENDPOINTS } from "./constants.js";
 import { login, signup } from "./app.js";
 import { render } from "./ui.js";
-import { loggedInTemplate } from "./templates.js";
+import {
+  headerTemplate,
+  loggedInTemplate,
+  leftBar,
+  allposts,
+  rightBar,
+  createpost,
+} from "./templates.js";
 
 export async function LoginApi(event) {
   if (event) event.preventDefault();
@@ -15,9 +22,10 @@ export async function LoginApi(event) {
       password,
     });
     if (response.success) {
-      render(loggedInTemplate)
+      render(loggedInTemplate);
+      setTimeout(Homepage, 2000);
     } else {
-      alert(response.message)
+      alert(response.message);
     }
   } catch (error) {
     console.error("Login Failed", error);
@@ -48,9 +56,9 @@ export async function SignupAPi(event) {
     const response = await fetchAPI(API_ENDPOINTS.signup, userData);
 
     if (response.success) {
-      login()
+      login();
     } else {
-      alert(response.message)
+      alert(response.message);
     }
   } catch (error) {
     console.error("signup failed:", error);
@@ -64,18 +72,52 @@ async function fetchAPI(url, data) {
       headers: {
         "Content-Type": "application/json",
       },
-      credentials: 'include',
+      credentials: "include",
       body: JSON.stringify(data),
     });
 
-    const responseData = await response.json()
+    const responseData = await response.json();
 
     if (!response.ok) {
-      throw new Error(responseData.message || `HTTP ERROR! status: ${response.status}`);
+      throw new Error(
+        responseData.message || `HTTP ERROR! status: ${response.status}`
+      );
     }
     return responseData;
   } catch (error) {
     console.error("API error:", error);
     throw error;
   }
+}
+
+function Homepage() {
+  const authdiv = document.getElementById("authentication");
+  if (authdiv) {
+    authdiv.remove();
+  }
+
+  const header = document.querySelector("header.card");
+  if (header) {
+    const username = "Guest"; // Replace this with actual username logic
+    header.innerHTML = headerTemplate(username); // Correct way to insert HTML
+  }
+
+  const content = document.getElementById("body");
+  let data = ["username", "password"];
+  content.innerHTML += leftBar(data);
+  content.innerHTML += allposts(data);
+  content.innerHTML += rightBar(data);
+  content.style.display = "grid";
+
+  const create = document.getElementById("create-post-btn");
+  if (create) {
+    create.addEventListener("click", displayCreate);
+  }
+}
+
+export function displayCreate() {
+  console.log("displayCreate");
+  const mainsection = document.getElementById("main");
+  let data = ["username", "password"];
+  mainsection.innerHTML = createpost(data);
 }

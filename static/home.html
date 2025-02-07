@@ -22,43 +22,77 @@
       </div>
     </header>
     <div class="container">
-        <!-- Left Sidebar -->
-        <div class="sidebar-left">
-          <div class="posts-section">
-            <h3>Posts</h3>
-            <ul>
-              <li><a href="#" class="active">All Posts</a></li>
-              <li><a href="#">Created Posts</a></li>
-              <li><a href="#">Liked Posts</a></li>
-            </ul>
-          </div>
-          <div class="categories-section">
-            <h3>Categories</h3>
-            <ul id="category">
-              <li><a href="#">Technology</a></li>
-            </ul>
-          </div>
+      <!-- Left Sidebar -->
+      <div class="sidebar-left">
+        <div class="posts-section">
+          <h3>Posts</h3>
+          <ul>
+            <li><a href="#" class="active">All Posts</a></li>
+            <li><a href="#">Created Posts</a></li>
+            <li><a href="#">Liked Posts</a></li>
+          </ul>
         </div>
-      
-        <!-- Middle Section (All Posts) -->
-        <div class="main-content">
-          <h2>All Posts</h2>
-          <div class="post">
-            <h4>Post Title 1</h4>
-            <p>This is the content of the first post.</p>
-            <span class="post-author">By User1</span>
-          </div>
-
-        </div>
-      
-        <!-- Right Sidebar (All Users) -->
-        <div class="sidebar-right">
-          <h3>All Users</h3>
-          <ul id="users">
-            <li>User1</li>
+        <div class="categories-section">
+          <h3>Categories</h3>
+          <ul id="category">
+            <li><a href="#">Technology</a></li>
           </ul>
         </div>
       </div>
+
+      <!-- Middle Section (All Posts) -->
+      <div class="main-content">
+        <form
+          id="create-post-form"
+          action="/posts/create"
+          method="POST"
+          enctype="multipart/form-data"
+        >
+          <input type="text" name="title" placeholder="Post Title" required />
+          <textarea
+            name="content"
+            placeholder="Post Content"
+            required
+          ></textarea>
+
+          <div class="categories-section">
+            ${ categories.length > 0 ? `
+            <label>Select Categories (Choose one or more):</label>
+            <div class="categories-grid">
+              ${categories .map( (category) => `
+              <div class="category-item">
+                <input
+                  type="checkbox"
+                  name="categories[]"
+                  value="${category.id}"
+                  id="category-${category.id}"
+                  class="category-checkbox"
+                />
+                <label for="category-${category.id}">${category.name}</label>
+              </div>
+              ` ) .join("")}
+            </div>
+            ` : "
+            <p>No categories available</p>
+            " }
+          </div>
+
+          <label for="image-upload">Upload Image (Max: 20MB)</label>
+          <input type="file" id="image-upload" name="image" accept="image/*" />
+
+          <button type="submit" class="btn">Submit Post</button><br />
+          <button type="button" id="closeModal" class="btn">Close</button>
+        </form>
+      </div>
+
+      <!-- Right Sidebar (All Users) -->
+      <div class="sidebar-right">
+        <h3>All Users</h3>
+        <ul id="users">
+          <li>User1</li>
+        </ul>
+      </div>
+    </div>
     <script type="module" src="/static/js/app.js"></script>
   </body>
 </html>

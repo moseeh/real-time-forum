@@ -461,3 +461,106 @@ body {
 .add-comment .btn.comment-btn:hover {
   background-color: rgb(45, 85, 158);
 }
+
+/* Form Styles */
+#create-post-form {
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 1.5rem;
+  border-radius: 7px;
+  color: white;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+#create-post-form input[type="text"],
+#create-post-form textarea,
+#create-post-form input[type="file"] {
+  width: 100%;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  border-radius: 7px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 0.9rem;
+  outline: none;
+}
+
+#create-post-form input[type="text"]::placeholder,
+#create-post-form textarea::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+#create-post-form textarea {
+  resize: vertical;
+  min-height: 150px;
+}
+
+/* Categories Section */
+.categories-section {
+  margin-bottom: 1rem;
+}
+
+.categories-section label {
+  font-size: 0.9rem;
+  color: white;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.5rem;
+}
+
+.category-item {
+  display: flex;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 0.5rem;
+  border-radius: 7px;
+}
+
+.category-checkbox {
+  margin-right: 0.5rem;
+}
+
+.category-item label {
+  color: white;
+  font-size: 0.9rem;
+}
+
+/* File Upload */
+#image-upload {
+  margin-bottom: 1rem;
+}
+
+/* Buttons */
+#create-post-form .btn {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  border-radius: 7px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  color: white;
+}
+
+#create-post-form .btn[type="submit"] {
+  background-color: rgb(56, 189, 149);
+}
+
+#create-post-form .btn[type="submit"]:hover {
+  background-color: rgb(45, 158, 124);
+}
+
+#create-post-form #closeModal {
+  background-color: rgb(14, 48, 122);
+}
+
+#create-post-form #closeModal:hover {
+  background-color: rgb(11, 38, 98);
+}
