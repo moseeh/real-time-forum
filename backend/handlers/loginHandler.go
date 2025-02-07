@@ -78,7 +78,7 @@ func (h *Handler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 		Success: true,
 		Message: "Login Successful",
 		Data: map[string]any{
-			"username":  req.Username,
+			"username":  user.Username,
 			"email":     user.Email,
 			"userID":    user.ID,
 			"firstName": user.FirstName,
