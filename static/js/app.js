@@ -24,27 +24,26 @@ export function signup() {
   function confirmfirst() {
     const firstname = first.value.trim();
     const available = document.getElementById("firstcheck");
-    if (validateUsername(firstname) === null){
+    if (validateUsername(firstname) === null) {
       available.style.display = "none";
     } else {
-      available.textContent = validateUsername(firstname)
+      available.textContent = validateUsername(firstname);
       available.style.display = "block";
-      return
+      return;
     }
   }
 
   function confirmsecond() {
     const secondname = second.value.trim();
     const available = document.getElementById("secondcheck");
-    if (validateUsername(secondname) === null){
+    if (validateUsername(secondname) === null) {
       available.style.display = "none";
     } else {
-      available.textContent = validateUsername(secondname)
+      available.textContent = validateUsername(secondname);
       available.style.display = "block";
-      return
+      return;
     }
   }
-
 
   async function confirmName() {
     const user = username.value.trim().toLowerCase();
@@ -70,17 +69,17 @@ export function signup() {
       const available = document.getElementById("nameavailable");
       // Handle the response
 
-      if (validateUsername(user) === null){
-        available.textContent = ""
+      if (validateUsername(user) === null) {
+        available.textContent = "";
         available.style.display = "none";
       } else {
-        available.textContent = validateUsername(user)
+        available.textContent = validateUsername(user);
         available.style.display = "block";
-        return
+        return;
       }
 
       if (data.success) {
-        console.log(data.success)
+        console.log(data.success);
         available.style.display = "none";
       } else {
         available.textContent = "Username already exists";
@@ -113,22 +112,21 @@ export function signup() {
       const available = document.getElementById("emailavailable");
 
       if (validateEmail(mail)) {
-        available.textContent = ""
+        available.textContent = "";
         available.style.display = "none";
       } else {
-        available.textContent = "Enter a valid email"
-        available.style.display = "block"
-        return
+        available.textContent = "Enter a valid email";
+        available.style.display = "block";
+        return;
       }
       // Handle the response
       if (data.success) {
-        available.textContent = ""
+        available.textContent = "";
         available.style.display = "none";
       } else {
-         available.textContent = "Email already exists!"
+        available.textContent = "Email already exists!";
         available.style.display = "block";
       }
-
     } catch (error) {
       console.error("Failed to fetch:", error);
     }
@@ -175,23 +173,32 @@ function validateEmail(email) {
 function validateUsername(username) {
   // Ensure it starts with a letter
   if (!/^[a-zA-Z]/.test(username)) {
-      return "username must start with a letter";
+    return "username must start with a letter";
   }
 
   // Allow only letters, numbers, and underscores
   if (!/^[a-zA-Z0-9_]+$/.test(username)) {
-      return "username can only contain letters, numbers, and underscores";
+    return "username can only contain letters, numbers, and underscores";
   }
 
   // Avoid consecutive underscores
   if (/__+/.test(username)) {
-      return "username cannot have consecutive underscores";
+    return "username cannot have consecutive underscores";
   }
 
   // Reserved usernames
-  const reserved = new Set(["admin", "root", "system", "test", "null", "localhost", "void", "guest"]);
+  const reserved = new Set([
+    "admin",
+    "root",
+    "system",
+    "test",
+    "null",
+    "localhost",
+    "void",
+    "guest",
+  ]);
   if (reserved.has(username)) {
-      return "username is reserved";
+    return "username is reserved";
   }
 
   // If all checks pass, return null (no error)
