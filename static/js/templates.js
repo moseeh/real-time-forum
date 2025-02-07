@@ -78,7 +78,9 @@ export const leftBar = (categories) => `
           <div class="categories-section">
             <h3>Categories</h3>
             <ul id="category">
-              ${categories.map((category) => `<li><a href="#">${category}</a></li>`).join("")}
+              ${categories
+                .map((category) => `<li><a href="#">${category}</a></li>`)
+                .join("")}
             </ul>
           </div>
         </div>
@@ -94,9 +96,11 @@ export const rightBar = (users) => `
 `;
 
 export const allposts = (posts) => `
-        <div class="main-content">
+        <div class="main-content" id="main">
           <h2>All Posts</h2>
-        ${posts.map((post) => `<div class="post">
+        ${posts
+          .map(
+            (post) => `<div class="post">
           <h3>${post.title}</h3>
           <p>${post.content}</p>
           <div class="post-actions">
@@ -106,7 +110,9 @@ export const allposts = (posts) => `
             <span class="dislikes">${post.dislikes} Dislikes</span>
             <button class="btn">Dislikes</button>
           </div>
-        </div>`).join("")}
+        </div>`
+          )
+          .join("")}
         </div>
 `;
 
@@ -114,7 +120,9 @@ export const singlepost = (post) => `
           <div class="post">
             <h4>${post.title}</h4>
             <p>${post.content}</p>
-            <span class="post-author">${post.author} at ${post.createdat}</span><br>
+            <span class="post-author">${post.author} at ${
+  post.createdat
+}</span><br>
             <div class="post-actions">
               <span class="likes">${post.likes} Likes</span>
               <button class="btn like-btn">Like</button>
@@ -126,11 +134,15 @@ export const singlepost = (post) => `
           <!-- Comments Section -->
           <div class="comments-section">
             <h3>Comments</h3>
-            ${post.contents.map((comment) => `<div class="comment">
+            ${post.contents
+              .map(
+                (comment) => `<div class="comment">
               <span class="comment-author">${comment.author}</span>
               <p>${comment.content}</p>
               <span class="comment-date">${comment.createdat}</span>
-            </div>`).join("")}
+            </div>`
+              )
+              .join("")}
         
             <!-- Add Comment Form -->
             <div class="add-comment">
@@ -139,3 +151,38 @@ export const singlepost = (post) => `
             </div>
           </div>
 `;
+
+export const createpost = (categories) => `
+    <form id="create-post-form" action="/posts/create" method="POST" enctype="multipart/form-data">
+      <input type="text" name="title" placeholder="Post Title" required />
+      <textarea name="content" placeholder="Post Content" required></textarea>
+
+      <div class="categories-section">
+        ${
+          categories.length > 0
+            ? `
+          <label>Select Categories (Choose one or more):</label>
+          <div class="categories-grid">
+            ${categories
+              .map(
+                (category) => `
+              <div class="category-item">
+                <input type="checkbox" name="categories[]" value="${category.id}" id="category-${category.id}" class="category-checkbox" />
+                <label for="category-${category.id}">${category.name}</label>
+              </div>
+            `
+              )
+              .join("")}
+          </div>
+        `
+            : "<p>No categories available</p>"
+        }
+      </div>
+
+      <label for="image-upload">Upload Image (Max: 20MB)</label>
+      <input type="file" id="image-upload" name="image" accept="image/*" />
+
+      <button type="submit" class="btn">Submit Post</button><br>
+      <button type="button" id="closeModal" class="btn">Close</button>
+    </form>
+  `;
