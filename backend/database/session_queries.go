@@ -1,6 +1,7 @@
 package database
 
 import (
+	"database/sql"
 	"fmt"
 	"time"
 )
@@ -36,4 +37,24 @@ func (m *UserModel) DeleteSession(session_id string) error {
 	query := `DELETE FROM SESSIONS WHERE session_id = ?;`
 	_, err := m.DB.Exec(query, session_id)
 	return err
+}
+
+func (m *UserModel) GetUserIdFromSession(sessionid string) (string, error) {
+	query := `SELECT user_id FROM SESSIONS WHERE session_id = ?;`
+
+	var user_id string
+
+	stmt, err := m.DB.Prepare(query)
+	if err != nil {
+		return "", nil
+	}
+	defer stmt.Close()
+	err = stmt.QueryRow(sessionid).Scan(&user_id)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return "", ErrNoRecord
+		}
+		return "", err
+	}
+	return user_id, nil
 }
