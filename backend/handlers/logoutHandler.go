@@ -2,14 +2,12 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"time"
 )
 
 func (h *Handler) LogoutHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("sleep moses")
 	cookie, err := r.Cookie("session_id")
 	if err == nil {
 		err = h.Users.DeleteSession(cookie.Value)
