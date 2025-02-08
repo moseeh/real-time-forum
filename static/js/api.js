@@ -9,7 +9,7 @@ import {
   rightBar,
   createpost,
 } from "./templates.js";
-import { getUserData } from "./states.js";
+import { Categories, getUserData } from "./states.js";
 export async function LoginApi(event) {
   if (event) event.preventDefault();
 
@@ -91,7 +91,7 @@ async function fetchAPI(url, data) {
   }
 }
 
-function Homepage() {
+export function Homepage() {
   const authdiv = document.getElementById("authentication");
   if (authdiv) {
     authdiv.remove();
@@ -100,7 +100,7 @@ function Homepage() {
   const header = document.querySelector("header.card");
   if (header) {
     const username = UserData.username;
-    header.innerHTML = headerTemplate(username); 
+    header.innerHTML = headerTemplate(username);
   }
 
   const content = document.getElementById("body");
@@ -114,33 +114,106 @@ function Homepage() {
   if (create) {
     create.addEventListener("click", displayCreate);
   }
-  const logoutBtn = document.getElementById("logout-btn")
+  const logoutBtn = document.getElementById("logout-btn");
   if (logoutBtn) {
-    logoutBtn = document.addEventListener("click", logout)
+    logoutBtn.addEventListener("click", logout);
   }
 }
 
 export function displayCreate() {
   console.log("displayCreate");
   const mainsection = document.getElementById("main");
-  let data = ["username", "password"];
-  mainsection.innerHTML = createpost(data);
+  // let data = ["username", "password"];
+  mainsection.innerHTML = createpost(Categories);
+
+  // Get form values on submit
+  document
+    .getElementById("create-post-form")
+    .addEventListener("submit", async (e) => {
+      e.preventDefault(); // Prevent default form submission
+
+      // Get basic form fields
+      const title = document.querySelector('input[name="title"]').value;
+      const content = document.querySelector('textarea[name="content"]').value;
+
+      // Get selected categories
+      const selectedCategories = Array.from(
+        document.querySelectorAll('input[name="categories[]"]:checked')
+      ).map((checkbox) => checkbox.value);
+
+      // Get the uploaded image file
+      const imageFile = document.querySelector('input[name="image"]').files[0];
+
+      // Create FormData object for sending files
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("content", content);
+      selectedCategories.forEach((categoryId) => {
+        formData.append("categories[]", categoryId);
+      });
+      if (imageFile) {
+        formData.append("image", imageFile);
+      }
+
+      try {
+        const response = await fetch("/posts/create", {
+          method: "POST",
+          body: formData,
+          credentials: "include",
+        });
+
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+
+        const result = await response.json();
+        console.log("Post created successfully:", result);
+
+        // Optional: Clear form after successful submission
+        document.getElementById("create-post-form").reset();
+
+        // Close modal if needed
+        document.getElementById("closeModal").click();
+      } catch (error) {
+        console.error("Error creating post:", error);
+        // Handle error appropriately
+      }
+    });
 }
 
 async function logout() {
   try {
     const response = await fetch(API_ENDPOINTS.logout, {
-      method: 'POST',
-      credentials: 'include',
+      method: "POST",
+      credentials: "include",
     });
     if (response.ok) {
-      localStorage.removeItem('userData')
-      localStorage.clear()
+      localStorage.removeItem("userData");
+      localStorage.clear();
+      login();
     } else {
-      console.error('Logout failed')
+      console.error("Logout failed");
     }
   } catch (error) {
-    console.error('Logout error:', error)
+    console.error("Logout error:", error);
   }
-  login()
+}
+
+export async function fetchCategories() {
+  try {
+    const response = await fetch(API_ENDPOINTS.categories, {
+      method: "GET",
+      credentials: "include",
+    });
+    if (response.ok) {
+      const responseData = await response.json();
+
+      Categories.length = 0; // Clear the array
+      Categories.push(...responseData.data);
+    } else {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+  } catch (error) {
+    console.error("Error fetching categories", error);
+  }
 }
