@@ -4,8 +4,9 @@ import {
   loginTemplate,
   loggedInTemplate,
 } from "./templates.js";
-import { LoginApi, SignupAPi } from "./api.js";
+import { fetchCategories, Homepage, LoginApi, SignupAPi } from "./api.js";
 import { validateEmail, validateUsername } from "./validators.js";
+import { getUserData } from "./states.js";
 
 export function signup() {
   render(signupTemplate); // Render the signup template
@@ -152,10 +153,17 @@ export function login() {
   }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async() => {
   document.getElementById("signup-button").addEventListener("click", signup);
   document.getElementById("login-button").addEventListener("click", login);
-  login();
+  const userData = getUserData()
+  if (userData) {
+    console.log(userData)
+    Homepage()
+  } else {
+    login();
+  }
+ await fetchCategories()
 });
 
 function debounce(func, delay) {
