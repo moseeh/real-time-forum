@@ -182,7 +182,7 @@ export const createpost = (categories) => `
       <label for="image-upload">Upload Image (Max: 20MB)</label>
       <input type="file" id="image-upload" name="image" accept="image/*" />
 
-      <button type="submit" class="btn">Submit Post</button><br>
+      <button type="submit" id="submitBtn" class="btn">Submit Post</button><br>
       <button type="button" id="closeModal" class="btn">Close</button>
     </form>
   `;
