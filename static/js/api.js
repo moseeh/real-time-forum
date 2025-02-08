@@ -9,7 +9,7 @@ import {
   rightBar,
   createpost,
 } from "./templates.js";
-
+import { getUserData } from "./states.js";
 export async function LoginApi(event) {
   if (event) event.preventDefault();
 
@@ -22,6 +22,7 @@ export async function LoginApi(event) {
       password,
     });
     if (response.success) {
+      localStorage.setItem("userData", JSON.stringify(response.data));
       render(loggedInTemplate);
       setTimeout(Homepage, 2000);
     } else {
@@ -95,11 +96,11 @@ function Homepage() {
   if (authdiv) {
     authdiv.remove();
   }
-
+  const UserData = getUserData();
   const header = document.querySelector("header.card");
   if (header) {
-    const username = "Guest"; // Replace this with actual username logic
-    header.innerHTML = headerTemplate(username); // Correct way to insert HTML
+    const username = UserData.username;
+    header.innerHTML = headerTemplate(username); 
   }
 
   const content = document.getElementById("body");
@@ -113,6 +114,10 @@ function Homepage() {
   if (create) {
     create.addEventListener("click", displayCreate);
   }
+  const logoutBtn = document.getElementById("logout-btn")
+  if (logoutBtn) {
+    logoutBtn = document.addEventListener("click", logout)
+  }
 }
 
 export function displayCreate() {
@@ -120,4 +125,22 @@ export function displayCreate() {
   const mainsection = document.getElementById("main");
   let data = ["username", "password"];
   mainsection.innerHTML = createpost(data);
+}
+
+async function logout() {
+  try {
+    const response = await fetch(API_ENDPOINTS.logout, {
+      method: 'POST',
+      credentials: 'include',
+    });
+    if (response.ok) {
+      localStorage.removeItem('userData')
+      localStorage.clear()
+    } else {
+      console.error('Logout failed')
+    }
+  } catch (error) {
+    console.error('Logout error:', error)
+  }
+  login()
 }
