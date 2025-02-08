@@ -29,6 +29,7 @@ func main() {
 		},
 	}
 	app.Users.InitTables()
+	database.InsertCategories(db)
 
 	h := handlers.NewHandler(app.Users)
 
