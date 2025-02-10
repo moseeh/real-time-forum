@@ -3,4 +3,5 @@ export const API_ENDPOINTS = {
   signup: "/api/signup",
   logout: "/api/logout",
   categories: "/api/categories",
+  allusers: "/api/allusers"
 };
