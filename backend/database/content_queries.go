@@ -11,3 +11,10 @@ func (m *UserModel) InsertContent(tx *sql.Tx, content *models.Content) error {
 	_, err := tx.Exec(query, content.ID, content.AuthorID, content.ParentID, content.ContentType, content.Title, content.Text)
 	return err
 }
+
+// InsertPostCategory links a post to a category
+func (u *UserModel) InsertPostCategory(tx *sql.Tx, postID, categoryID string) error {
+	query := `INSERT INTO POST_CATEGORIES (post_id, category_id) VALUES (?, ?)`
+	_, err := tx.Exec(query, postID, categoryID)
+	return err
+}
