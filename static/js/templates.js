@@ -90,7 +90,7 @@ export const rightBar = (users) => `
         <div class="sidebar-right">
           <h3>All Users</h3>
           <ul id="users">
-            ${users.map((user) => `<li><a href="#">${user}</a></li>`).join("")}
+            ${users.map((user) => `<li><a href="#">${user.name}</a></li>`).join("")}
           </ul>
         </div>
 `;
