@@ -10,6 +10,9 @@ import {
   createpost,
 } from "./templates.js";
 import { Categories, getUserData, Users } from "./states.js";
+import { displayCreate } from "./posts.js";
+
+
 export async function LoginApi(event) {
   if (event) event.preventDefault();
 
@@ -122,66 +125,6 @@ export async function Homepage() {
   }
 }
 
-export function displayCreate() {
-  console.log("displayCreate");
-  const mainsection = document.getElementById("main");
-  // let data = ["username", "password"];
-  mainsection.innerHTML = createpost(Categories);
-
-  // Get form values on submit
-  document
-    .getElementById("create-post-form")
-    .addEventListener("submit", async (e) => {
-      e.preventDefault(); // Prevent default form submission
-
-      // Get basic form fields
-      const title = document.querySelector('input[name="title"]').value;
-      const content = document.querySelector('textarea[name="content"]').value;
-
-      // Get selected categories
-      const selectedCategories = Array.from(
-        document.querySelectorAll('input[name="categories[]"]:checked')
-      ).map((checkbox) => checkbox.value);
-
-      // Get the uploaded image file
-      const imageFile = document.querySelector('input[name="image"]').files[0];
-
-      // Create FormData object for sending files
-      const formData = new FormData();
-      formData.append("title", title);
-      formData.append("content", content);
-      selectedCategories.forEach((categoryId) => {
-        formData.append("categories[]", categoryId);
-      });
-      if (imageFile) {
-        formData.append("image", imageFile);
-      }
-
-      try {
-        const response = await fetch("/posts/create", {
-          method: "POST",
-          body: formData,
-          credentials: "include",
-        });
-
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-
-        const result = await response.json();
-        console.log("Post created successfully:", result);
-
-        // Optional: Clear form after successful submission
-        document.getElementById("create-post-form").reset();
-
-        // Close modal if needed
-        document.getElementById("closeModal").click();
-      } catch (error) {
-        console.error("Error creating post:", error);
-        // Handle error appropriately
-      }
-    });
-}
 
 async function logout() {
   try {
