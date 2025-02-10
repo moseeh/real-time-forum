@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 )
 
@@ -10,7 +11,7 @@ func (h *Handler) GetUsers(w http.ResponseWriter, r *http.Request) {
 	users, err := h.Users.GetAllUsers()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-
+		fmt.Println("prob")
 		json.NewEncoder(w).Encode(ApiResponse{
 			Success: false,
 			Message: "Server error occurred",

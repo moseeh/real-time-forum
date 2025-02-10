@@ -9,7 +9,7 @@ import {
   rightBar,
   createpost,
 } from "./templates.js";
-import { Categories, getUserData } from "./states.js";
+import { Categories, getUserData, Users } from "./states.js";
 export async function LoginApi(event) {
   if (event) event.preventDefault();
 
@@ -91,11 +91,12 @@ async function fetchAPI(url, data) {
   }
 }
 
-export function Homepage() {
+export async function Homepage() {
   const authdiv = document.getElementById("authentication");
   if (authdiv) {
     authdiv.remove();
   }
+  await fetchUsers()
   const UserData = getUserData();
   const header = document.querySelector("header.card");
   if (header) {
@@ -107,7 +108,7 @@ export function Homepage() {
   let data = ["username", "password"];
   content.innerHTML += leftBar(Categories);
   content.innerHTML += allposts(data);
-  content.innerHTML += rightBar(data);
+  content.innerHTML += rightBar(Users);
   content.style.display = "grid";
 
   const create = document.getElementById("create-post-btn");
@@ -215,5 +216,24 @@ export async function fetchCategories() {
     }
   } catch (error) {
     console.error("Error fetching categories", error);
+  }
+}
+
+export async function fetchUsers() {
+  try {
+    const response = await fetch(API_ENDPOINTS.allusers, {
+      method: "GET",
+      credentials: "include",
+    });
+    if (response.ok) {
+      const responseData = await response.json();
+
+      Users.length = 0; // Clear the array
+      Users.push(...responseData.data);
+    } else {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+  } catch (error) {
+    console.error("Error fetching users", error);
   }
 }
