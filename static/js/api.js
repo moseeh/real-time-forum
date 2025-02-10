@@ -105,7 +105,7 @@ export function Homepage() {
 
   const content = document.getElementById("body");
   let data = ["username", "password"];
-  content.innerHTML += leftBar(data);
+  content.innerHTML += leftBar(Categories);
   content.innerHTML += allposts(data);
   content.innerHTML += rightBar(data);
   content.style.display = "grid";
