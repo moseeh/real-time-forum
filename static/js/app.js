@@ -159,11 +159,11 @@ document.addEventListener("DOMContentLoaded", async() => {
   const userData = getUserData()
   if (userData) {
     console.log(userData)
+    await fetchCategories()
     Homepage()
   } else {
     login();
   }
- await fetchCategories()
 });
 
 function debounce(func, delay) {
