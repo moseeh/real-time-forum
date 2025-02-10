@@ -79,7 +79,7 @@ export const leftBar = (categories) => `
             <h3>Categories</h3>
             <ul id="category">
               ${categories
-                .map((category) => `<li><a href="#">${category}</a></li>`)
+                .map((category) => `<li><a href="#">${category.name}</a></li>`)
                 .join("")}
             </ul>
           </div>
