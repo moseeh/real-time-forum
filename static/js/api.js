@@ -97,6 +97,7 @@ export async function Homepage() {
     authdiv.remove();
   }
   await fetchUsers()
+  await fetchCategories()
   const UserData = getUserData();
   const header = document.querySelector("header.card");
   if (header) {
