@@ -10,6 +10,11 @@ import (
 
 var ErrNoRecord = errors.New("no matching record found")
 
+type User struct {
+	UserId   string `json:"id"`
+	Username string `json:"name"`
+}
+
 func (m *UserModel) InsertUser(id, first_name, last_name, username, email, gender, password string, age int) error {
 	const USER_INSERT string = "INSERT INTO USERS (user_id, first_name, last_name,  username, email, gender, age, password) VALUES (?,?,?,?,?,?,?,?);"
 	stmt, err := m.DB.Prepare(USER_INSERT)
@@ -73,4 +78,24 @@ func (m *UserModel) GetUserByEmailOrUsername(identifier string) (*models.User, e
 		return nil, err
 	}
 	return user, nil
+}
+
+func (u *UserModel) GetAllUsers() ([]User, error) {
+	query := `SELECT user_id, username FROM USERS`
+	rows, err := u.DB.Query(query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var users []User
+	for rows.Next() {
+		var one User
+		err := rows.Scan(&one.UserId, &one.Username)
+		if err != nil {
+			return nil, err
+		}
+		users = append(users, one)
+	}
+	return users, nil
 }
