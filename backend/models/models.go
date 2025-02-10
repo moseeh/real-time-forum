@@ -21,6 +21,7 @@ type Content struct {
 	LikesCount   int    `json:"likescount"`
 	DislikeCount int    `json:"dislikecount"`
 	CommentCount int    `json:"commentcount"`
+	ImageUrl     string `json:"imageurl"`
 }
 
 type UserInteraction struct {
