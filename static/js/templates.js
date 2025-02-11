@@ -191,8 +191,23 @@ export const createpost = (categories) => `
       <button type="button" id="closeModal" class="btn">Close</button>
     </form>
   `;
+
+const startchat = () => `
+    <div class="chat-container">
+  <!-- Chat Messages Display -->
+  <div class="chat-messages" id="chat-messages">
+    <!-- Messages will be dynamically added here -->
+  </div>
+
+  <!-- Typing Textarea -->
+  <div class="chat-input">
+    <textarea id="chat-textarea" placeholder="Type your message..."></textarea>
+    <button id="send-btn" class="btn">Send</button>
+  </div>
+</div>
+`;
 window.Chat = (username) => {
   console.log(`Starting chat with ${username}`);
   const mainSection = document.getElementById("main");
-  mainSection.innerHTML = "";
+  mainSection.innerHTML = startchat();
 };
