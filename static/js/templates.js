@@ -87,12 +87,17 @@ export const leftBar = (categories) => `
 `;
 
 export const rightBar = (users) => `
-        <div class="sidebar-right">
-          <h3>All Users</h3>
-          <ul id="users">
-            ${users.map((user) => `<li><a href="#">${user.name}</a></li>`).join("")}
-          </ul>
-        </div>
+  <div class="sidebar-right">
+    <h3>All Users</h3>
+    <ul id="users">
+      ${users
+        .map(
+          (user) =>
+            `<li><a href="#" onclick="Chat('${user.id}')">${user.name}</a></li>`
+        )
+        .join("")}
+    </ul>
+  </div>
 `;
 
 export const allposts = (posts) => `
@@ -186,3 +191,8 @@ export const createpost = (categories) => `
       <button type="button" id="closeModal" class="btn">Close</button>
     </form>
   `;
+window.Chat = (username) => {
+  console.log(`Starting chat with ${username}`);
+  const mainSection = document.getElementById("main");
+  mainSection.innerHTML = "";
+};
