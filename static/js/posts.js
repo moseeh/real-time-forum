@@ -33,3 +33,27 @@ const closeModalBtn = document.getElementById("closeModal");
     mainSection.innerHTML = "";
   });
 }
+
+export async function fetchPosts() {
+  console.log(1)
+  try {
+      const response = await fetch("/api/posts", {
+          method: "GET",
+          headers: {
+              "Content-Type": "application/json"
+          },
+          credentials: "include" // to include cookies for auth
+      });
+
+      if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log(data)
+      return data;
+  } catch (error) {
+      console.error("Error fetching posts:", error);
+      throw error;
+  }
+}

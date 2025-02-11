@@ -8,18 +8,33 @@ import (
 )
 
 type Post struct {
-	ContentID     string
-	UserID        string
-	Username      string
-	Text          string
-	Title         string
-	CreatedAt     time.Time
-	Categories    []Category
-	LikesCount    int
-	CommentsCount int
-	DislikesCount int
-	Isliked       bool
-	IsDisliked    bool
+	ContentID     string          `json:"post_id"`
+	Title         string          `json:"title"`
+	Text          string          `json:"content"`
+	CreatedAt     time.Time       `json:"created_at"`
+	UpdatedAt     time.Time       `json:"updated_at"`
+	UserID        string          `json:"author_id"`
+	Username      string          `json:"username"`
+	Categories    []Category      `json:"categories"`
+	LikesCount    int             `json:"likes_count"`
+	DislikesCount int             `json:"dislikes_count"`
+	CommentsCount int             `json:"comments_count"`
+	IsLiked       bool            `json:"is_liked"`
+	IsDisliked    bool            `json:"is_disliked"`
+	Comments      []CommentThread `json:"comments"`
+}
+type CommentThread struct {
+	ContentID     string          `json:"comment_id"`
+	UserID        string          `json:"user_id"`
+	Username      string          `json:"username"`
+	Text          string          `json:"text"`
+	CreatedAt     time.Time       `json:"created_at"`
+	UpdatedAt     time.Time       `json:"updated_at"`
+	LikesCount    int             `json:"likes_count"`
+	DislikesCount int             `json:"dislikes_count"`
+	IsLiked       bool            `json:"is_liked"`
+	IsDisliked    bool            `json:"is_disliked"`
+	Replies       []CommentThread `json:"replies"`
 }
 
 func (m *UserModel) InsertContent(tx *sql.Tx, content *models.Content) error {
@@ -96,7 +111,7 @@ func (u *UserModel) GetAllPosts(currentUserID string) ([]Post, error) {
 		}
 
 		// Convert int to bool for is_liked and is_disliked
-		post.Isliked = isLiked == 1
+		post.IsLiked = isLiked == 1
 		post.IsDisliked = isDisliked == 1
 
 		// Get categories for this post

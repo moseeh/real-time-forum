@@ -30,3 +30,4 @@ type UserInteraction struct {
 	ContentID       string `json:"contentid"`
 	InteractionType string `json:"interactiontype"`
 }
+

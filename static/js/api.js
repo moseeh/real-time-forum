@@ -10,7 +10,7 @@ import {
   createpost,
 } from "./templates.js";
 import { Categories, getUserData, Users } from "./states.js";
-import { displayCreate } from "./posts.js";
+import { displayCreate, fetchPosts } from "./posts.js";
 
 
 export async function LoginApi(event) {
@@ -101,6 +101,7 @@ export async function Homepage() {
   }
   await fetchUsers()
   await fetchCategories()
+  await fetchPosts()
   const UserData = getUserData();
   const header = document.querySelector("header.card");
   if (header) {
