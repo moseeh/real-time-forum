@@ -69,3 +69,29 @@ func (u *UserModel) GetAllCategories() ([]Category, error) {
 	}
 	return categories, nil
 }
+
+// GetPostCategories retrieves all categories for a specific post
+func (u *UserModel) GetPostCategories(postID string) ([]Category, error) {
+	query := `
+        SELECT c.category_id, c.name, c.description
+        FROM CATEGORIES c
+        JOIN POST_CATEGORIES pc ON c.category_id = pc.category_id
+        WHERE pc.post_id = ?`
+
+	rows, err := u.DB.Query(query, postID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var categories []Category
+	for rows.Next() {
+		var cat Category
+		err := rows.Scan(&cat.CategoryID, &cat.Name, &cat.Description)
+		if err != nil {
+			return nil, err
+		}
+		categories = append(categories, cat)
+	}
+	return categories, nil
+}
