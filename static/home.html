@@ -42,47 +42,21 @@
 
       <!-- Middle Section (All Posts) -->
       <div class="main-content">
-        <form
-          id="create-post-form"
-          action="/posts/create"
-          method="POST"
-          enctype="multipart/form-data"
-        >
-          <input type="text" name="title" placeholder="Post Title" required />
-          <textarea
-            name="content"
-            placeholder="Post Content"
-            required
-          ></textarea>
-
-          <div class="categories-section">
-            ${ categories.length > 0 ? `
-            <label>Select Categories (Choose one or more):</label>
-            <div class="categories-grid">
-              ${categories .map( (category) => `
-              <div class="category-item">
-                <input
-                  type="checkbox"
-                  name="categories[]"
-                  value="${category.id}"
-                  id="category-${category.id}"
-                  class="category-checkbox"
-                />
-                <label for="category-${category.id}">${category.name}</label>
-              </div>
-              ` ) .join("")}
-            </div>
-            ` : "
-            <p>No categories available</p>
-            " }
+        <div class="chat-container">
+          <!-- Chat Messages Display -->
+          <div class="chat-messages" id="chat-messages">
+            <!-- Messages will be dynamically added here -->
           </div>
 
-          <label for="image-upload">Upload Image (Max: 20MB)</label>
-          <input type="file" id="image-upload" name="image" accept="image/*" />
-
-          <button type="submit" class="btn">Submit Post</button><br />
-          <button type="button" id="closeModal" class="btn">Close</button>
-        </form>
+          <!-- Typing Textarea -->
+          <div class="chat-input">
+            <textarea
+              id="chat-textarea"
+              placeholder="Type your message..."
+            ></textarea>
+            <button id="send-btn" class="btn">Send</button>
+          </div>
+        </div>
       </div>
 
       <!-- Right Sidebar (All Users) -->
@@ -94,5 +68,59 @@
       </div>
     </div>
     <script type="module" src="/static/js/app.js"></script>
+    <script>
+      // Get DOM elements
+      const chatMessages = document.getElementById("chat-messages");
+      const chatTextarea = document.getElementById("chat-textarea");
+      const sendBtn = document.getElementById("send-btn");
+
+      // Function to add a new message
+      function addMessage(sender, message) {
+        const messageDiv = document.createElement("div");
+        messageDiv.classList.add("message");
+
+        // Get current time
+        const time = new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+
+        // Add message content
+        messageDiv.innerHTML = `
+    <div>
+      <span class="sender">${sender}</span>
+      <span class="time">${time}</span>
+    </div>
+    <div class="content">${message}</div>
+  `;
+
+        // Append the message to the chat
+        chatMessages.appendChild(messageDiv);
+
+        // Scroll to the bottom of the chat
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }
+
+      // Send message on button click
+      sendBtn.addEventListener("click", () => {
+        const message = chatTextarea.value.trim();
+        if (message) {
+          addMessage("You", message); // Replace "You" with the actual sender's name
+          chatTextarea.value = ""; // Clear the textarea
+        }
+      });
+
+      // Send message on pressing Enter (without Shift)
+      chatTextarea.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+          e.preventDefault(); // Prevent newline in textarea
+          sendBtn.click(); // Trigger send button click
+        }
+      });
+      
+      // Example: Simulate incoming messages
+      setTimeout(() => addMessage("User1", "Hello!"), 1000);
+      setTimeout(() => addMessage("User2", "Hi there!"), 3000);
+    </script>
   </body>
 </html>
