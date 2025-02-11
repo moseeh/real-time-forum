@@ -79,8 +79,8 @@ export const leftBar = (categories) => `
             <h3>Categories</h3>
             <ul id="category">
               ${categories
-                .map((category) => `<li><a href="#">${category.name}</a></li>`)
-                .join("")}
+    .map((category) => `<li><a href="#">${category.name}</a></li>`)
+    .join("")}
             </ul>
           </div>
         </div>
@@ -91,14 +91,14 @@ export const rightBar = (users, username) => `
     <h3>All Users</h3>
     <ul id="users">
       ${users
-        .map((user) => {
-          // Only create a list item if the user's name is not the same as the current username
-          if (user.name !== username) {
-            return `<li><a href="#" onclick="Chat('${user.id}')">${user.name}</a></li>`;
-          }
-          return ""; // Skip this user
-        })
-        .join("")}
+    .map((user) => {
+      // Only create a list item if the user's name is not the same as the current username
+      if (user.name !== username) {
+        return `<li><a href="#" onclick="Chat('${user.name}')">${user.name}</a></li>`;
+      }
+      return ""; // Skip this user
+    })
+    .join("")}
     </ul>
   </div>
 `;
@@ -107,8 +107,8 @@ export const allposts = (posts) => `
         <div class="main-content" id="main">
           <h2>All Posts</h2>
         ${posts
-          .map(
-            (post) => `<div class="post">
+    .map(
+      (post) => `<div class="post">
           <h3>${post.title}</h3>
           <p>${post.content}</p>
           <div class="post-actions">
@@ -119,8 +119,8 @@ export const allposts = (posts) => `
             <button class="btn">Dislikes</button>
           </div>
         </div>`
-          )
-          .join("")}
+    )
+    .join("")}
         </div>
 `;
 
@@ -128,9 +128,8 @@ export const singlepost = (post) => `
           <div class="post">
             <h4>${post.title}</h4>
             <p>${post.content}</p>
-            <span class="post-author">${post.author} at ${
-  post.createdat
-}</span><br>
+            <span class="post-author">${post.author} at ${post.createdat
+  }</span><br>
             <div class="post-actions">
               <span class="likes">${post.likes} Likes</span>
               <button class="btn like-btn">Like</button>
@@ -143,14 +142,14 @@ export const singlepost = (post) => `
           <div class="comments-section">
             <h3>Comments</h3>
             ${post.contents
-              .map(
-                (comment) => `<div class="comment">
+    .map(
+      (comment) => `<div class="comment">
               <span class="comment-author">${comment.author}</span>
               <p>${comment.content}</p>
               <span class="comment-date">${comment.createdat}</span>
             </div>`
-              )
-              .join("")}
+    )
+    .join("")}
         
             <!-- Add Comment Form -->
             <div class="add-comment">
@@ -166,25 +165,24 @@ export const createpost = (categories) => `
       <textarea name="content" placeholder="Post Content" required></textarea>
 
       <div class="categories-section">
-        ${
-          categories.length > 0
-            ? `
+        ${categories.length > 0
+    ? `
           <label>Select Categories (Choose one or more):</label>
           <div class="categories-grid">
             ${categories
-              .map(
-                (category) => `
+      .map(
+        (category) => `
               <div class="category-item">
                 <input type="checkbox" name="categories[]" value="${category.id}" id="category-${category.id}" class="category-checkbox" />
                 <label for="category-${category.id}">${category.name}</label>
               </div>
             `
-              )
-              .join("")}
+      )
+      .join("")}
           </div>
         `
-            : "<p>No categories available</p>"
-        }
+    : "<p>No categories available</p>"
+  }
       </div>
 
       <label for="image-upload">Upload Image (Max: 20MB)</label>
@@ -197,6 +195,7 @@ export const createpost = (categories) => `
 
 const startchat = () => `
     <div class="chat-container">
+    <div class="chat-
   <!-- Chat Messages Display -->
   <div class="chat-messages" id="chat-messages">
     <!-- Messages will be dynamically added here -->
@@ -213,4 +212,81 @@ window.Chat = (username) => {
   console.log(`Starting chat with ${username}`);
   const mainSection = document.getElementById("main");
   mainSection.innerHTML = startchat();
+  const userData = localStorage.getItem("userData");
+  const data = JSON.parse(userData)
+  const sender = data.username
+  const reciver = username
+  console.log(reciver, sender)
+
+  // Connect to WebSocket server
+  const socket = new WebSocket(`ws://${window.location.host}/ws`);
+
+  socket.onopen = () => {
+    socket.send(sender);
+    console.log("Connected to WebSocket server");
+  };
+
+  socket.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+
+    if (data.senderId) {
+      // Display chat message
+      addMessage(data.senderId, data.message)
+    } else if (data.userId) {
+      // Update online status
+      const statusDiv = document.getElementById("onlineStatus");
+      const userStatus = document.getElementById(`status-${data.userId}`);
+      if (userStatus) {
+        userStatus.textContent = data.online ? "Online" : "Offline";
+        userStatus.className = data.online ? "online" : "offline";
+      } else {
+        statusDiv.innerHTML += `<p id="status-${data.userId}" class="${data.online ? "online" : "offline"}">${data.userId}: ${data.online ? "Online" : "Offline"}</p>`;
+      }
+    }
+  };
+
+  const sendBtn = document.getElementById("send-btn");
+
+  sendBtn.addEventListener("click", sendMessage);
+
+  function sendMessage() {
+    const messageInput = document.getElementById("chat-textarea");
+    const message = messageInput.value;
+
+    if (message) {
+        const data = {
+            senderId: sender,
+            receiverId: reciver,
+            message: message,
+        };
+        socket.send(JSON.stringify(data));
+        addMessage(sender, message); // Display the message locally
+        messageInput.value = ""; // Clear input field
+    }
+}
 };
+
+// Function to add a new message
+function addMessage(sender, message) {
+  const chatMessages = document.getElementById("chat-messages");
+  const messageDiv = document.createElement("div");
+  messageDiv.classList.add("message");
+
+  // Get current time
+  const time = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+  // Add message content
+  messageDiv.innerHTML = `
+    <div>
+      <span class="sender">${sender}</span>
+      <span class="time">${time}</span>
+    </div>
+    <div class="content">${message}</div>
+  `;
+
+  // Append the message to the chat
+  chatMessages.appendChild(messageDiv);
+
+  // Scroll to the bottom of the chat
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
