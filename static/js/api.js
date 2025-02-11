@@ -112,7 +112,7 @@ export async function Homepage() {
   let data = ["username", "password"];
   content.innerHTML += leftBar(Categories);
   content.innerHTML += allposts(data);
-  content.innerHTML += rightBar(Users);
+  content.innerHTML += rightBar(Users, UserData.username);
   content.style.display = "grid";
 
   const create = document.getElementById("create-post-btn");
