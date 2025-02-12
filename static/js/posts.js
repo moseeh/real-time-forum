@@ -28,7 +28,7 @@ export function displayCreate() {
       console.error("Error during form submission:", error);
     }
   });
-const closeModalBtn = document.getElementById("closeModal");
+  const closeModalBtn = document.getElementById("closeModal");
   closeModalBtn.addEventListener("click", () => {
     mainSection.innerHTML = "";
   });
@@ -36,35 +36,89 @@ const closeModalBtn = document.getElementById("closeModal");
 
 export async function fetchPosts() {
   try {
-      const response = await fetch("/api/posts", {
-          method: "GET",
-          headers: {
-              "Content-Type": "application/json"
-          },
-          credentials: "include" // to include cookies for auth
-      });
+    const response = await fetch("/api/posts", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include", // to include cookies for auth
+    });
 
-      if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-      }
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
 
-      const data = await response.json();
-      return data.posts;
+    const data = await response.json();
+    return data.posts;
   } catch (error) {
-      console.error("Error fetching posts:", error);
-      throw error;
+    console.error("Error fetching posts:", error);
+    throw error;
   }
 }
 
 export async function displayPosts() {
   try {
-    let posts = await fetchPosts(); 
- 
-    const content = document.getElementById('body')
-    content.innerHTML += allposts(posts)
+    let posts = await fetchPosts();
+    const content = document.getElementById("body");
+    
+    // Add the posts to the DOM
+    content.innerHTML += allposts(posts);
+
+    // Get main content element
+    const mainContent = document.getElementById("main");
+    
+    const updateButtonUI = (button, count, isActive) => {
+      const countSpan = button.querySelector("span");
+      countSpan.textContent = count;
+      button.classList.toggle("active", isActive);
+    };
+
+    // Use event delegation with more specific target checking
+    mainContent.addEventListener("click", async (e) => {
+      // Find target button - check if click is on button or its children
+      const button = e.target.matches('.upvote-btn, .downvote-btn') ? 
+                    e.target : 
+                    e.target.closest('.upvote-btn, .downvote-btn');
+                    
+      if (!button) return;
+
+      const postId = button.dataset.postId;
+      const isUpvote = button.classList.contains("upvote-btn");
+      const interactionType = isUpvote ? "like" : "dislike";
+
+      try {
+        const response = await fetch("/api/interactions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            content_id: postId,
+            interaction_type: interactionType,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to update interaction");
+        }
+
+        const data = await response.json();
+        const article = button.closest("article");
+        const upvoteBtn = article.querySelector(".upvote-btn");
+        const downvoteBtn = article.querySelector(".downvote-btn");
+
+        updateButtonUI(upvoteBtn, data.likes_count, data.is_liked);
+        updateButtonUI(downvoteBtn, data.dislikes_count, data.is_disliked);
+      } catch (error) {
+        console.error("Error:", error);
+        alert("Failed to update vote. Please try again.");
+      }
+    });
+
   } catch (error) {
-    console.error("Error displaying posts error", error)
-    const content = document.getElementById('body')
+    console.error("Error displaying posts:", error);
+    const content = document.getElementById("body");
     content.innerHTML += `<div class="error">Error loading posts: ${error.message}</div>`;
   }
 }
