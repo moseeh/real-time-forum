@@ -79,8 +79,8 @@ export const leftBar = (categories) => `
             <h3>Categories</h3>
             <ul id="category">
               ${categories
-    .map((category) => `<li><a href="#">${category.name}</a></li>`)
-    .join("")}
+                .map((category) => `<li><a href="#">${category.name}</a></li>`)
+                .join("")}
             </ul>
           </div>
         </div>
@@ -91,14 +91,14 @@ export const rightBar = (users, username) => `
     <h3>All Users</h3>
     <ul id="users">
       ${users
-    .map((user) => {
-      // Only create a list item if the user's name is not the same as the current username
-      if (user.name !== username) {
-        return `<li><a href="#" onclick="Chat('${user.name}','${user.id}')">${user.name}</a></li>`;
-      }
-      return ""; // Skip this user
-    })
-    .join("")}
+        .map((user) => {
+          // Only create a list item if the user's name is not the same as the current username
+          if (user.name !== username) {
+            return `<li><a href="#" onclick="Chat('${user.name}','${user.id}')">${user.name}</a></li>`;
+          }
+          return ""; // Skip this user
+        })
+        .join("")}
     </ul>
   </div>
 `;
@@ -107,8 +107,8 @@ export const allposts = (posts) => `
         <div class="main-content" id="main">
           <h2>All Posts</h2>
         ${posts
-    .map(
-      (post) => `<div class="post">
+          .map(
+            (post) => `<div class="post">
           <h3>${post.title}</h3>
           <p>${post.content}</p>
           <div class="post-actions">
@@ -119,8 +119,8 @@ export const allposts = (posts) => `
             <button class="btn">Dislikes</button>
           </div>
         </div>`
-    )
-    .join("")}
+          )
+          .join("")}
         </div>
 `;
 
@@ -128,8 +128,9 @@ export const singlepost = (post) => `
           <div class="post">
             <h4>${post.title}</h4>
             <p>${post.content}</p>
-            <span class="post-author">${post.author} at ${post.createdat
-  }</span><br>
+            <span class="post-author">${post.author} at ${
+  post.createdat
+}</span><br>
             <div class="post-actions">
               <span class="likes">${post.likes} Likes</span>
               <button class="btn like-btn">Like</button>
@@ -142,14 +143,14 @@ export const singlepost = (post) => `
           <div class="comments-section">
             <h3>Comments</h3>
             ${post.contents
-    .map(
-      (comment) => `<div class="comment">
+              .map(
+                (comment) => `<div class="comment">
               <span class="comment-author">${comment.author}</span>
               <p>${comment.content}</p>
               <span class="comment-date">${comment.createdat}</span>
             </div>`
-    )
-    .join("")}
+              )
+              .join("")}
         
             <!-- Add Comment Form -->
             <div class="add-comment">
@@ -165,24 +166,25 @@ export const createpost = (categories) => `
       <textarea name="content" placeholder="Post Content" required></textarea>
 
       <div class="categories-section">
-        ${categories.length > 0
-    ? `
+        ${
+          categories.length > 0
+            ? `
           <label>Select Categories (Choose one or more):</label>
           <div class="categories-grid">
             ${categories
-      .map(
-        (category) => `
+              .map(
+                (category) => `
               <div class="category-item">
                 <input type="checkbox" name="categories[]" value="${category.id}" id="category-${category.id}" class="category-checkbox" />
                 <label for="category-${category.id}">${category.name}</label>
               </div>
             `
-      )
-      .join("")}
+              )
+              .join("")}
           </div>
         `
-    : "<p>No categories available</p>"
-  }
+            : "<p>No categories available</p>"
+        }
       </div>
 
       <label for="image-upload">Upload Image (Max: 20MB)</label>
@@ -208,16 +210,16 @@ const startchat = (username) => `
   </div>
 </div>
 `;
-window.Chat = (username,id) => {
+window.Chat = (username, id) => {
   console.log(`Starting chat with ${username}`);
   const mainSection = document.getElementById("main");
   mainSection.innerHTML = startchat(username);
   const userData = localStorage.getItem("userData");
-  const data = JSON.parse(userData)
+  const data = JSON.parse(userData);
   // console.log(data)
-  const sender = [data.username, data.userID]
-  const reciver = [username, id]
-  console.log(reciver, sender)
+  const sender = [data.username, data.userID];
+  const reciver = [username, id];
+  console.log(reciver, sender);
 
   // Connect to WebSocket server
   const socket = new WebSocket(`ws://${window.location.host}/ws`);
@@ -231,12 +233,12 @@ window.Chat = (username,id) => {
     const data = JSON.parse(event.data);
 
     if (data.senderId) {
-      console.log(data.senderId)
+      console.log(data.senderId);
       // Display chat message
       if (data.senderId === id) {
-        addMessage(reciver[0], data.message)
+        addMessage(reciver[0], data.message);
       }
-      showNotification(reciver[0])
+      showNotification(reciver[0]);
     } else if (data.userId) {
       // Update online status
       // const statusDiv = document.getElementById("onlineStatus");
@@ -259,16 +261,16 @@ window.Chat = (username,id) => {
     const message = messageInput.value;
 
     if (message) {
-        const data = {
-            senderId: sender[1],
-            receiverId: reciver[1],
-            message: message,
-        };
-        socket.send(JSON.stringify(data));
-        addMessage(sender[0], message); // Display the message locally
-        messageInput.value = ""; // Clear input field
+      const data = {
+        senderId: sender[1],
+        receiverId: reciver[1],
+        message: message,
+      };
+      socket.send(JSON.stringify(data));
+      addMessage(sender[0], message); // Display the message locally
+      messageInput.value = ""; // Clear input field
     }
-}
+  }
 };
 
 // Function to add a new message
@@ -278,7 +280,10 @@ function addMessage(sender, message) {
   messageDiv.classList.add("message");
 
   // Get current time
-  const time = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  const time = new Date().toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 
   // Add message content
   messageDiv.innerHTML = `
