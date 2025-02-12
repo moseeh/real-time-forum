@@ -2,8 +2,10 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
+	"real-time-forum/backend/utils"
 	"sync"
 
 	"github.com/gorilla/websocket"
@@ -86,6 +88,8 @@ func (h *Handler) HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 			log.Println("Error parsing message:", err)
 			continue
 		}
+
+		fmt.Println(message.ReceiverID)
 		tx, err := h.Users.DB.Begin()
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -93,10 +97,16 @@ func (h *Handler) HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 		}
 		defer tx.Rollback()
 
+		messageid := utils.UUIDGen()
+
 		// Save the message to the database
-		if err := h.Users.SaveMessage(tx, message.SenderID, message.ReceiverID, message.Message); err != nil {
+		if err := h.Users.SaveMessage(tx,messageid, message.SenderID, message.ReceiverID, message.Message); err != nil {
 			log.Println("Error saving message:", err)
 			continue
+		}
+		if err := tx.Commit(); err != nil {
+			http.Error(w, "Failed to commit transaction", http.StatusInternalServerError)
+			return
 		}
 
 		// Send the message to the receiver if they are online
