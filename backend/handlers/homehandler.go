@@ -14,7 +14,6 @@ type PostResponse struct {
 }
 
 func (h *Handler) GetPosts(w http.ResponseWriter, r *http.Request) {
-	fmt.Println(1)
 	w.Header().Set("Content-Type", "application/json")
 	sessionid, err := r.Cookie("session_id")
 	if err != nil {
@@ -28,7 +27,6 @@ func (h *Handler) GetPosts(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	fmt.Println(user_id)
 	posts, err := h.Users.GetAllPosts(user_id)
 	if err != nil {
 		fmt.Println(err)
