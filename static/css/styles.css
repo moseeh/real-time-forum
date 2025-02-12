@@ -50,7 +50,7 @@ body {
   cursor: pointer;
   font-size: 14px;
   transition: all 0.3s ease;
-  color: white;
+  color: rgb(10, 9, 9);
 }
 
 #create-post-btn {
