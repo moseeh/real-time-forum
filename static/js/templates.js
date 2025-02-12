@@ -233,6 +233,7 @@ window.Chat = (username,id) => {
     if (data.senderId) {
       // Display chat message
       addMessage(reciver[0], data.message)
+      showNotification(reciver[0])
     } else if (data.userId) {
       // Update online status
       // const statusDiv = document.getElementById("onlineStatus");
@@ -290,4 +291,20 @@ function addMessage(sender, message) {
 
   // Scroll to the bottom of the chat
   chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+// Function to show a notification
+function showNotification(senderName) {
+  // Create the notification element
+  const notification = document.createElement("div");
+  notification.className = "notification";
+  notification.textContent = `New message from ${senderName}`;
+
+  // Append the notification to the body
+  document.body.appendChild(notification);
+
+  // Remove the notification after 2 seconds
+  setTimeout(() => {
+    notification.remove();
+  }, 2000);
 }
