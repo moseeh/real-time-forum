@@ -1,0 +1,66 @@
+package handlers
+
+import (
+	"encoding/json"
+	"net/http"
+
+	"real-time-forum/backend/models"
+	"real-time-forum/backend/utils"
+)
+
+type InteractionRequest struct {
+	ContentID       string `json:"content_id"`
+	InteractionType string `json:"interaction_type"`
+}
+
+type InteractionResponse struct {
+	LikesCount    int  `json:"likes_count"`
+	DislikesCount int  `json:"dislikes_count"`
+	IsLiked       bool `json:"is_liked"`
+	IsDisliked    bool `json:"is_disliked"`
+}
+
+func (h *Handler) HandleInteraction(w http.ResponseWriter, r *http.Request) {
+	sessionid, err := r.Cookie("session_id")
+	if err != nil {
+		// json respose to be implemented
+		http.Error(w, "unauthorized", http.StatusUnauthorized)
+		return
+	}
+	user_id, err := h.Users.GetUserIdFromSession(sessionid.Value)
+	if err != nil {
+		// json respose to be implemented
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	var req InteractionRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	interaction := &models.UserInteraction{
+		InteractionID:   utils.UUIDGen(),
+		UserID:          user_id,
+		ContentID:       req.ContentID,
+		InteractionType: req.InteractionType,
+	}
+	if err := h.Users.AddUserInteraction(interaction); err != nil {
+		http.Error(w, "Failed to add interaction", http.StatusInternalServerError)
+		return
+	}
+	post, err := h.Users.GetPost(req.ContentID, user_id)
+	if err != nil {
+		http.Error(w, "Failed to get updated post data", http.StatusInternalServerError)
+		return
+	}
+	response := InteractionResponse{
+		LikesCount:    post.LikesCount,
+		DislikesCount: post.DislikesCount,
+		IsLiked:       post.IsLiked,
+		IsDisliked:    post.IsDisliked,
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
+}
