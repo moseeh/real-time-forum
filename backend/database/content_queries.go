@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	"fmt"
 	"time"
 
 	"real-time-forum/backend/models"
@@ -123,4 +124,75 @@ func (u *UserModel) GetAllPosts(currentUserID string) ([]Post, error) {
 		posts = append(posts, post)
 	}
 	return posts, nil
+}
+
+func (u *UserModel) GetPost(contentID string, currentUserID string) (*Post, error) {
+	query := `
+    SELECT
+        c.content_id,
+        c.title,
+        c.text,
+        c.created_at,
+        u.username,
+        c.user_id,
+        c.likes_count,
+        c.dislikes_count,
+        c.comments_count,
+        CASE
+            WHEN ui_like.interaction_id IS NOT NULL THEN 1
+            ELSE 0
+        END as is_liked,
+        CASE
+            WHEN ui_dislike.interaction_id IS NOT NULL THEN 1
+            ELSE 0
+        END as is_disliked
+    FROM CONTENTS c
+    JOIN USERS u ON c.user_id = u.user_id
+    LEFT JOIN USER_INTERACTIONS ui_like ON
+        c.content_id = ui_like.content_id
+        AND ui_like.user_id = ?
+        AND ui_like.interaction_type = 'like'
+    LEFT JOIN USER_INTERACTIONS ui_dislike ON
+        c.content_id = ui_dislike.content_id
+        AND ui_dislike.user_id = ?
+        AND ui_dislike.interaction_type = 'dislike'
+    WHERE c.content_type = 'post'
+    AND c.content_id = ?
+    `
+
+	var post Post
+	var isLiked, isDisliked int
+
+	err := u.DB.QueryRow(query, currentUserID, currentUserID, contentID).Scan(
+		&post.ContentID,
+		&post.Title,
+		&post.Text,
+		&post.CreatedAt,
+		&post.Username,
+		&post.UserID,
+		&post.LikesCount,
+		&post.DislikesCount,
+		&post.CommentsCount,
+		&isLiked,
+		&isDisliked,
+	)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, fmt.Errorf("post not found")
+		}
+		return nil, err
+	}
+
+	// Convert int to bool for is_liked and is_disliked
+	post.IsLiked = isLiked == 1
+	post.IsDisliked = isDisliked == 1
+
+	// Get categories for this post
+	categories, err := u.GetPostCategories(post.ContentID)
+	if err != nil {
+		return nil, err
+	}
+	post.Categories = categories
+
+	return &post, nil
 }
