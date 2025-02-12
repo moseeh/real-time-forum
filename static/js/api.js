@@ -7,11 +7,13 @@ import {
   leftBar,
   allposts,
   rightBar,
-  createpost,
+  Sender,
+  Reciver,
+  addMessage,
+  showNotification,
 } from "./templates.js";
 import { Categories, getUserData, Users } from "./states.js";
 import { displayCreate } from "./posts.js";
-
 
 export async function LoginApi(event) {
   if (event) event.preventDefault();
@@ -99,8 +101,9 @@ export async function Homepage() {
   if (authdiv) {
     authdiv.remove();
   }
-  await fetchUsers()
-  await fetchCategories()
+  await fetchUsers();
+  await fetchCategories();
+  await startSocket();
   const UserData = getUserData();
   const header = document.querySelector("header.card");
   if (header) {
@@ -124,7 +127,6 @@ export async function Homepage() {
     logoutBtn.addEventListener("click", logout);
   }
 }
-
 
 async function logout() {
   try {
@@ -179,5 +181,63 @@ export async function fetchUsers() {
     }
   } catch (error) {
     console.error("Error fetching users", error);
+  }
+}
+
+async function startSocket() {
+  const socket = new WebSocket(`ws://${window.location.host}/ws`);
+
+  const userData = localStorage.getItem("userData");
+  const data = JSON.parse(userData);
+  // console.log(data)
+  const sender = [data.username, data.userID];
+  socket.onopen = () => {
+    socket.send(sender[1]);
+    console.log("Connected to WebSocket server");
+  };
+
+  socket.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+
+    if (data.senderId) {
+      console.log(data.senderId);
+      // Display chat message
+      if (data.senderId === id) {
+        addMessage(Reciver[0], data.message);
+      }
+      showNotification(Reciver[0]);
+    } else if (data.userId) {
+      // Update online status
+      // const statusDiv = document.getElementById("onlineStatus");
+      // const userStatus = document.getElementById(`status-${data.userId}`);
+      // if (userStatus) {
+      //   userStatus.textContent = data.online ? "Online" : "Offline";
+      //   userStatus.className = data.online ? "online" : "offline";
+      // } else {
+      //   statusDiv.innerHTML += `<p id="status-${data.userId}" class="${data.online ? "online" : "offline"}">${data.userId}: ${data.online ? "Online" : "Offline"}</p>`;
+      // }
+    }
+  };
+
+  const sendBtn = document.getElementById("send-btn");
+  if (sendBtn) {
+    sendBtn.addEventListener("click", sendMessage);
+  }
+
+  function sendMessage() {
+    console.log("sent")
+    const messageInput = document.getElementById("chat-textarea");
+    const message = messageInput.value;
+
+    if (message) {
+      const data = {
+        senderId: sender[1],
+        receiverId: Reciver[1],
+        message: message,
+      };
+      socket.send(JSON.stringify(data));
+      addMessage(sender[0], message); // Display the message locally
+      messageInput.value = ""; // Clear input field
+    }
   }
 }

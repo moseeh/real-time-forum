@@ -210,72 +210,24 @@ const startchat = (username) => `
   </div>
 </div>
 `;
+
+export let Sender;
+export let Reciver;
+
 window.Chat = (username, id) => {
   console.log(`Starting chat with ${username}`);
   const mainSection = document.getElementById("main");
   mainSection.innerHTML = startchat(username);
-  const userData = localStorage.getItem("userData");
-  const data = JSON.parse(userData);
   // console.log(data)
-  const sender = [data.username, data.userID];
-  const reciver = [username, id];
-  console.log(reciver, sender);
-
-  // Connect to WebSocket server
-  const socket = new WebSocket(`ws://${window.location.host}/ws`);
-
-  socket.onopen = () => {
-    socket.send(sender[1]);
-    console.log("Connected to WebSocket server");
-  };
-
-  socket.onmessage = (event) => {
-    const data = JSON.parse(event.data);
-
-    if (data.senderId) {
-      console.log(data.senderId);
-      // Display chat message
-      if (data.senderId === id) {
-        addMessage(reciver[0], data.message);
-      }
-      showNotification(reciver[0]);
-    } else if (data.userId) {
-      // Update online status
-      // const statusDiv = document.getElementById("onlineStatus");
-      // const userStatus = document.getElementById(`status-${data.userId}`);
-      // if (userStatus) {
-      //   userStatus.textContent = data.online ? "Online" : "Offline";
-      //   userStatus.className = data.online ? "online" : "offline";
-      // } else {
-      //   statusDiv.innerHTML += `<p id="status-${data.userId}" class="${data.online ? "online" : "offline"}">${data.userId}: ${data.online ? "Online" : "Offline"}</p>`;
-      // }
-    }
-  };
-
-  const sendBtn = document.getElementById("send-btn");
-
-  sendBtn.addEventListener("click", sendMessage);
-
-  function sendMessage() {
-    const messageInput = document.getElementById("chat-textarea");
-    const message = messageInput.value;
-
-    if (message) {
-      const data = {
-        senderId: sender[1],
-        receiverId: reciver[1],
-        message: message,
-      };
-      socket.send(JSON.stringify(data));
-      addMessage(sender[0], message); // Display the message locally
-      messageInput.value = ""; // Clear input field
-    }
-  }
+  Reciver = [username, id];
+  console.log(Reciver, Sender);
+ 
 };
 
 // Function to add a new message
-function addMessage(sender, message) {
+export function addMessage(sender, message) {
   const chatMessages = document.getElementById("chat-messages");
+  if (!chatMessages) return;
   const messageDiv = document.createElement("div");
   messageDiv.classList.add("message");
 
@@ -302,7 +254,7 @@ function addMessage(sender, message) {
 }
 
 // Function to show a notification
-function showNotification(senderName) {
+export function showNotification(senderName) {
   // Create the notification element
   const notification = document.createElement("div");
   notification.className = "notification";
