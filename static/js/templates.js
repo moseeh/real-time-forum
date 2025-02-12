@@ -104,25 +104,37 @@ export const rightBar = (users, username) => `
 `;
 
 export const allposts = (posts) => `
-        <div class="main-content" id="main">
-          <h2>All Posts</h2>
+    <div class="main-content" id="main">
+        <h2>All Posts</h2>
         ${posts
-          .map(
-            (post) => `<div class="post">
-          <h3>${post.title}</h3>
-          <p>${post.content}</p>
-          <div class="post-actions">
-            <span class="author">Author: ${post.author}</span>
-            <span class="likes">${post.likes} Likes</span>
-            <button class="btn">Like</button>
-            <span class="dislikes">${post.dislikes} Dislikes</span>
-            <button class="btn">Dislikes</button>
-          </div>
-        </div>`
-          )
-          .join("")}
-        </div>
+            .map(
+                ({ title, content, username, likes_count, dislikes_count, post_id, comments_count }) => `
+                <article class="post">
+                    <header>
+                        <h3>${title}</h3>
+                    </header>
+                    <p>${content}</p>
+                    <footer class="post-actions">
+                        <span class="author">By: ${username}</span>
+                        <div class="buttons">
+                            <button class="btn upvote-btn" aria-label="Upvote" data-post-id="${post_id}">
+                            <i class="fa-solid fa-thumbs-up"></i><span>${likes_count}</span>
+                            </button>
+                            <button class="btn downvote-btn" aria-label="Downvote" data-post-id="${post_id}">
+                            <i class="fa-solid fa-thumbs-down"></i><span>${dislikes_count}</span>
+                            </button>
+                            <button class="btn action-btn">
+                              <i class="fa-regular fa-comment"></i> ${comments_count}
+                           </button>
+                        </div>
+                    </footer>
+                </article>`
+            )
+            .join("")}
+    </div>
 `;
+
+
 
 export const singlepost = (post) => `
           <div class="post">

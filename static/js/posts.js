@@ -1,4 +1,4 @@
-import { createpost } from "./templates.js";
+import { allposts, createpost } from "./templates.js";
 import { Categories } from "./states.js";
 
 export function displayCreate() {
@@ -35,7 +35,6 @@ const closeModalBtn = document.getElementById("closeModal");
 }
 
 export async function fetchPosts() {
-  console.log(1)
   try {
       const response = await fetch("/api/posts", {
           method: "GET",
@@ -50,10 +49,22 @@ export async function fetchPosts() {
       }
 
       const data = await response.json();
-      console.log(data)
-      return data;
+      return data.posts;
   } catch (error) {
       console.error("Error fetching posts:", error);
       throw error;
+  }
+}
+
+export async function displayPosts() {
+  try {
+    let posts = await fetchPosts(); 
+ 
+    const content = document.getElementById('body')
+    content.innerHTML += allposts(posts)
+  } catch (error) {
+    console.error("Error displaying posts error", error)
+    const content = document.getElementById('body')
+    content.innerHTML += `<div class="error">Error loading posts: ${error.message}</div>`;
   }
 }

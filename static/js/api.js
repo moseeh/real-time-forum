@@ -9,8 +9,8 @@ import {
   rightBar,
   createpost,
 } from "./templates.js";
-import { Categories, getUserData, Users } from "./states.js";
-import { displayCreate, fetchPosts } from "./posts.js";
+import { Categories, getUserData, Users , Posts} from "./states.js";
+import { displayCreate, displayPosts, fetchPosts } from "./posts.js";
 
 
 export async function LoginApi(event) {
@@ -101,7 +101,6 @@ export async function Homepage() {
   }
   await fetchUsers()
   await fetchCategories()
-  await fetchPosts()
   const UserData = getUserData();
   const header = document.querySelector("header.card");
   if (header) {
@@ -112,7 +111,7 @@ export async function Homepage() {
   const content = document.getElementById("body");
   let data = ["username", "password"];
   content.innerHTML += leftBar(Categories);
-  content.innerHTML += allposts(data);
+  await displayPosts()
   content.innerHTML += rightBar(Users, UserData.username);
   content.style.display = "grid";
 
