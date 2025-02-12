@@ -36,6 +36,7 @@ func (app *App) Routes() http.Handler {
 	mux.HandleFunc("GET /api/allusers", app.Handlers.GetUsers)
 	mux.HandleFunc("POST /posts/create", app.Handlers.CreatePost)
 	mux.HandleFunc("GET /api/posts", app.Handlers.GetPosts)
+	mux.HandleFunc("POST /api/interactions", app.Handlers.HandleInteraction)
 
 	return mux
 }
