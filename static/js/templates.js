@@ -94,7 +94,7 @@ export const rightBar = (users, username) => `
     .map((user) => {
       // Only create a list item if the user's name is not the same as the current username
       if (user.name !== username) {
-        return `<li><a href="#" onclick="Chat('${user.name}')">${user.name}</a></li>`;
+        return `<li><a href="#" onclick="Chat('${user.name}','${user.id}')">${user.name}</a></li>`;
       }
       return ""; // Skip this user
     })
@@ -208,21 +208,22 @@ const startchat = () => `
   </div>
 </div>
 `;
-window.Chat = (username) => {
+window.Chat = (username,id) => {
   console.log(`Starting chat with ${username}`);
   const mainSection = document.getElementById("main");
   mainSection.innerHTML = startchat();
   const userData = localStorage.getItem("userData");
   const data = JSON.parse(userData)
-  const sender = data.username
-  const reciver = username
+  // console.log(data)
+  const sender = [data.username, data.userID]
+  const reciver = [username, id]
   console.log(reciver, sender)
 
   // Connect to WebSocket server
   const socket = new WebSocket(`ws://${window.location.host}/ws`);
 
   socket.onopen = () => {
-    socket.send(sender);
+    socket.send(sender[1]);
     console.log("Connected to WebSocket server");
   };
 
@@ -231,17 +232,17 @@ window.Chat = (username) => {
 
     if (data.senderId) {
       // Display chat message
-      addMessage(data.senderId, data.message)
+      addMessage(reciver[0], data.message)
     } else if (data.userId) {
       // Update online status
-      const statusDiv = document.getElementById("onlineStatus");
-      const userStatus = document.getElementById(`status-${data.userId}`);
-      if (userStatus) {
-        userStatus.textContent = data.online ? "Online" : "Offline";
-        userStatus.className = data.online ? "online" : "offline";
-      } else {
-        statusDiv.innerHTML += `<p id="status-${data.userId}" class="${data.online ? "online" : "offline"}">${data.userId}: ${data.online ? "Online" : "Offline"}</p>`;
-      }
+      // const statusDiv = document.getElementById("onlineStatus");
+      // const userStatus = document.getElementById(`status-${data.userId}`);
+      // if (userStatus) {
+      //   userStatus.textContent = data.online ? "Online" : "Offline";
+      //   userStatus.className = data.online ? "online" : "offline";
+      // } else {
+      //   statusDiv.innerHTML += `<p id="status-${data.userId}" class="${data.online ? "online" : "offline"}">${data.userId}: ${data.online ? "Online" : "Offline"}</p>`;
+      // }
     }
   };
 
@@ -255,12 +256,12 @@ window.Chat = (username) => {
 
     if (message) {
         const data = {
-            senderId: sender,
-            receiverId: reciver,
+            senderId: sender[1],
+            receiverId: reciver[1],
             message: message,
         };
         socket.send(JSON.stringify(data));
-        addMessage(sender, message); // Display the message locally
+        addMessage(sender[0], message); // Display the message locally
         messageInput.value = ""; // Clear input field
     }
 }
