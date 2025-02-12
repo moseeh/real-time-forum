@@ -193,9 +193,9 @@ export const createpost = (categories) => `
     </form>
   `;
 
-const startchat = () => `
+const startchat = (username) => `
     <div class="chat-container">
-    <div class="chat-
+    <h2>Chat with ${username}</h2>
   <!-- Chat Messages Display -->
   <div class="chat-messages" id="chat-messages">
     <!-- Messages will be dynamically added here -->
@@ -211,7 +211,7 @@ const startchat = () => `
 window.Chat = (username,id) => {
   console.log(`Starting chat with ${username}`);
   const mainSection = document.getElementById("main");
-  mainSection.innerHTML = startchat();
+  mainSection.innerHTML = startchat(username);
   const userData = localStorage.getItem("userData");
   const data = JSON.parse(userData)
   // console.log(data)
@@ -231,8 +231,11 @@ window.Chat = (username,id) => {
     const data = JSON.parse(event.data);
 
     if (data.senderId) {
+      console.log(data.senderId)
       // Display chat message
-      addMessage(reciver[0], data.message)
+      if (data.senderId === id) {
+        addMessage(reciver[0], data.message)
+      }
       showNotification(reciver[0])
     } else if (data.userId) {
       // Update online status
