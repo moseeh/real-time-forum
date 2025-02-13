@@ -60,62 +60,63 @@ export async function displayPosts() {
   try {
     let posts = await fetchPosts();
     const content = document.getElementById("body");
-    
-    // Add the posts to the DOM
     content.innerHTML += allposts(posts);
-
-    // Get main content element
-    const mainContent = document.getElementById("main");
-    
-    const updateButtonUI = (button, count, isActive) => {
-      const countSpan = button.querySelector("span");
-      countSpan.textContent = count;
-      button.classList.toggle("active", isActive);
-    };
-
-    // Use event delegation with more specific target checking
-    mainContent.addEventListener("click", async (e) => {
-      // Find target button - check if click is on button or its children
-      const button = e.target.matches('.upvote-btn, .downvote-btn') ? 
-                    e.target : 
-                    e.target.closest('.upvote-btn, .downvote-btn');
-                    
-      if (!button) return;
-
-      const postId = button.dataset.postId;
-      const isUpvote = button.classList.contains("upvote-btn");
-      const interactionType = isUpvote ? "like" : "dislike";
-
-      try {
-        const response = await fetch("/api/interactions", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify({
-            content_id: postId,
-            interaction_type: interactionType,
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to update interaction");
-        }
-
-        const data = await response.json();
-        const article = button.closest("article");
-        const upvoteBtn = article.querySelector(".upvote-btn");
-        const downvoteBtn = article.querySelector(".downvote-btn");
-
-        updateButtonUI(upvoteBtn, data.likes_count, data.is_liked);
-        updateButtonUI(downvoteBtn, data.dislikes_count, data.is_disliked);
-      } catch (error) {
-        console.error("Error:", error);
-        alert("Failed to update vote. Please try again.");
+    // Wait for a moment to ensure DOM is updated
+    setTimeout(() => {
+      // Get the main content after the DOM update
+      const mainContent = document.getElementById("main");
+      if (!mainContent) {
+        console.error("Could not find main element");
+        return;
       }
-    });
 
+      const updateButtonUI = (button, count, isActive) => {
+        const countSpan = button.querySelector("span");
+        countSpan.textContent = count;
+        button.classList.toggle("active", isActive);
+      };
+
+      mainContent.addEventListener("click", async (e) => {
+        const button = e.target.matches(".upvote-btn, .downvote-btn")
+          ? e.target
+          : e.target.closest(".upvote-btn, .downvote-btn");
+
+        if (!button) return;
+
+        const postId = button.dataset.postId;
+        const isUpvote = button.classList.contains("upvote-btn");
+        const interactionType = isUpvote ? "like" : "dislike";
+
+        try {
+          const response = await fetch("/api/interactions", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+            body: JSON.stringify({
+              content_id: postId,
+              interaction_type: interactionType,
+            }),
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to update interaction");
+          }
+
+          const data = await response.json();
+          const article = button.closest("article");
+          const upvoteBtn = article.querySelector(".upvote-btn");
+          const downvoteBtn = article.querySelector(".downvote-btn");
+
+          updateButtonUI(upvoteBtn, data.likes_count, data.is_liked);
+          updateButtonUI(downvoteBtn, data.dislikes_count, data.is_disliked);
+        } catch (error) {
+          console.error("Error:", error);
+          alert("Failed to update vote. Please try again.");
+        }
+      });
+    });
   } catch (error) {
     console.error("Error displaying posts:", error);
     const content = document.getElementById("body");
