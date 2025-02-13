@@ -141,3 +141,29 @@ func (h *Handler) HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 	broadcastOnlineStatus(user.UserID, user.Name, false)
 	log.Println("User disconnected:", user)
 }
+
+type Twousers struct {
+	User1 string `json:"senderId"`
+	User2 string `json:"receiverId"`
+}
+
+func (h *Handler) FetchMessages(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+    var data Twousers
+    err := json.NewDecoder(r.Body).Decode(&data)
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusBadRequest)
+        return
+    }
+
+	messages, err := h.Users.GetAllMessages(data.User1, data.User2)
+	if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+
+	fmt.Println(messages[0])
+
+	w.WriteHeader(http.StatusOK)
+    json.NewEncoder(w).Encode(messages)
+}
