@@ -6,14 +6,16 @@ import {
   loggedInTemplate,
   leftBar,
   allposts,
-  rightBar,
-  Sender,
-  Reciver,
   addMessage,
   showNotification,
+  startchat,
 } from "./templates.js";
 import { Categories, getUserData, Users } from "./states.js";
 import { displayCreate } from "./posts.js";
+
+let Sender = [];
+let Reciver = [];
+let Socket;
 
 export async function LoginApi(event) {
   if (event) event.preventDefault();
@@ -185,59 +187,76 @@ export async function fetchUsers() {
 }
 
 async function startSocket() {
-  const socket = new WebSocket(`ws://${window.location.host}/ws`);
+  Socket = new WebSocket(`ws://${window.location.host}/ws`);
 
   const userData = localStorage.getItem("userData");
   const data = JSON.parse(userData);
   // console.log(data)
-  const sender = [data.username, data.userID];
-  socket.onopen = () => {
-    socket.send(sender[1]);
+  Sender = [data.username, data.userID];
+  Socket.onopen = () => {
+    Socket.send(Sender[1]);
     console.log("Connected to WebSocket server");
   };
 
-  socket.onmessage = (event) => {
+  Socket.onmessage = (event) => {
     const data = JSON.parse(event.data);
-
+    console.log(data);
     if (data.senderId) {
-      console.log(data.senderId);
+      console.log(data.senderId,Reciver[1]);
       // Display chat message
-      if (data.senderId === id) {
+      if (data.senderId === Reciver[1]) {
         addMessage(Reciver[0], data.message);
       }
       showNotification(Reciver[0]);
     } else if (data.userId) {
-      // Update online status
-      // const statusDiv = document.getElementById("onlineStatus");
-      // const userStatus = document.getElementById(`status-${data.userId}`);
-      // if (userStatus) {
-      //   userStatus.textContent = data.online ? "Online" : "Offline";
-      //   userStatus.className = data.online ? "online" : "offline";
-      // } else {
-      //   statusDiv.innerHTML += `<p id="status-${data.userId}" class="${data.online ? "online" : "offline"}">${data.userId}: ${data.online ? "Online" : "Offline"}</p>`;
-      // }
+      showNotification(data.sender);
     }
   };
+}
 
+const rightBar = (users, username) => `
+  <div class="sidebar-right">
+    <h3>All Users</h3>
+    <ul id="users">
+      ${users
+        .map((user) => {
+          // Only create a list item if the user's name is not the same as the current username
+          if (user.name !== username) {
+            return `<li><a href="#" onclick="Chat('${user.name}','${user.id}')">${user.name}</a></li>`;
+          }
+          return ""; // Skip this user
+        })
+        .join("")}
+    </ul>
+  </div>
+`;
+
+window.Chat = function (username, id) {
+  console.log(`Starting chat with ${username}`);
+  const mainSection = document.getElementById("main");
+  mainSection.innerHTML = startchat(username);
+  // console.log(data)
+  Reciver = [username, id];
+  console.log(Reciver, Sender);
   const sendBtn = document.getElementById("send-btn");
   if (sendBtn) {
     sendBtn.addEventListener("click", sendMessage);
   }
+};
 
-  function sendMessage() {
-    console.log("sent")
-    const messageInput = document.getElementById("chat-textarea");
-    const message = messageInput.value;
+function sendMessage() {
+  const messageInput = document.getElementById("chat-textarea");
+  const message = messageInput.value;
 
-    if (message) {
-      const data = {
-        senderId: sender[1],
-        receiverId: Reciver[1],
-        message: message,
-      };
-      socket.send(JSON.stringify(data));
-      addMessage(sender[0], message); // Display the message locally
-      messageInput.value = ""; // Clear input field
-    }
+  if (message) {
+    const data = {
+      senderId: Sender[1],
+      receiverId: Reciver[1],
+      message: message,
+    };
+    console.log(data);
+    Socket.send(JSON.stringify(data));
+    addMessage(Sender[0], message); // Display the message locally
+    messageInput.value = ""; // Clear input field
   }
 }

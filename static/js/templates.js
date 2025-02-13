@@ -195,7 +195,7 @@ export const createpost = (categories) => `
     </form>
   `;
 
-const startchat = (username) => `
+export const startchat = (username) => `
     <div class="chat-container">
     <h2>Chat with ${username}</h2>
   <!-- Chat Messages Display -->
@@ -210,19 +210,6 @@ const startchat = (username) => `
   </div>
 </div>
 `;
-
-export let Sender;
-export let Reciver;
-
-window.Chat = (username, id) => {
-  console.log(`Starting chat with ${username}`);
-  const mainSection = document.getElementById("main");
-  mainSection.innerHTML = startchat(username);
-  // console.log(data)
-  Reciver = [username, id];
-  console.log(Reciver, Sender);
- 
-};
 
 // Function to add a new message
 export function addMessage(sender, message) {
@@ -258,7 +245,7 @@ export function showNotification(senderName) {
   // Create the notification element
   const notification = document.createElement("div");
   notification.className = "notification";
-  notification.textContent = `New message from ${senderName}`;
+  notification.textContent = `${senderName}`;
 
   // Append the notification to the body
   document.body.appendChild(notification);
