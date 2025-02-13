@@ -36,6 +36,7 @@ func (app *App) Routes() http.Handler {
 	mux.HandleFunc("GET /api/allusers", app.Handlers.GetUsers)
 	mux.HandleFunc("POST /posts/create", app.Handlers.CreatePost)
 	mux.HandleFunc("GET /ws", app.Handlers.HandleWebSocket)
+	mux.HandleFunc("POST /api/messages", app.Handlers.FetchMessages)
 
 	return mux
 }
