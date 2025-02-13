@@ -5,14 +5,49 @@ import (
 )
 
 func (m *UserModel) AddUserInteraction(interaction *models.UserInteraction) error {
-	query := `INSERT INTO USER_INTERACTIONS (interaction_id, user_id, content_id, interaction_type) VALUES (?, ?, ?, ?)`
+	// First check if interaction exists
+	checkQuery := `
+		SELECT COUNT(*) 
+		FROM USER_INTERACTIONS 
+		WHERE user_id = ? 
+		AND content_id = ? 
+		AND interaction_type = ?`
 
-	_, err := m.DB.Exec(query, interaction.InteractionID, interaction.UserID, interaction.ContentID, interaction.InteractionType)
-	return err
-}
+	var count int
+	err := m.DB.QueryRow(checkQuery, 
+		interaction.UserID, 
+		interaction.ContentID, 
+		interaction.InteractionType).Scan(&count)
+	if err != nil {
+		return err
+	}
 
-func (m *UserModel) RemoveUserInteraction(userID, contentID string) error {
-	query := `DELETE FROM USER_INTERACTIONS WHERE user_id = ? AND content_id = ?`
-	_, err := m.DB.Exec(query, userID, contentID)
+	// If interaction exists, delete it
+	if count > 0 {
+		deleteQuery := `
+			DELETE FROM USER_INTERACTIONS 
+			WHERE user_id = ? 
+			AND content_id = ? 
+			AND interaction_type = ?`
+		
+		_, err = m.DB.Exec(deleteQuery, 
+			interaction.UserID, 
+			interaction.ContentID, 
+			interaction.InteractionType)
+		return err
+	}
+
+	// If interaction doesn't exist, insert it
+	insertQuery := `
+		INSERT INTO USER_INTERACTIONS 
+		(interaction_id, user_id, content_id, interaction_type) 
+		VALUES (?, ?, ?, ?)`
+	
+	_, err = m.DB.Exec(insertQuery,
+		interaction.InteractionID,
+		interaction.UserID,
+		interaction.ContentID,
+		interaction.InteractionType)
+	
 	return err
 }
