@@ -10,7 +10,7 @@ import {
   showNotification,
   startchat,
 } from "./templates.js";
-import { Categories, getUserData, Users } from "./states.js";
+import { Categories, getUserData, Users, Messages } from "./states.js";
 import { displayCreate } from "./posts.js";
 
 let Sender = [];
@@ -235,13 +235,14 @@ const rightBar = (users, username) => `
   </div>
 `;
 
-window.Chat = function (username, id) {
+window.Chat = async function (username, id) {
   console.log(`Starting chat with ${username}`);
   const mainSection = document.getElementById("main");
   mainSection.innerHTML = startchat(username);
   // console.log(data)
   Reciver = [username, id];
   console.log(Reciver, Sender);
+  await fetchMessages()
   const sendBtn = document.getElementById("send-btn");
   if (sendBtn) {
     sendBtn.addEventListener("click", sendMessage);
@@ -263,5 +264,30 @@ function sendMessage() {
     Socket.send(JSON.stringify(data));
     addMessage(Sender[0], message); // Display the message locally
     messageInput.value = ""; // Clear input field
+  }
+}
+
+async function fetchMessages() {
+  try {
+    console.log(API_ENDPOINTS.messages)
+    const response = await fetch(API_ENDPOINTS.messages, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ senderId: Sender[1], receiverId: Reciver[1] }),
+    });
+    if (response.ok) {
+      let responseData = await response.json();
+
+      Messages.length = 0; // Clear the array
+      Messages.push(...responseData)
+      console.log(Messages)
+    } else {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+  } catch (error) {
+    console.error("Error fetching messages", error);
   }
 }
