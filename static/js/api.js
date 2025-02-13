@@ -194,7 +194,11 @@ async function startSocket() {
   // console.log(data)
   Sender = [data.username, data.userID];
   Socket.onopen = () => {
-    Socket.send(Sender[1]);
+    const data = {
+      senderId: Sender[1],
+      name :Sender[0]
+    };
+    Socket.send(JSON.stringify(data));
     console.log("Connected to WebSocket server");
   };
 
@@ -207,9 +211,9 @@ async function startSocket() {
       if (data.senderId === Reciver[1]) {
         addMessage(Reciver[0], data.message);
       }
-      showNotification(Reciver[0]);
+      showNotification(`New Message from ${data.sendername}`);
     } else if (data.userId) {
-      showNotification(data.sender);
+      showNotification(`${data.name} is online`);
     }
   };
 }
@@ -251,6 +255,7 @@ function sendMessage() {
   if (message) {
     const data = {
       senderId: Sender[1],
+      sendername: Sender[0],
       receiverId: Reciver[1],
       message: message,
     };

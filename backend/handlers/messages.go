@@ -24,19 +24,27 @@ var mutex = &sync.Mutex{} // Mutex to protect concurrent access to the users map
 
 type Message struct {
 	SenderID   string `json:"senderId"`
+	Sendername string `json:"sendername"`
 	ReceiverID string `json:"receiverId"`
 	Message    string `json:"message"`
+}
+
+type Newuser struct {
+	UserID string `json:"senderId"`
+	Name string `json:"name"`
 }
 
 // Online status structure
 type OnlineStatus struct {
 	UserID string `json:"userId"`
+	Name string `json:"name"`
 	Online bool   `json:"online"`
 }
 
-func broadcastOnlineStatus(userID string, online bool) {
+func broadcastOnlineStatus(userID, name string, online bool) {
 	status := OnlineStatus{
 		UserID: userID,
+		Name: name,
 		Online: online,
 	}
 	statusJSON, _ := json.Marshal(status)
@@ -62,17 +70,21 @@ func (h *Handler) HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 		log.Println("Error reading user ID:", err)
 		return
 	}
-	userID := string(msg)
+
+	var user Newuser
+	if err := json.Unmarshal(msg, &user); err != nil {
+		log.Println("Error parsing message:", err)
+	}
 
 	// Add user to the active users list
 	mutex.Lock()
-	users[userID] = conn
-	onlineUsers[userID] = true
+	users[user.UserID] = conn
+	onlineUsers[user.UserID] = true
 	mutex.Unlock()
 
 	// Broadcast that the user is online
-	broadcastOnlineStatus(userID, true)
-	log.Println("User connected:", userID)
+	broadcastOnlineStatus(user.UserID, user.Name, true)
+	log.Println("User connected:", user)
 
 	// Listen for incoming messages
 	for {
@@ -121,11 +133,11 @@ func (h *Handler) HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 
 	// Remove user from the active users list when they disconnect
 	mutex.Lock()
-	delete(users, userID)
-	delete(onlineUsers, userID)
+	delete(users, user.UserID)
+	delete(onlineUsers, user.UserID)
 	mutex.Unlock()
 
 	// Broadcast that the user is offline
-	broadcastOnlineStatus(userID, false)
-	log.Println("User disconnected:", userID)
+	broadcastOnlineStatus(user.UserID, user.Name, false)
+	log.Println("User disconnected:", user)
 }
