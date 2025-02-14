@@ -211,6 +211,7 @@ async function startSocket() {
       if (data.senderId === Reciver[1]) {
         displaytyping();
       }
+      typingonlist(data.senderId)
     } else if (data.senderId) {
       // Display chat message
       if (data.senderId === Reciver[1]) {
@@ -268,6 +269,10 @@ const rightBar = (users, username) => `
                 <a href="#" id="${user.id}" style="color: ${statusColor};" onclick="Chat('${user.name}','${user.id}')">
                   ${user.name} ${user.online ? "(Online)" : "(Offline)"}
                 </a>
+                <span id="typing-${user.id}" class="typing-indicator" style="display: none;">
+                  <span class="typing-text">typing...</span>
+                  <span class="blinking-cursor">|</span>
+                </span>
               </li>`;
       }
       return ""; // Skip this user
@@ -321,14 +326,27 @@ function sendTyping() {
 }
 
 function displaytyping() {
+  // Show the typing indicator in the chat container
   const typingDiv = document.getElementById("typing");
   if (typingDiv) {
-    // Show the typing indicator
     typingDiv.classList.add("show");
-
-    // Hide the typing indicator after 2 seconds
     setTimeout(() => {
       typingDiv.classList.remove("show");
+    }, 2000);
+  }
+}
+
+function typingonlist(userId) {
+
+
+
+  const list = document.getElementById(userId);
+  if (list) {
+    list.style.color = "rgb(225, 236, 229)"; // Green for online
+    list.innerHTML = list.innerHTML.replace("(Online)", "(Typing)"); // Update status text
+    setTimeout(() => {
+      list.style.color = "rgb(49, 238, 11)"; // White for offline
+      list.innerHTML = list.innerHTML.replace("(Typing)", "(Online)"); // Update status text
     }, 2000);
   }
 }
