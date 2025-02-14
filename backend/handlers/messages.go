@@ -20,7 +20,7 @@ var upgrader = websocket.Upgrader{
 // Store active users and their WebSocket connections
 var (
 	users       = make(map[string]*websocket.Conn)
-	onlineUsers = make(map[string]bool)
+	OnlineUsers = make(map[string]bool)
 	mutex       = &sync.Mutex{} // Mutex to protect concurrent access to the users map
 )
 
@@ -82,7 +82,7 @@ func (h *Handler) HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 	// Add user to the active users list
 	mutex.Lock()
 	users[user.UserID] = conn
-	onlineUsers[user.UserID] = true
+	OnlineUsers[user.UserID] = true
 	mutex.Unlock()
 
 	// Broadcast that the user is online
@@ -147,7 +147,7 @@ func (h *Handler) HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 	// Remove user from the active users list when they disconnect
 	mutex.Lock()
 	delete(users, user.UserID)
-	delete(onlineUsers, user.UserID)
+	delete(OnlineUsers, user.UserID)
 	mutex.Unlock()
 
 	// Broadcast that the user is offline
