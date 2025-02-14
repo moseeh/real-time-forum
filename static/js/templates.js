@@ -123,7 +123,7 @@ export const allposts = (posts) => `
                 <button class="btn downvote-btn" aria-label="Downvote" data-post-id="${post_id}">
                   <i class="fa-solid fa-thumbs-down"></i><span>${dislikes_count}</span>
                 </button>
-                <button class="btn action-btn">
+                <button class="btn comment-btn" data-post-id="${post_id}">
                   <i class="fa-regular fa-comment"></i> ${comments_count}
                 </button>
               </div>
@@ -133,6 +133,18 @@ export const allposts = (posts) => `
       .join('')
       : ''}
   </div>
+
+   <div class="modal-overlay" id="commentModal">
+    <div class="modal">
+      <h3>Add Comment</h3>
+      <textarea id="commentText" placeholder="Type your comment here..."></textarea>
+      <div class="modal-buttons">
+        <button class="btn cancel-btn" id="cancelComment">Cancel</button>
+        <button class="btn submit-btn" id="submitComment">Submit</button>
+      </div>
+    </div>
+  </div>
+
 `;
 
 

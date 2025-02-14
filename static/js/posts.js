@@ -61,6 +61,7 @@ export async function displayPosts() {
     let posts = await fetchPosts();
     const content = document.getElementById("body");
     content.innerHTML += allposts(posts);
+
     // Wait for a moment to ensure DOM is updated
     setTimeout(() => {
       // Get the main content after the DOM update
@@ -69,6 +70,9 @@ export async function displayPosts() {
         console.error("Could not find main element");
         return;
       }
+      const modal = document.getElementById("commentModal");
+      const commentText = document.getElementById("commentText");
+      let currentPostId = null;
 
       const updateButtonUI = (button, count, isActive) => {
         const countSpan = button.querySelector("span");
@@ -77,44 +81,97 @@ export async function displayPosts() {
       };
 
       mainContent.addEventListener("click", async (e) => {
-        const button = e.target.matches(".upvote-btn, .downvote-btn")
+        const voteButton = e.target.matches(".upvote-btn, .downvote-btn")
           ? e.target
           : e.target.closest(".upvote-btn, .downvote-btn");
+        // handle user interactions
+        if (voteButton) {
+          const postId = voteButton.dataset.postId;
+          const isUpvote = voteButton.classList.contains("upvote-btn");
+          const interactionType = isUpvote ? "like" : "dislike";
 
-        if (!button) return;
+          try {
+            const response = await fetch("/api/interactions", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              credentials: "include",
+              body: JSON.stringify({
+                content_id: postId,
+                interaction_type: interactionType,
+              }),
+            });
 
-        const postId = button.dataset.postId;
-        const isUpvote = button.classList.contains("upvote-btn");
-        const interactionType = isUpvote ? "like" : "dislike";
+            if (!response.ok) {
+              throw new Error("Failed to update interaction");
+            }
 
-        try {
-          const response = await fetch("/api/interactions", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            credentials: "include",
-            body: JSON.stringify({
-              content_id: postId,
-              interaction_type: interactionType,
-            }),
-          });
-
-          if (!response.ok) {
-            throw new Error("Failed to update interaction");
+            const data = await response.json();
+            const article = voteButton.closest("article");
+            const upvoteBtn = article.querySelector(".upvote-btn");
+            const downvoteBtn = article.querySelector(".downvote-btn");
+            updateButtonUI(upvoteBtn, data.likes_count, data.is_liked);
+            updateButtonUI(downvoteBtn, data.dislikes_count, data.is_disliked);
+          } catch (error) {
+            console.error("Error:", error);
+            alert("Failed to update vote. Please try again.");
           }
-
-          const data = await response.json();
-          const article = button.closest("article");
-          const upvoteBtn = article.querySelector(".upvote-btn");
-          const downvoteBtn = article.querySelector(".downvote-btn");
-
-          updateButtonUI(upvoteBtn, data.likes_count, data.is_liked);
-          updateButtonUI(downvoteBtn, data.dislikes_count, data.is_disliked);
-        } catch (error) {
-          console.error("Error:", error);
-          alert("Failed to update vote. Please try again.");
+          return;
         }
+        // Handle comment button
+        const commentButton = e.target.matches(".comment-btn")
+          ? e.target
+          : e.target.closest(".comment-btn");
+
+        if (commentButton) {
+          const postId = commentButton.dataset.postId;
+          currentPostId = postId;
+          modal.style.display = "flex";
+          commentText.value = "";
+          commentText.focus();
+        }
+        document
+          .getElementById("cancelComment")
+          .addEventListener("click", () => {
+            modal.style.display = "none";
+            currentPostId = null;
+          });
+        document
+          .getElementById("submitComment")
+          .addEventListener("click", async () => {
+            if (commentText.value.trim() && currentPostId) {
+              try {
+                const response = await fetch("/api/comments", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  credentials: "include",
+                  body: JSON.stringify({
+                    content_id: currentPostId,
+                    comment: commentText.value.trim(),
+                  }),
+                });
+                if (!response.ok) {
+                  throw new Error("Failed to submit comment");
+                }
+                const data = await response.json();
+                const article = document
+                  .querySelector(`[data-post-id="${currentPostId}"]`)
+                  .closest("article");
+                const commentBtn = article.querySelector(".comment-btn");
+                commentBtn.querySelector("span").textContent =
+                  data.comments_count;
+
+                modal.style.display = "none";
+                currentPostId = null;
+              } catch (error) {
+                console.error("Error:", error);
+                alert("Failed to submit comment. Please try again.");
+              }
+            }
+          });
       });
     });
   } catch (error) {
