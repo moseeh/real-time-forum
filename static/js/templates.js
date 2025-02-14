@@ -86,23 +86,6 @@ export const leftBar = (categories) => `
         </div>
 `;
 
-export const rightBar = (users, username) => `
-  <div class="sidebar-right">
-    <h3>All Users</h3>
-    <ul id="users">
-      ${users
-        .map((user) => {
-          // Only create a list item if the user's name is not the same as the current username
-          if (user.name !== username) {
-            return `<li><a href="#" onclick="Chat('${user.name}','${user.id}')">${user.name}</a></li>`;
-          }
-          return ""; // Skip this user
-        })
-        .join("")}
-    </ul>
-  </div>
-`;
-
 export const allposts = (posts) => `
         <div class="main-content" id="main">
           <h2>All Posts</h2>
