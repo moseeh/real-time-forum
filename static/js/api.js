@@ -10,7 +10,7 @@ import {
   showNotification,
   startchat,
 } from "./templates.js";
-import { Categories, getUserData, Users, Messages } from "./states.js";
+import { Categories, getUserData, Users, Messages} from "./states.js";
 import { displayCreate } from "./posts.js";
 
 let Sender = [];
@@ -239,11 +239,26 @@ window.Chat = async function (username, id) {
   console.log(`Starting chat with ${username}`);
   const mainSection = document.getElementById("main");
   mainSection.innerHTML = startchat(username);
+  let page = 1
+  let isLoading = false; // Flag to prevent multiple fetches
   // console.log(data)
   Reciver = [username, id];
   console.log(Reciver, Sender);
   await fetchMessages()
-  await displayMessages()
+  await displayMessages(page)
+
+  const chatMessages = document.getElementById("chat-messages");
+  if (chatMessages) {
+    chatMessages.addEventListener("scroll", async () => {
+      if (chatMessages.scrollTop === 0 && !isLoading) {
+        isLoading = true; // Set flag to prevent multiple fetches
+        page++; // Increment page
+        await displayMessages(page); // Display the new messages
+        isLoading = false; // Reset flag
+      }
+    });
+  }
+
   const sendBtn = document.getElementById("send-btn");
   if (sendBtn) {
     sendBtn.addEventListener("click", sendMessage);
@@ -293,7 +308,19 @@ async function fetchMessages() {
   }
 }
 
-async function displayMessages() {
-  console.log()
-  Messages.map(message => addMessage(message.sender_username, message.message, message.timestamp))
+async function displayMessages(page) {
+  const chatMessages = document.getElementById("chat-messages");
+  if (!chatMessages) return;
+
+  // Store the current scroll height
+  const scrollHeightBefore = chatMessages.scrollHeight;
+  const start = (page-1) * 10
+  const end = start + 10;
+  const messages = Messages.slice(start, end);
+  console.log(start, end);
+  // Add messages to the chat
+  messages.map(message => addMessage(message.sender_username, message.message, message.timestamp))
+
+  // Restore the scroll position to maintain the user's view
+  chatMessages.scrollTop = chatMessages.scrollHeight - scrollHeightBefore;
 }
