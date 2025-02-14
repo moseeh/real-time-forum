@@ -243,6 +243,7 @@ window.Chat = async function (username, id) {
   Reciver = [username, id];
   console.log(Reciver, Sender);
   await fetchMessages()
+  await displayMessages()
   const sendBtn = document.getElementById("send-btn");
   if (sendBtn) {
     sendBtn.addEventListener("click", sendMessage);
@@ -290,4 +291,9 @@ async function fetchMessages() {
   } catch (error) {
     console.error("Error fetching messages", error);
   }
+}
+
+async function displayMessages() {
+  console.log()
+  Messages.map(message => addMessage(message.sender_username, message.message, message.timestamp))
 }
