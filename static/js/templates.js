@@ -212,17 +212,21 @@ export const startchat = (username) => `
 `;
 
 // Function to add a new message
-export function addMessage(sender, message) {
+export function addMessage(sender, message, time) {
   const chatMessages = document.getElementById("chat-messages");
   if (!chatMessages) return;
   const messageDiv = document.createElement("div");
   messageDiv.classList.add("message");
 
-  // Get current time
-  const time = new Date().toLocaleTimeString([], {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  if (time === undefined) {
+    // Get current time
+    time = new Date().toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  } else {
+    time = formatTimestamp(time)
+  }
 
   // Add message content
   messageDiv.innerHTML = `
@@ -254,4 +258,24 @@ export function showNotification(senderName) {
   setTimeout(() => {
     notification.remove();
   }, 2000);
+}
+
+function formatTimestamp(timestamp) {
+  const date = new Date(timestamp);
+
+  // Format date as "31-12-2025"
+  const formattedDate = date.toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  }).replace(/\//g, "-"); // Replace slashes with dashes
+
+  // Format time as "11:30 AM"
+  const formattedTime = date.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  });
+
+  return `(${formattedDate}) at (${formattedTime})`;
 }
