@@ -230,12 +230,14 @@ async function startSocket() {
 }
 
 function changestatus(id, online) {
-  const list = document.getElementById(id)
+  const list = document.getElementById(id);
   if (list) {
     if (online) {
-      list.style.color = "rgb(0, 255, 0)"
+      list.style.color = "rgb(0, 255, 0)"; // Green for online
+      list.innerHTML = list.innerHTML.replace("(Offline)", "(Online)"); // Update status text
     } else {
-      list.style.color = "rgb(255, 255, 255)"
+      list.style.color = "rgb(255, 255, 255)"; // White for offline
+      list.innerHTML = list.innerHTML.replace("(Online)", "(Offline)"); // Update status text
     }
   }
 }
@@ -248,7 +250,14 @@ const rightBar = (users, username) => `
         .map((user) => {
           // Only create a list item if the user's name is not the same as the current username
           if (user.name !== username) {
-            return `<li><a href="#" id="${user.id}" style="color:rgb(255, 255, 255)" onclick="Chat('${user.name}','${user.id}')">${user.name}</a></li>`;
+            // Determine the color based on the user's online status
+            const statusColor = user.online ? "rgb(0, 255, 0)" : "rgb(255, 255, 255)";
+            return `
+              <li>
+                <a href="#" id="${user.id}" style="color: ${statusColor};" onclick="Chat('${user.name}','${user.id}')">
+                  ${user.name} ${user.online ? "(Online)" : "(Offline)"}
+                </a>
+              </li>`;
           }
           return ""; // Skip this user
         })
