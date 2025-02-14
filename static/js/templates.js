@@ -197,7 +197,10 @@ export const createpost = (categories) => `
 
 export const startchat = (username) => `
     <div class="chat-container">
-    <h2>Chat with ${username}</h2>
+    <div class="chathead">
+      <h2>Chat with ${username}</h2><br /><br />
+      <p id="typing" style="display:none">typing...</p>
+    </div>
   <!-- Chat Messages Display -->
   <div class="chat-messages" id="chat-messages">
     <!-- Messages will be dynamically added here -->
