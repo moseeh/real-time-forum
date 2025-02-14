@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"sync"
@@ -116,7 +115,6 @@ func (h *Handler) HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 			continue
 		}
 
-		fmt.Println(message.ReceiverID)
 		tx, err := h.Users.DB.Begin()
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -176,8 +174,6 @@ func (h *Handler) FetchMessages(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	fmt.Println(messages[0])
 
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(messages)

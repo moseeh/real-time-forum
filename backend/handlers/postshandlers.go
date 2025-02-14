@@ -3,7 +3,6 @@ package handlers
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -21,7 +20,6 @@ func (h *Handler) CreatePost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	sessionid, err := r.Cookie("session_id")
 	if err != nil {
-		fmt.Println(1)
 		// json respose to be implemented
 		http.Error(w, "unauthorized", http.StatusUnauthorized)
 		return

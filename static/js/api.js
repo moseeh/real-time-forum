@@ -103,10 +103,11 @@ export async function Homepage() {
   if (authdiv) {
     authdiv.remove();
   }
-  await fetchUsers();
   await fetchCategories();
   await startSocket();
   const UserData = getUserData();
+  await fetchUsers(UserData.userID);
+  console.log(Users)
   const header = document.querySelector("header.card");
   if (header) {
     const username = UserData.username;
@@ -167,12 +168,14 @@ export async function fetchCategories() {
   }
 }
 
-export async function fetchUsers() {
+export async function fetchUsers(user) {
   try {
     const response = await fetch(API_ENDPOINTS.allusers, {
-      method: "GET",
+      method: "POST",
       credentials: "include",
+      body: JSON.stringify({ username: user }),
     });
+
     if (response.ok) {
       const responseData = await response.json();
 
@@ -204,7 +207,6 @@ async function startSocket() {
 
   Socket.onmessage = (event) => {
     const data = JSON.parse(event.data);
-    console.log(data.istyping);
     if (data.istyping === true) {
       // displayTyping(data.name);
       if (data.senderId === Reciver[1]) {
@@ -218,7 +220,10 @@ async function startSocket() {
       }
       showNotification(`New Message from ${data.sendername}`);
     } else if (data.userId) {
-      showNotification(`${data.name} is online`);
+      console.log(data.userId,Sender[1]);
+      if (data.userId !== Sender[1]) {
+        showNotification(`${data.name} is online`);
+      }
     }
   };
 }
