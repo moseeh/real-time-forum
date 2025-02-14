@@ -178,23 +178,26 @@ export const createpost = (categories) => `
     </form>
   `;
 
-export const startchat = (username) => `
-    <div class="chat-container">
+  export const startchat = (username) => `
+  <div class="chat-container">
     <div class="chathead">
       <h2>Chat with ${username}</h2><br /><br />
-      <p id="typing" style="display:none">typing...</p>
+      <div id="typing" class="typing-indicator">
+        <span class="typing-text">typing...</span>
+        <span class="blinking-cursor">|</span>
+      </div>
     </div>
-  <!-- Chat Messages Display -->
-  <div class="chat-messages" id="chat-messages">
-    <!-- Messages will be dynamically added here -->
-  </div>
+    <!-- Chat Messages Display -->
+    <div class="chat-messages" id="chat-messages">
+      <!-- Messages will be dynamically added here -->
+    </div>
 
-  <!-- Typing Textarea -->
-  <div class="chat-input">
-    <textarea id="chat-textarea" placeholder="Type your message..."></textarea>
-    <button id="send-btn" class="btn">Send</button>
+    <!-- Typing Textarea -->
+    <div class="chat-input">
+      <textarea id="chat-textarea" placeholder="Type your message..."></textarea>
+      <button id="send-btn" class="btn">Send</button>
+    </div>
   </div>
-</div>
 `;
 
 // Function to add a new message
