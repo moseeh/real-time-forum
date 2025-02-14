@@ -313,9 +313,12 @@ function sendTyping() {
 function displaytyping() {
   const typingDiv = document.getElementById("typing");
   if (typingDiv) {
-    typingDiv.style.display = "block";
+    // Show the typing indicator
+    typingDiv.classList.add("show");
+
+    // Hide the typing indicator after 2 seconds
     setTimeout(() => {
-      typingDiv.style.display = "none";
+      typingDiv.classList.remove("show");
     }, 2000);
   }
 }
