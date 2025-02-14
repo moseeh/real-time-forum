@@ -221,7 +221,7 @@ async function startSocket() {
       showNotification(`New Message from ${data.sendername}`);
     } else if (data.userId) {
       console.log(data.userId,Sender[1]);
-      if (data.userId !== Sender[1]) {
+      if (data.userId !== Sender[1] && data.online === true) {
         showNotification(`${data.name} is online`);
       }
       changestatus(data.userId, data.online)
