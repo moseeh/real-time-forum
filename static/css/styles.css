@@ -6,6 +6,7 @@
 body {
   font-family: Arial, Helvetica, sans-serif;
   background: linear-gradient(to right, rgb(6, 108, 100), rgb(14, 48, 122));
+  height: fit-content;
 }
 
 /* Header Styles */
