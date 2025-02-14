@@ -193,9 +193,9 @@ async function startSocket() {
   Socket = new WebSocket(`ws://${window.location.host}/ws`);
 
   const userData = localStorage.getItem("userData");
-  const data = JSON.parse(userData);
+  const Data = JSON.parse(userData);
   // console.log(data)
-  Sender = [data.username, data.userID];
+  Sender = [Data.username, Data.userID];
   Socket.onopen = () => {
     const data = {
       senderId: Sender[1],
@@ -225,8 +225,23 @@ async function startSocket() {
         showNotification(`${data.name} is online`);
       }
       changestatus(data.userId, data.online)
+      newusers(Data)
     }
   };
+}
+
+async function newusers(Data) {
+  const old = Users.length
+  await fetchUsers(Data.userID)
+  console.log(Users.length, old)
+  if (Users.length > old) {
+    const content = document.getElementById("body");
+    const user = document.getElementById("userlist")
+    if (user) {
+      user.remove()
+    }
+    content.innerHTML += rightBar( Users, Data.username)
+  }
 }
 
 function changestatus(id, online) {
@@ -243,7 +258,7 @@ function changestatus(id, online) {
 }
 
 const rightBar = (users, username) => `
-  <div class="sidebar-right">
+  <div class="sidebar-right" id="userlist">
     <h3>All Users</h3>
     <ul id="users">
       ${users
