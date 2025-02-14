@@ -257,7 +257,7 @@ export function showNotification(senderName) {
   // Remove the notification after 2 seconds
   setTimeout(() => {
     notification.remove();
-  }, 2000);
+  }, 5000);
 }
 
 function formatTimestamp(timestamp) {
