@@ -107,7 +107,6 @@ export async function Homepage() {
   await startSocket();
   const UserData = getUserData();
   await fetchUsers(UserData.userID);
-  console.log(Users)
   const header = document.querySelector("header.card");
   if (header) {
     const username = UserData.username;
@@ -212,7 +211,6 @@ async function startSocket() {
       if (data.senderId === Reciver[1]) {
         displaytyping();
       }
-      console.log("Typing: ", data.sendername);
     } else if (data.senderId) {
       // Display chat message
       if (data.senderId === Reciver[1]) {
@@ -220,7 +218,6 @@ async function startSocket() {
       }
       showNotification(`New Message from ${data.sendername}`);
     } else if (data.userId) {
-      console.log(data.userId,Sender[1]);
       if (data.userId !== Sender[1] && data.online === true) {
         showNotification(`${data.name} is online`);
       }
@@ -233,14 +230,13 @@ async function startSocket() {
 async function newusers(Data) {
   const old = Users.length
   await fetchUsers(Data.userID)
-  console.log(Users.length, old)
   if (Users.length > old) {
     const content = document.getElementById("body");
     const user = document.getElementById("userlist")
     if (user) {
       user.remove()
     }
-    content.innerHTML += rightBar( Users, Data.username)
+    content.innerHTML += rightBar(Users, Data.username)
   }
 }
 
@@ -262,21 +258,21 @@ const rightBar = (users, username) => `
     <h3>All Users</h3>
     <ul id="users">
       ${users
-        .map((user) => {
-          // Only create a list item if the user's name is not the same as the current username
-          if (user.name !== username) {
-            // Determine the color based on the user's online status
-            const statusColor = user.online ? "rgb(0, 255, 0)" : "rgb(255, 255, 255)";
-            return `
+    .map((user) => {
+      // Only create a list item if the user's name is not the same as the current username
+      if (user.name !== username) {
+        // Determine the color based on the user's online status
+        const statusColor = user.online ? "rgb(0, 255, 0)" : "rgb(255, 255, 255)";
+        return `
               <li>
                 <a href="#" id="${user.id}" style="color: ${statusColor};" onclick="Chat('${user.name}','${user.id}')">
                   ${user.name} ${user.online ? "(Online)" : "(Offline)"}
                 </a>
               </li>`;
-          }
-          return ""; // Skip this user
-        })
-        .join("")}
+      }
+      return ""; // Skip this user
+    })
+    .join("")}
     </ul>
   </div>
 `;
@@ -289,7 +285,6 @@ window.Chat = async function (username, id) {
   let isLoading = false; // Flag to prevent multiple fetches
   // console.log(data)
   Reciver = [username, id];
-  console.log(Reciver, Sender);
   await fetchMessages();
   await displayMessages(page);
 
@@ -349,7 +344,6 @@ function sendMessage() {
       receiverId: Reciver[1],
       message: message,
     };
-    console.log(data);
     Socket.send(JSON.stringify(data));
     addMessage(Sender[0], message); // Display the message locally
     messageInput.value = ""; // Clear input field
@@ -358,7 +352,6 @@ function sendMessage() {
 
 async function fetchMessages() {
   try {
-    console.log(API_ENDPOINTS.messages);
     const response = await fetch(API_ENDPOINTS.messages, {
       method: "POST",
       credentials: "include",
@@ -390,7 +383,6 @@ async function displayMessages(page) {
   const start = (page - 1) * 10;
   const end = start + 10;
   const messages = Messages.slice(start, end);
-  console.log(start, end);
   // Add messages to the chat
   messages.map((message) =>
     addMessage(message.sender_username, message.message, message.timestamp)
