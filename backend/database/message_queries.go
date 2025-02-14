@@ -28,7 +28,7 @@ func (u *UserModel) GetAllMessages(senderId, receiverId string) ([]models.Messag
             OR 
             (MESSAGES.senderId = ? AND MESSAGES.receiverId = ?)
         ORDER BY 
-            MESSAGES.timestamp ASC;` // DESC to get the most recent messages first
+            MESSAGES.timestamp ASC;` // ASC to get the most recent messages first
 
 	// Execute the query
 	rows, err := u.DB.Query(query, senderId, receiverId, receiverId, senderId)
