@@ -582,6 +582,36 @@ body {
   display: flex;
 }
 
+/* Typing Indicator */
+.typing-indicator {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+  opacity: 0; /* Start with opacity 0 */
+  transition: opacity 0.3s ease; /* Smooth fade-in/out */
+}
+
+.typing-indicator.show {
+  opacity: 1; /* Fully visible when the "show" class is added */
+}
+
+/* Blinking Cursor Animation */
+@keyframes blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+.blinking-cursor {
+  animation: blink 1s infinite; /* Blinking effect */
+  font-weight: bold;
+}
+
 /* Chat Messages Display */
 .chat-messages {
   flex: 1;
