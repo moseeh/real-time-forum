@@ -5,8 +5,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"real-time-forum/backend/utils"
 	"sync"
+
+	"real-time-forum/backend/utils"
 
 	"github.com/gorilla/websocket"
 )
@@ -18,33 +19,36 @@ var upgrader = websocket.Upgrader{
 }
 
 // Store active users and their WebSocket connections
-var users = make(map[string]*websocket.Conn)
-var onlineUsers = make(map[string]bool)
-var mutex = &sync.Mutex{} // Mutex to protect concurrent access to the users map
+var (
+	users       = make(map[string]*websocket.Conn)
+	onlineUsers = make(map[string]bool)
+	mutex       = &sync.Mutex{} // Mutex to protect concurrent access to the users map
+)
 
 type Message struct {
 	SenderID   string `json:"senderId"`
 	Sendername string `json:"sendername"`
 	ReceiverID string `json:"receiverId"`
 	Message    string `json:"message"`
+	Typing     bool   `json:"istyping"`
 }
 
 type Newuser struct {
 	UserID string `json:"senderId"`
-	Name string `json:"name"`
+	Name   string `json:"name"`
 }
 
 // Online status structure
 type OnlineStatus struct {
 	UserID string `json:"userId"`
-	Name string `json:"name"`
+	Name   string `json:"name"`
 	Online bool   `json:"online"`
 }
 
 func broadcastOnlineStatus(userID, name string, online bool) {
 	status := OnlineStatus{
 		UserID: userID,
-		Name: name,
+		Name:   name,
 		Online: online,
 	}
 	statusJSON, _ := json.Marshal(status)
@@ -101,6 +105,17 @@ func (h *Handler) HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 			continue
 		}
 
+		if message.Typing {
+			mutex.Lock()
+			if receiverConn, ok := users[message.ReceiverID]; ok {
+				if err := receiverConn.WriteJSON(message); err != nil {
+					log.Println("Error sending message to receiver:", err)
+				}
+			}
+			mutex.Unlock()
+			continue
+		}
+
 		fmt.Println(message.ReceiverID)
 		tx, err := h.Users.DB.Begin()
 		if err != nil {
@@ -112,7 +127,7 @@ func (h *Handler) HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 		messageid := utils.UUIDGen()
 
 		// Save the message to the database
-		if err := h.Users.SaveMessage(tx,messageid, message.SenderID, message.ReceiverID, message.Message); err != nil {
+		if err := h.Users.SaveMessage(tx, messageid, message.SenderID, message.ReceiverID, message.Message); err != nil {
 			log.Println("Error saving message:", err)
 			continue
 		}
@@ -149,21 +164,21 @@ type Twousers struct {
 
 func (h *Handler) FetchMessages(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-    var data Twousers
-    err := json.NewDecoder(r.Body).Decode(&data)
-    if err != nil {
-        http.Error(w, err.Error(), http.StatusBadRequest)
-        return
-    }
+	var data Twousers
+	err := json.NewDecoder(r.Body).Decode(&data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 
 	messages, err := h.Users.GetAllMessages(data.User1, data.User2)
 	if err != nil {
-        http.Error(w, err.Error(), http.StatusInternalServerError)
-        return
-    }
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	fmt.Println(messages[0])
 
 	w.WriteHeader(http.StatusOK)
-    json.NewEncoder(w).Encode(messages)
+	json.NewEncoder(w).Encode(messages)
 }
