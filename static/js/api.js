@@ -10,7 +10,7 @@ import {
   showNotification,
   startchat,
 } from "./templates.js";
-import { Categories, getUserData, Users, Messages} from "./states.js";
+import { Categories, getUserData, Users, Messages } from "./states.js";
 import { displayCreate } from "./posts.js";
 
 let Sender = [];
@@ -196,7 +196,7 @@ async function startSocket() {
   Socket.onopen = () => {
     const data = {
       senderId: Sender[1],
-      name :Sender[0]
+      name: Sender[0],
     };
     Socket.send(JSON.stringify(data));
     console.log("Connected to WebSocket server");
@@ -204,9 +204,14 @@ async function startSocket() {
 
   Socket.onmessage = (event) => {
     const data = JSON.parse(event.data);
-    console.log(data);
-    if (data.senderId) {
-      console.log(data.senderId,Reciver[1]);
+    console.log(data.istyping);
+    if (data.istyping === true) {
+      // displayTyping(data.name);
+      if (data.senderId === Reciver[1]) {
+        displaytyping();
+      }
+      console.log("Typing: ", data.sendername);
+    } else if (data.senderId) {
       // Display chat message
       if (data.senderId === Reciver[1]) {
         addMessage(Reciver[0], data.message);
@@ -239,13 +244,13 @@ window.Chat = async function (username, id) {
   console.log(`Starting chat with ${username}`);
   const mainSection = document.getElementById("main");
   mainSection.innerHTML = startchat(username);
-  let page = 1
+  let page = 1;
   let isLoading = false; // Flag to prevent multiple fetches
   // console.log(data)
   Reciver = [username, id];
   console.log(Reciver, Sender);
-  await fetchMessages()
-  await displayMessages(page)
+  await fetchMessages();
+  await displayMessages(page);
 
   const chatMessages = document.getElementById("chat-messages");
   if (chatMessages) {
@@ -263,7 +268,31 @@ window.Chat = async function (username, id) {
   if (sendBtn) {
     sendBtn.addEventListener("click", sendMessage);
   }
+  const chatInput = document.getElementById("chat-textarea");
+  if (chatInput) {
+    chatInput.addEventListener("input", sendTyping);
+  }
 };
+
+function sendTyping() {
+  const data = {
+    senderId: Sender[1],
+    sendername: Sender[0],
+    receiverId: Reciver[1],
+    istyping: true,
+  };
+  Socket.send(JSON.stringify(data));
+}
+
+function displaytyping() {
+  const typingDiv = document.getElementById("typing");
+  if (typingDiv) {
+    typingDiv.style.display = "block";
+    setTimeout(() => {
+      typingDiv.style.display = "none";
+    }, 2000);
+  }
+}
 
 function sendMessage() {
   const messageInput = document.getElementById("chat-textarea");
@@ -285,7 +314,7 @@ function sendMessage() {
 
 async function fetchMessages() {
   try {
-    console.log(API_ENDPOINTS.messages)
+    console.log(API_ENDPOINTS.messages);
     const response = await fetch(API_ENDPOINTS.messages, {
       method: "POST",
       credentials: "include",
@@ -298,8 +327,8 @@ async function fetchMessages() {
       let responseData = await response.json();
 
       Messages.length = 0; // Clear the array
-      Messages.push(...responseData)
-      console.log(Messages)
+      Messages.push(...responseData);
+      console.log(Messages);
     } else {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -314,12 +343,14 @@ async function displayMessages(page) {
 
   // Store the current scroll height
   const scrollHeightBefore = chatMessages.scrollHeight;
-  const start = (page-1) * 10
+  const start = (page - 1) * 10;
   const end = start + 10;
   const messages = Messages.slice(start, end);
   console.log(start, end);
   // Add messages to the chat
-  messages.map(message => addMessage(message.sender_username, message.message, message.timestamp))
+  messages.map((message) =>
+    addMessage(message.sender_username, message.message, message.timestamp)
+  );
 
   // Restore the scroll position to maintain the user's view
   chatMessages.scrollTop = chatMessages.scrollHeight - scrollHeightBefore;
