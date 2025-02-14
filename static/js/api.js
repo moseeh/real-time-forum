@@ -224,8 +224,20 @@ async function startSocket() {
       if (data.userId !== Sender[1]) {
         showNotification(`${data.name} is online`);
       }
+      changestatus(data.userId, data.online)
     }
   };
+}
+
+function changestatus(id, online) {
+  const list = document.getElementById(id)
+  if (list) {
+    if (online) {
+      list.style.color = "rgb(0, 255, 0)"
+    } else {
+      list.style.color = "rgb(255, 255, 255)"
+    }
+  }
 }
 
 const rightBar = (users, username) => `
@@ -236,7 +248,7 @@ const rightBar = (users, username) => `
         .map((user) => {
           // Only create a list item if the user's name is not the same as the current username
           if (user.name !== username) {
-            return `<li><a href="#" onclick="Chat('${user.name}','${user.id}')">${user.name}</a></li>`;
+            return `<li><a href="#" id="${user.id}" style="color:rgb(255, 255, 255)" onclick="Chat('${user.name}','${user.id}')">${user.name}</a></li>`;
           }
           return ""; // Skip this user
         })
