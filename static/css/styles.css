@@ -6,6 +6,7 @@
 body {
   font-family: Arial, Helvetica, sans-serif;
   background: linear-gradient(to right, rgb(6, 108, 100), rgb(14, 48, 122));
+  height: fit-content;
 }
 
 /* Header Styles */
@@ -577,6 +578,40 @@ body {
   flex-direction: column;
 }
 
+.chathead {
+  display: flex;
+}
+
+/* Typing Indicator */
+.typing-indicator {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+  opacity: 0; /* Start with opacity 0 */
+  transition: opacity 0.3s ease; /* Smooth fade-in/out */
+}
+
+.typing-indicator.show {
+  opacity: 1; /* Fully visible when the "show" class is added */
+}
+
+/* Blinking Cursor Animation */
+@keyframes blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+.blinking-cursor {
+  animation: blink 1s infinite; /* Blinking effect */
+  font-weight: bold;
+}
+
 /* Chat Messages Display */
 .chat-messages {
   flex: 1;
@@ -646,4 +681,38 @@ body {
 
 #send-btn:hover {
   background-color: rgb(45, 158, 124);
+}
+
+/* Notification Styles */
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: rgba(56, 189, 149, 0.9); /* Teal with transparency */
+  color: white;
+  padding: 10px 20px;
+  border-radius: 7px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  animation: slideIn 0.5s ease-out, fadeOut 0.5s ease-in 1.5s;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
 }

@@ -5,3 +5,5 @@ export function getUserData() {
 
 export let Categories = [];
 export let Users = [];
+export let Messages = [];
+export let Page = 1

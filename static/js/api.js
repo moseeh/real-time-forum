@@ -6,12 +6,16 @@ import {
   loggedInTemplate,
   leftBar,
   allposts,
-  rightBar,
-  createpost,
+  addMessage,
+  showNotification,
+  startchat,
 } from "./templates.js";
-import { Categories, getUserData, Users } from "./states.js";
+import { Categories, getUserData, Users, Messages } from "./states.js";
 import { displayCreate } from "./posts.js";
 
+let Sender = [];
+let Reciver = [];
+let Socket;
 
 export async function LoginApi(event) {
   if (event) event.preventDefault();
@@ -29,10 +33,15 @@ export async function LoginApi(event) {
       render(loggedInTemplate);
       setTimeout(Homepage, 2000);
     } else {
+      console.log(response.message)
       alert(response.message);
     }
   } catch (error) {
     console.error("Login Failed", error);
+    // alert("Invalid credentials");
+    const errorMessage = document.getElementById("logincheck")
+    errorMessage.textContent = "Invalid credentials";
+    errorMessage.style.display = "block";
   }
 }
 
@@ -99,9 +108,10 @@ export async function Homepage() {
   if (authdiv) {
     authdiv.remove();
   }
-  await fetchUsers()
-  await fetchCategories()
+  await fetchCategories();
+  await startSocket();
   const UserData = getUserData();
+  await fetchUsers(UserData.userID);
   const header = document.querySelector("header.card");
   if (header) {
     const username = UserData.username;
@@ -124,7 +134,6 @@ export async function Homepage() {
     logoutBtn.addEventListener("click", logout);
   }
 }
-
 
 async function logout() {
   try {
@@ -163,12 +172,14 @@ export async function fetchCategories() {
   }
 }
 
-export async function fetchUsers() {
+export async function fetchUsers(user) {
   try {
     const response = await fetch(API_ENDPOINTS.allusers, {
-      method: "GET",
+      method: "POST",
       credentials: "include",
+      body: JSON.stringify({ username: user }),
     });
+
     if (response.ok) {
       const responseData = await response.json();
 
@@ -180,4 +191,226 @@ export async function fetchUsers() {
   } catch (error) {
     console.error("Error fetching users", error);
   }
+}
+
+async function startSocket() {
+  Socket = new WebSocket(`ws://${window.location.host}/ws`);
+
+  const userData = localStorage.getItem("userData");
+  const Data = JSON.parse(userData);
+  // console.log(data)
+  Sender = [Data.username, Data.userID];
+  Socket.onopen = () => {
+    const data = {
+      senderId: Sender[1],
+      name: Sender[0],
+    };
+    Socket.send(JSON.stringify(data));
+    console.log("Connected to WebSocket server");
+  };
+
+  Socket.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+    if (data.istyping === true) {
+      // displayTyping(data.name);
+      if (data.senderId === Reciver[1]) {
+        displaytyping();
+      }
+      typingonlist(data.senderId)
+    } else if (data.senderId) {
+      // Display chat message
+      if (data.senderId === Reciver[1]) {
+        addMessage(Reciver[0], data.message);
+      }
+      showNotification(`New Message from ${data.sendername}`);
+    } else if (data.userId) {
+      if (data.userId !== Sender[1] && data.online === true) {
+        showNotification(`${data.name} is online`);
+      }
+      changestatus(data.userId, data.online)
+      newusers(Data)
+    }
+  };
+}
+
+async function newusers(Data) {
+  const old = Users.length
+  await fetchUsers(Data.userID)
+  if (Users.length > old) {
+    const content = document.getElementById("body");
+    const user = document.getElementById("userlist")
+    if (user) {
+      user.remove()
+    }
+    content.innerHTML += rightBar(Users, Data.username)
+  }
+}
+
+function changestatus(id, online) {
+  const list = document.getElementById(id);
+  if (list) {
+    if (online) {
+      list.style.color = "rgb(0, 255, 0)"; // Green for online
+      list.innerHTML = list.innerHTML.replace("(Offline)", "(Online)"); // Update status text
+    } else {
+      list.style.color = "rgb(255, 255, 255)"; // White for offline
+      list.innerHTML = list.innerHTML.replace("(Online)", "(Offline)"); // Update status text
+    }
+  }
+}
+
+const rightBar = (users, username) => `
+  <div class="sidebar-right" id="userlist">
+    <h3>All Users</h3>
+    <ul id="users">
+      ${users
+    .map((user) => {
+      // Only create a list item if the user's name is not the same as the current username
+      if (user.name !== username) {
+        // Determine the color based on the user's online status
+        const statusColor = user.online ? "rgb(0, 255, 0)" : "rgb(255, 255, 255)";
+        return `
+              <li>
+                <a href="#" id="${user.id}" style="color: ${statusColor};" onclick="Chat('${user.name}','${user.id}')">
+                  ${user.name} ${user.online ? "(Online)" : "(Offline)"}
+                </a>
+                <span id="typing-${user.id}" class="typing-indicator" style="display: none;">
+                  <span class="typing-text">typing...</span>
+                  <span class="blinking-cursor">|</span>
+                </span>
+              </li>`;
+      }
+      return ""; // Skip this user
+    })
+    .join("")}
+    </ul>
+  </div>
+`;
+
+window.Chat = async function (username, id) {
+  console.log(`Starting chat with ${username}`);
+  const mainSection = document.getElementById("main");
+  mainSection.innerHTML = startchat(username);
+  let page = 1;
+  let isLoading = false; // Flag to prevent multiple fetches
+  // console.log(data)
+  Reciver = [username, id];
+  await fetchMessages();
+  await displayMessages(page);
+
+  const chatMessages = document.getElementById("chat-messages");
+  if (chatMessages) {
+    chatMessages.addEventListener("scroll", async () => {
+      if (chatMessages.scrollTop === 0 && !isLoading) {
+        isLoading = true; // Set flag to prevent multiple fetches
+        page++; // Increment page
+        await displayMessages(page); // Display the new messages
+        isLoading = false; // Reset flag
+      }
+    });
+  }
+
+  const sendBtn = document.getElementById("send-btn");
+  if (sendBtn) {
+    sendBtn.addEventListener("click", sendMessage);
+  }
+  const chatInput = document.getElementById("chat-textarea");
+  if (chatInput) {
+    chatInput.addEventListener("input", sendTyping);
+  }
+};
+
+function sendTyping() {
+  const data = {
+    senderId: Sender[1],
+    sendername: Sender[0],
+    receiverId: Reciver[1],
+    istyping: true,
+  };
+  Socket.send(JSON.stringify(data));
+}
+
+function displaytyping() {
+  // Show the typing indicator in the chat container
+  const typingDiv = document.getElementById("typing");
+  if (typingDiv) {
+    typingDiv.classList.add("show");
+    setTimeout(() => {
+      typingDiv.classList.remove("show");
+    }, 2000);
+  }
+}
+
+function typingonlist(userId) {
+
+
+
+  const list = document.getElementById(userId);
+  if (list) {
+    list.style.color = "rgb(225, 236, 229)"; // Green for online
+    list.innerHTML = list.innerHTML.replace("(Online)", "(Typing)"); // Update status text
+    setTimeout(() => {
+      list.style.color = "rgb(49, 238, 11)"; // White for offline
+      list.innerHTML = list.innerHTML.replace("(Typing)", "(Online)"); // Update status text
+    }, 2000);
+  }
+}
+
+function sendMessage() {
+  const messageInput = document.getElementById("chat-textarea");
+  const message = messageInput.value;
+
+  if (message) {
+    const data = {
+      senderId: Sender[1],
+      sendername: Sender[0],
+      receiverId: Reciver[1],
+      message: message,
+    };
+    Socket.send(JSON.stringify(data));
+    addMessage(Sender[0], message); // Display the message locally
+    messageInput.value = ""; // Clear input field
+  }
+}
+
+async function fetchMessages() {
+  try {
+    const response = await fetch(API_ENDPOINTS.messages, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ senderId: Sender[1], receiverId: Reciver[1] }),
+    });
+    if (response.ok) {
+      let responseData = await response.json();
+
+      Messages.length = 0; // Clear the array
+      Messages.push(...responseData);
+      console.log(Messages);
+    } else {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+  } catch (error) {
+    console.error("Error fetching messages", error);
+  }
+}
+
+async function displayMessages(page) {
+  const chatMessages = document.getElementById("chat-messages");
+  if (!chatMessages) return;
+
+  // Store the current scroll height
+  const scrollHeightBefore = chatMessages.scrollHeight;
+  const start = (page - 1) * 10;
+  const end = start + 10;
+  const messages = Messages.slice(start, end);
+  // Add messages to the chat
+  messages.map((message) =>
+    addMessage(message.sender_username, message.message, message.timestamp)
+  );
+
+  // Restore the scroll position to maintain the user's view
+  chatMessages.scrollTop = chatMessages.scrollHeight - scrollHeightBefore;
 }

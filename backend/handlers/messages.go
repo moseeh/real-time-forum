@@ -2,11 +2,11 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
-	"real-time-forum/backend/utils"
 	"sync"
+
+	"real-time-forum/backend/utils"
 
 	"github.com/gorilla/websocket"
 )
@@ -18,25 +18,36 @@ var upgrader = websocket.Upgrader{
 }
 
 // Store active users and their WebSocket connections
-var users = make(map[string]*websocket.Conn)
-var onlineUsers = make(map[string]bool)
-var mutex = &sync.Mutex{} // Mutex to protect concurrent access to the users map
+var (
+	users       = make(map[string]*websocket.Conn)
+	OnlineUsers = make(map[string]bool)
+	mutex       = &sync.Mutex{} // Mutex to protect concurrent access to the users map
+)
 
 type Message struct {
 	SenderID   string `json:"senderId"`
+	Sendername string `json:"sendername"`
 	ReceiverID string `json:"receiverId"`
 	Message    string `json:"message"`
+	Typing     bool   `json:"istyping"`
+}
+
+type Newuser struct {
+	UserID string `json:"senderId"`
+	Name   string `json:"name"`
 }
 
 // Online status structure
 type OnlineStatus struct {
 	UserID string `json:"userId"`
+	Name   string `json:"name"`
 	Online bool   `json:"online"`
 }
 
-func broadcastOnlineStatus(userID string, online bool) {
+func broadcastOnlineStatus(userID, name string, online bool) {
 	status := OnlineStatus{
 		UserID: userID,
+		Name:   name,
 		Online: online,
 	}
 	statusJSON, _ := json.Marshal(status)
@@ -62,17 +73,21 @@ func (h *Handler) HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 		log.Println("Error reading user ID:", err)
 		return
 	}
-	userID := string(msg)
+
+	var user Newuser
+	if err := json.Unmarshal(msg, &user); err != nil {
+		log.Println("Error parsing message:", err)
+	}
 
 	// Add user to the active users list
 	mutex.Lock()
-	users[userID] = conn
-	onlineUsers[userID] = true
+	users[user.UserID] = conn
+	OnlineUsers[user.UserID] = true
 	mutex.Unlock()
 
 	// Broadcast that the user is online
-	broadcastOnlineStatus(userID, true)
-	log.Println("User connected:", userID)
+	broadcastOnlineStatus(user.UserID, user.Name, true)
+	log.Println("User connected:", user)
 
 	// Listen for incoming messages
 	for {
@@ -89,7 +104,17 @@ func (h *Handler) HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 			continue
 		}
 
-		fmt.Println(message.ReceiverID)
+		if message.Typing {
+			mutex.Lock()
+			if receiverConn, ok := users[message.ReceiverID]; ok {
+				if err := receiverConn.WriteJSON(message); err != nil {
+					log.Println("Error sending message to receiver:", err)
+				}
+			}
+			mutex.Unlock()
+			continue
+		}
+
 		tx, err := h.Users.DB.Begin()
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -100,7 +125,7 @@ func (h *Handler) HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 		messageid := utils.UUIDGen()
 
 		// Save the message to the database
-		if err := h.Users.SaveMessage(tx,messageid, message.SenderID, message.ReceiverID, message.Message); err != nil {
+		if err := h.Users.SaveMessage(tx, messageid, message.SenderID, message.ReceiverID, message.Message); err != nil {
 			log.Println("Error saving message:", err)
 			continue
 		}
@@ -121,11 +146,35 @@ func (h *Handler) HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 
 	// Remove user from the active users list when they disconnect
 	mutex.Lock()
-	delete(users, userID)
-	delete(onlineUsers, userID)
+	delete(users, user.UserID)
+	delete(OnlineUsers, user.UserID)
 	mutex.Unlock()
 
 	// Broadcast that the user is offline
-	broadcastOnlineStatus(userID, false)
-	log.Println("User disconnected:", userID)
+	broadcastOnlineStatus(user.UserID, user.Name, false)
+	log.Println("User disconnected:", user)
+}
+
+type Twousers struct {
+	User1 string `json:"senderId"`
+	User2 string `json:"receiverId"`
+}
+
+func (h *Handler) FetchMessages(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	var data Twousers
+	err := json.NewDecoder(r.Body).Decode(&data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	messages, err := h.Users.GetAllMessages(data.User1, data.User2)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(messages)
 }
