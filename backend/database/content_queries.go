@@ -196,3 +196,12 @@ func (u *UserModel) GetPost(contentID string, currentUserID string) (*Post, erro
 
 	return &post, nil
 }
+
+func (u *UserModel) GetContentCommentCount(tx *sql.Tx, contentID string) (int, error) {
+	var count int
+	err := tx.QueryRow(`SELECT COUNT(*) FROM CONTENTS WHERE parent_id = ?`, contentID).Scan(&count)
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}
