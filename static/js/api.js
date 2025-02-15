@@ -33,10 +33,15 @@ export async function LoginApi(event) {
       render(loggedInTemplate);
       setTimeout(Homepage, 2000);
     } else {
+      console.log(response.message)
       alert(response.message);
     }
   } catch (error) {
     console.error("Login Failed", error);
+    // alert("Invalid credentials");
+    const errorMessage = document.getElementById("logincheck")
+    errorMessage.textContent = "Invalid credentials";
+    errorMessage.style.display = "block";
   }
 }
 

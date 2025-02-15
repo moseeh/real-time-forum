@@ -4,6 +4,7 @@ export const loginTemplate = () => `
     <input type="text" id="login-username" placeholder="Username or Email" class="input-field" />
     <br /><br />
     <input type="password" id="login-password" placeholder="Password" class="input-field" />
+    <div id="logincheck" style="display:none;color:red;"></div>
     <br /><br />
     <button id="login-form-button" class="login-form-button" type="button">Login</button>
   </div>
