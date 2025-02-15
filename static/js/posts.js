@@ -64,7 +64,6 @@ export async function displayPosts() {
 
     // Wait for a moment to ensure DOM is updated
     setTimeout(() => {
-      // Get the main content after the DOM update
       const mainContent = document.getElementById("main");
       if (!mainContent) {
         console.error("Could not find main element");
@@ -72,6 +71,8 @@ export async function displayPosts() {
       }
       const modal = document.getElementById("commentModal");
       const commentText = document.getElementById("commentText");
+      const cancelComment = document.getElementById("cancelComment");
+      const submitComment = document.getElementById("submitComment");
       let currentPostId = null;
 
       const updateButtonUI = (button, count, isActive) => {
@@ -79,6 +80,55 @@ export async function displayPosts() {
         countSpan.textContent = count;
         button.classList.toggle("active", isActive);
       };
+      // Setup cancel comment button listener once
+      cancelComment.addEventListener("click", () => {
+        modal.style.display = "none";
+        currentPostId = null;
+      });
+
+      // Setup submit comment button listener once
+      submitComment.addEventListener("click", async () => {
+        if (commentText.value.trim() && currentPostId) {
+          try {
+            const response = await fetch("/api/comments", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              credentials: "include",
+              body: JSON.stringify({
+                content_id: currentPostId,
+                comment: commentText.value.trim(),
+              }),
+            });
+            if (!response.ok) {
+              throw new Error("Failed to submit comment");
+            }
+            const data = await response.json();
+            const commentBtn = document.querySelector(
+              `.comment-btn[data-post-id="${currentPostId}"]`
+            );
+            if (!commentBtn) {
+              console.error(
+                `Could not find comment button with data-post-id="${currentPostId}"`
+              );
+              return;
+            }
+            const commentSpan = commentBtn.querySelector("span");
+            if (!commentSpan) {
+              console.error("Could not find comment count span");
+              return;
+            }
+            commentSpan.textContent = data.comments_count;
+            modal.style.display = "none";
+            currentPostId = null;
+            commentText.value = "";
+          } catch (error) {
+            console.error("Error:", error);
+            alert(error);
+          }
+        }
+      });
 
       mainContent.addEventListener("click", async (e) => {
         const voteButton = e.target.matches(".upvote-btn, .downvote-btn")
@@ -131,47 +181,6 @@ export async function displayPosts() {
           commentText.value = "";
           commentText.focus();
         }
-        document
-          .getElementById("cancelComment")
-          .addEventListener("click", () => {
-            modal.style.display = "none";
-            currentPostId = null;
-          });
-        document
-          .getElementById("submitComment")
-          .addEventListener("click", async () => {
-            if (commentText.value.trim() && currentPostId) {
-              try {
-                const response = await fetch("/api/comments", {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                  },
-                  credentials: "include",
-                  body: JSON.stringify({
-                    content_id: currentPostId,
-                    comment: commentText.value.trim(),
-                  }),
-                });
-                if (!response.ok) {
-                  throw new Error("Failed to submit comment");
-                }
-                const data = await response.json();
-                const article = document
-                  .querySelector(`[data-post-id="${currentPostId}"]`)
-                  .closest("article");
-                const commentBtn = article.querySelector(".comment-btn");
-                commentBtn.querySelector("span").textContent =
-                  data.comments_count;
-
-                modal.style.display = "none";
-                currentPostId = null;
-              } catch (error) {
-                console.error("Error:", error);
-                alert("Failed to submit comment. Please try again.");
-              }
-            }
-          });
       });
     });
   } catch (error) {
