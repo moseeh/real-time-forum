@@ -98,7 +98,8 @@ func (u *UserModel) GetAllUsers(userid string) ([]User, error) {
         GROUP BY 
             USERS.user_id
         ORDER BY 
-            USERS.username ASC;
+            last_interaction DESC NULLS LAST, 
+    		USERS.username ASC;
     `
 
 	rows, err := u.DB.Query(query, userid, userid, userid)
