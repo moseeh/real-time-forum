@@ -16,23 +16,49 @@ export function signup() {
   const email = document.getElementById("signup-email");
   const first = document.getElementById("first-name");
   const second = document.getElementById("second-name");
-  let ok;
+  const password = document.getElementById("signup-password");
+  const signupButton = document.getElementById("signup-form-button");
+
+  let isUsernameValid = false;
+  let isEmailValid = false;
+  let isFirstNameValid = false;
+  let isSecondNameValid = false;
+  let isPasswordValid = false;
 
   username.addEventListener("input", debounce(confirmName, 300));
   email.addEventListener("input", debounce(confirmEmail, 300));
   first.addEventListener("input", debounce(confirmfirst, 300));
   second.addEventListener("input", debounce(confirmsecond, 300));
+  password.addEventListener("input", debounce(validatePassword, 300));
+
+  function validatePassword() {
+    console.log("Checking password");
+    const passwordtxt = password.value.trim();
+    const available = document.getElementById("passwordcheck");
+    if (passwordtxt.length >= 8 && /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(passwordtxt)) {
+      available.style.display = "none";
+      isPasswordValid = true;
+    } else {
+      available.textContent = "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character.";
+      available.style.fontSize = "12px";
+      available.style.display = "block";
+      isPasswordValid = false;
+    }
+    checkAllValidations();
+  }
 
   function confirmfirst() {
     const firstname = first.value.trim();
     const available = document.getElementById("firstcheck");
     if (validateUsername(firstname) === null) {
       available.style.display = "none";
+      isFirstNameValid = true;
     } else {
       available.textContent = validateUsername(firstname);
       available.style.display = "block";
-      return;
+      isFirstNameValid = false;
     }
+    checkAllValidations();
   }
 
   function confirmsecond() {
@@ -40,11 +66,13 @@ export function signup() {
     const available = document.getElementById("secondcheck");
     if (validateUsername(secondname) === null) {
       available.style.display = "none";
+      isSecondNameValid = true;
     } else {
       available.textContent = validateUsername(secondname);
       available.style.display = "block";
-      return;
+      isSecondNameValid = false;
     }
+    checkAllValidations();
   }
 
   async function confirmName() {
@@ -59,37 +87,39 @@ export function signup() {
         body: JSON.stringify({ username: user }),
       });
 
-      // Check if the response is OK (status code 200-299)
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
 
-      // Decode the JSON response
       const data = await response.json();
       console.log(data, user);
 
       const available = document.getElementById("nameavailable");
-      // Handle the response
 
       if (validateUsername(user) === null) {
         available.textContent = "";
         available.style.display = "none";
+        isUsernameValid = true;
       } else {
         available.textContent = validateUsername(user);
         available.style.display = "block";
-        return;
+        isUsernameValid = false;
       }
 
       if (data.success) {
         console.log(data.success);
         available.style.display = "none";
+        isUsernameValid = true;
       } else {
         available.textContent = "Username already exists";
         available.style.display = "block";
+        isUsernameValid = false;
       }
     } catch (error) {
       console.error("Failed to fetch:", error);
+      isUsernameValid = false;
     }
+    checkAllValidations();
   }
 
   async function confirmEmail() {
@@ -104,39 +134,50 @@ export function signup() {
         body: JSON.stringify({ email: mail }),
       });
 
-      // Check if the response is OK (status code 200-299)
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
 
-      // Decode the JSON response
       const data = await response.json();
       const available = document.getElementById("emailavailable");
 
       if (validateEmail(mail)) {
         available.textContent = "";
         available.style.display = "none";
+        isEmailValid = true;
       } else {
         available.textContent = "Enter a valid email";
         available.style.display = "block";
-        return;
+        isEmailValid = false;
       }
-      // Handle the response
+
       if (data.success) {
         available.textContent = "";
         available.style.display = "none";
+        isEmailValid = true;
       } else {
         available.textContent = "Email already exists!";
         available.style.display = "block";
+        isEmailValid = false;
       }
     } catch (error) {
       console.error("Failed to fetch:", error);
+      isEmailValid = false;
+    }
+    checkAllValidations();
+  }
+
+  function checkAllValidations() {
+    if (isUsernameValid && isEmailValid && isFirstNameValid && isSecondNameValid && isPasswordValid) {
+      signupButton.disabled = false;
+    } else {
+      signupButton.disabled = true;
     }
   }
 
-  const signupButton = document.getElementById("signup-form-button");
   if (signupButton) {
     signupButton.addEventListener("click", SignupAPi);
+    signupButton.disabled = true; // Initially disable the button
   }
 }
 
