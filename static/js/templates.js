@@ -36,6 +36,7 @@ export const signupTemplate = () => `
     <input type="number" id="age" class="input-field" placeholder="Enter age" required />
     <br /><br />
     <input type="password" id="signup-password" placeholder="Password" class="input-field" required/>
+    <div id="passwordcheck" style="display:none;color:red;"></div>
     <br /><br />
     <input type="password" id="confirm-password" placeholder="Confirm Password" class="input-field" required/>
     <br /><br />
