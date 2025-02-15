@@ -124,7 +124,7 @@ export const allposts = (posts) => `
                   <i class="fa-solid fa-thumbs-down"></i><span>${dislikes_count}</span>
                 </button>
                 <button class="btn comment-btn" data-post-id="${post_id}">
-                  <i class="fa-regular fa-comment"></i> ${comments_count}
+                  <i class="fa-regular fa-comment"></i><span>${comments_count}</span>
                 </button>
               </div>
             </footer>
