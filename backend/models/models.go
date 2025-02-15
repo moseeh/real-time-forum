@@ -31,3 +31,9 @@ type UserInteraction struct {
 	InteractionType string `json:"interactiontype"`
 }
 
+// Message represents a single message with sender's username and timestamp
+type Message struct {
+	Message        string `json:"message"`
+	SenderUsername string `json:"sender_username"`
+	Timestamp      string `json:"timestamp"`
+}

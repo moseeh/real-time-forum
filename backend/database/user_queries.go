@@ -13,6 +13,7 @@ var ErrNoRecord = errors.New("no matching record found")
 type User struct {
 	UserId   string `json:"id"`
 	Username string `json:"name"`
+	Online   bool   `json:"online"`
 }
 
 func (m *UserModel) InsertUser(id, first_name, last_name, username, email, gender, password string, age int) error {
@@ -80,9 +81,28 @@ func (m *UserModel) GetUserByEmailOrUsername(identifier string) (*models.User, e
 	return user, nil
 }
 
-func (u *UserModel) GetAllUsers() ([]User, error) {
-	query := `SELECT user_id, username FROM USERS`
-	rows, err := u.DB.Query(query)
+func (u *UserModel) GetAllUsers(userid string) ([]User, error) {
+	// Query to fetch all users except the main user
+	query := `
+        SELECT 
+            USERS.user_id,
+            USERS.username,
+            MAX(MESSAGES.timestamp) AS last_interaction
+        FROM 
+            USERS
+        LEFT JOIN 
+            MESSAGES ON (USERS.user_id = MESSAGES.senderId OR USERS.user_id = MESSAGES.receiverId)
+            AND (MESSAGES.senderId = ? OR MESSAGES.receiverId = ?)
+        WHERE 
+            USERS.user_id != ?
+        GROUP BY 
+            USERS.user_id
+        ORDER BY 
+            last_interaction DESC NULLS LAST, 
+    		USERS.username ASC;
+    `
+
+	rows, err := u.DB.Query(query, userid, userid, userid)
 	if err != nil {
 		return nil, err
 	}
@@ -91,11 +111,13 @@ func (u *UserModel) GetAllUsers() ([]User, error) {
 	var users []User
 	for rows.Next() {
 		var one User
-		err := rows.Scan(&one.UserId, &one.Username)
+		var lastInteraction sql.NullString // Use sql.NullString to handle NULL values
+		err := rows.Scan(&one.UserId, &one.Username, &lastInteraction)
 		if err != nil {
 			return nil, err
 		}
 		users = append(users, one)
 	}
+
 	return users, nil
 }
