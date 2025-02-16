@@ -12,6 +12,7 @@ type Post struct {
 	ContentID     string          `json:"post_id"`
 	Title         string          `json:"title"`
 	Text          string          `json:"content"`
+	ParentID      string          `json:"parent_id"`
 	CreatedAt     time.Time       `json:"created_at"`
 	UpdatedAt     time.Time       `json:"updated_at"`
 	UserID        string          `json:"author_id"`
@@ -26,6 +27,7 @@ type Post struct {
 }
 type CommentThread struct {
 	ContentID     string          `json:"comment_id"`
+	ParentID      string          `json:"parent_id"`
 	UserID        string          `json:"user_id"`
 	Username      string          `json:"username"`
 	Text          string          `json:"text"`

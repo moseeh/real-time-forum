@@ -5,13 +5,13 @@ import {
   headerTemplate,
   loggedInTemplate,
   leftBar,
-  allposts,
   addMessage,
   showNotification,
   startchat,
 } from "./templates.js";
-import { Categories, getUserData, Users } from "./states.js";
+import { Categories, getUserData, Users, Messages } from "./states.js";
 import { displayCreate } from "./posts.js";
+import { displayPosts } from "./posts.js";
 
 let Sender = [];
 let Reciver = [];
@@ -33,13 +33,13 @@ export async function LoginApi(event) {
       render(loggedInTemplate);
       setTimeout(Homepage, 2000);
     } else {
-      console.log(response.message)
+      console.log(response.message);
       alert(response.message);
     }
   } catch (error) {
     console.error("Login Failed", error);
     // alert("Invalid credentials");
-    const errorMessage = document.getElementById("logincheck")
+    const errorMessage = document.getElementById("logincheck");
     errorMessage.textContent = "Invalid credentials";
     errorMessage.style.display = "block";
   }
@@ -121,7 +121,7 @@ export async function Homepage() {
   const content = document.getElementById("body");
   let data = ["username", "password"];
   content.innerHTML += leftBar(Categories);
-  await displayPosts()
+  await displayPosts();
   content.innerHTML += rightBar(Users, UserData.username);
   content.style.display = "grid";
 
@@ -216,7 +216,7 @@ async function startSocket() {
       if (data.senderId === Reciver[1]) {
         displaytyping();
       }
-      typingonlist(data.senderId)
+      typingonlist(data.senderId);
     } else if (data.senderId) {
       // Display chat message
       if (data.senderId === Reciver[1]) {
@@ -227,22 +227,22 @@ async function startSocket() {
       if (data.userId !== Sender[1] && data.online === true) {
         showNotification(`${data.name} is online`);
       }
-      changestatus(data.userId, data.online)
-      newusers(Data)
+      changestatus(data.userId, data.online);
+      newusers(Data);
     }
   };
 }
 
 async function newusers(Data) {
-  const old = Users.length
-  await fetchUsers(Data.userID)
+  const old = Users.length;
+  await fetchUsers(Data.userID);
   if (Users.length > old) {
     const content = document.getElementById("body");
-    const user = document.getElementById("userlist")
+    const user = document.getElementById("userlist");
     if (user) {
-      user.remove()
+      user.remove();
     }
-    content.innerHTML += rightBar(Users, Data.username)
+    content.innerHTML += rightBar(Users, Data.username);
   }
 }
 
@@ -264,25 +264,33 @@ const rightBar = (users, username) => `
     <h3>All Users</h3>
     <ul id="users">
       ${users
-    .map((user) => {
-      // Only create a list item if the user's name is not the same as the current username
-      if (user.name !== username) {
-        // Determine the color based on the user's online status
-        const statusColor = user.online ? "rgb(0, 255, 0)" : "rgb(255, 255, 255)";
-        return `
+        .map((user) => {
+          // Only create a list item if the user's name is not the same as the current username
+          if (user.name !== username) {
+            // Determine the color based on the user's online status
+            const statusColor = user.online
+              ? "rgb(0, 255, 0)"
+              : "rgb(255, 255, 255)";
+            return `
               <li>
-                <a href="#" id="${user.id}" style="color: ${statusColor};" onclick="Chat('${user.name}','${user.id}')">
+                <a href="#" id="${
+                  user.id
+                }" style="color: ${statusColor};" onclick="Chat('${
+              user.name
+            }','${user.id}')">
                   ${user.name} ${user.online ? "(Online)" : "(Offline)"}
                 </a>
-                <span id="typing-${user.id}" class="typing-indicator" style="display: none;">
+                <span id="typing-${
+                  user.id
+                }" class="typing-indicator" style="display: none;">
                   <span class="typing-text">typing...</span>
                   <span class="blinking-cursor">|</span>
                 </span>
               </li>`;
-      }
-      return ""; // Skip this user
-    })
-    .join("")}
+          }
+          return ""; // Skip this user
+        })
+        .join("")}
     </ul>
   </div>
 `;
@@ -342,9 +350,6 @@ function displaytyping() {
 }
 
 function typingonlist(userId) {
-
-
-
   const list = document.getElementById(userId);
   if (list) {
     list.style.color = "rgb(225, 236, 229)"; // Green for online
