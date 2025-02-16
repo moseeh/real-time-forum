@@ -131,6 +131,29 @@ export async function displayPosts() {
       });
 
       mainContent.addEventListener("click", async (e) => {
+        const postArticle = e.target.closest(".post");
+        if (postArticle && !e.target.closest(".buttons")) {
+          const postId = postArticle.getAttribute("data-post-id");
+          if (postId) {
+            console.log(postId)
+            try {
+
+              const response = await fetch(`/api/posts/${postId}`, {
+                method: "GET",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include", 
+              });
+              if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+              }
+              const postDetails = await response.json();
+
+              console.log(postDetails);
+            } catch (error) {
+              console.error("Error fetching post details:", error);
+            }
+          }
+        }
         const voteButton = e.target.matches(".upvote-btn, .downvote-btn")
           ? e.target
           : e.target.closest(".upvote-btn, .downvote-btn");
