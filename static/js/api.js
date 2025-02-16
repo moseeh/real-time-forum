@@ -226,9 +226,9 @@ async function startSocket() {
     } else if (data.userId) {
       if (data.userId !== Sender[1] && data.online === true) {
         showNotification(`${data.name} is online`);
+        changestatus(data.userId, data.online);
+        newusers(Data);
       }
-      changestatus(data.userId, data.online);
-      newusers(Data);
     }
   };
 }
@@ -237,6 +237,7 @@ async function newusers(Data) {
   const old = Users.length;
   await fetchUsers(Data.userID);
   if (Users.length > old) {
+    console.log(old, Users.length)
     const content = document.getElementById("body");
     const user = document.getElementById("userlist");
     if (user) {
