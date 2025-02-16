@@ -94,7 +94,7 @@ export const allposts = (posts) => `
     ${posts?.length ? posts
       .map(
         ({ title, content, username, likes_count, dislikes_count, post_id, comments_count }) => `
-          <article class="post">
+          <article class="post" data-post-id="${post_id}">
             <header>
               <h3>${title}</h3>
             </header>
