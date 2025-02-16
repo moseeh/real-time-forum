@@ -5,13 +5,13 @@
 
 body {
   font-family: Arial, Helvetica, sans-serif;
-  background: linear-gradient(to right, rgb(6, 108, 100), rgb(14, 48, 122));
+  background: black;
   height: fit-content;
 }
 
 /* Header Styles */
 .card {
-  background: linear-gradient(to right, rgb(6, 108, 100), rgb(14, 48, 122));
+  background: black;
   padding: 1rem;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
@@ -53,6 +53,15 @@ body {
   transition: all 0.3s ease;
   color: rgb(10, 9, 9);
 }
+.post {
+  transition: transform 0.3s ease;
+}
+
+.post:hover {
+  transform: translateX(5px);
+  cursor: pointer;
+}
+
 
 #create-post-btn {
   background-color: rgb(56, 189, 149);
@@ -85,7 +94,7 @@ body {
   display: grid;
   grid-template-columns: 1fr 2fr 1fr; /* Left, Middle, Right */
   gap: 1rem;
-  background: linear-gradient(to bottom, rgb(6, 108, 100), rgb(14, 48, 122));
+  background: black;
   margin: 2% auto;
   padding: 1rem;
   border-radius: 5px;
