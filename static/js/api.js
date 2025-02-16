@@ -144,7 +144,7 @@ async function logout() {
     if (response.ok) {
       localStorage.removeItem("userData");
       localStorage.clear();
-      login();
+      window.location.href = "/";
     } else {
       console.error("Logout failed");
     }
