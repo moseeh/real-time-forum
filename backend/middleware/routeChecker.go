@@ -40,6 +40,7 @@ func (app *App) Routes() http.Handler {
 	mux.HandleFunc("POST /api/interactions", app.Handlers.HandleInteraction)
 	mux.HandleFunc("GET /ws", app.Handlers.HandleWebSocket)
 	mux.HandleFunc("POST /api/messages", app.Handlers.FetchMessages)
+	mux.HandleFunc("GET /api/post/details", app.Handlers.HandlePostDetails)
 
 	return mux
 }
