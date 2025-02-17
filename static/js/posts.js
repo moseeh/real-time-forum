@@ -1,4 +1,4 @@
-import { allposts, createpost } from "./templates.js";
+import { allposts, createpost, singlepost } from "./templates.js";
 import { Categories } from "./states.js";
 
 export function displayCreate() {
@@ -134,22 +134,31 @@ export async function displayPosts() {
         const postArticle = e.target.closest(".post");
         if (postArticle && !e.target.closest(".buttons")) {
           const postId = postArticle.getAttribute("data-post-id");
+          console.log("Post ID:", postId);
           if (postId) {
-            console.log(postId)
             try {
-
-              const response = await fetch(`/api/posts/${postId}`, {
-                method: "GET",
-                headers: { "Content-Type": "application/json" },
-                credentials: "include", 
-              });
+              const response = await fetch(
+                `/api/post/details?postID=${postId}`,
+                {
+                  method: "GET",
+                  headers: { "Content-Type": "application/json" },
+                  credentials: "include",
+                }
+              );
+              console.log("Click detected on mainContent");
               if (!response.ok) {
+                console.log(1);
+                console.error(
+                  `Server responded with status: ${response.status}`
+                );
                 throw new Error(`HTTP error! status: ${response.status}`);
               }
               const postDetails = await response.json();
 
-              console.log(postDetails);
+              let post = postDetails.post
+              mainContent.innerHTML = singlepost(post)
             } catch (error) {
+              console.log(error);
               console.error("Error fetching post details:", error);
             }
           }
