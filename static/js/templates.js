@@ -91,9 +91,19 @@ export const leftBar = (categories) => `
 export const allposts = (posts) => `
   <div class="main-content" id="main">
     <h2>All Posts</h2>
-    ${posts?.length ? posts
-      .map(
-        ({ title, content, username, likes_count, dislikes_count, post_id, comments_count }) => `
+    ${
+      posts?.length
+        ? posts
+            .map(
+              ({
+                title,
+                content,
+                username,
+                likes_count,
+                dislikes_count,
+                post_id,
+                comments_count,
+              }) => `
           <article class="post" data-post-id="${post_id}">
             <header>
               <h3>${title}</h3>
@@ -114,9 +124,10 @@ export const allposts = (posts) => `
               </div>
             </footer>
           </article>`
-      )
-      .join('')
-      : ''}
+            )
+            .join("")
+        : ""
+    }
   </div>
 
    <div class="modal-overlay" id="commentModal">
@@ -132,43 +143,66 @@ export const allposts = (posts) => `
 
 `;
 
-
-
 export const singlepost = (post) => `
-          <div class="post">
-            <h4>${post.title}</h4>
-            <p>${post.content}</p>
-            <span class="post-author">${post.author} at ${
-  post.createdat
-}</span><br>
-            <div class="post-actions">
-              <span class="likes">${post.likes} Likes</span>
-              <button class="btn like-btn">Like</button>
-              <span class="dislikes">${post.dislikes} Dislikes</span>
-              <button class="btn dislike-btn">Dislike</button>
-            </div>
-          </div>
-        
-          <!-- Comments Section -->
-          <div class="comments-section">
-            <h3>Comments</h3>
-            ${post.contents
-              .map(
-                (comment) => `<div class="comment">
-              <span class="comment-author">${comment.author}</span>
-              <p>${comment.content}</p>
-              <span class="comment-date">${comment.createdat}</span>
-            </div>`
-              )
-              .join("")}
-        
-            <!-- Add Comment Form -->
-            <div class="add-comment">
-              <textarea placeholder="Add a comment..." rows="3"></textarea>
-              <button class="btn comment-btn">Submit</button>
-            </div>
-          </div>
+  <div class="post">
+    <h4>${post.title}</h4>
+    <p>${post.content}</p>
+    <span class="post-author">${post.username} at ${formatDate(post.created_at)}</span><br>
+    <div class="post-actions">
+      <span class="likes">${post.likes_count} Likes</span>
+      <button class="btn like-btn ${post.IsLiked ? 'active' : ''}" 
+              data-post-id="${post.post_id}" 
+              data-action="like">Like</button>
+      <span class="dislikes">${post.dislikes_count} Dislikes</span>
+      <button class="btn dislike-btn ${post.IsDisliked ? 'active' : ''}" 
+              data-post-id="${post.post_id}" 
+              data-action="dislike">Dislike</button>
+    </div>
+  </div>
+
+  <!-- Comments Section -->
+  <div class="comments-section">
+    <h3>Comments (${post.comments_count})</h3>
+    ${renderComments(post.comments)}
+
+    <!-- Add Comment Form -->
+    <div class="add-comment">
+      <textarea placeholder="Add a comment..." rows="3"></textarea>
+      <button class="btn comment-btn" data-post-id="${post.post_id}">Submit</button>
+    </div>
+  </div>
 `;
+
+const renderComments = (comments) => {
+  if (!comments || comments.length === 0) {
+    return '<p class="no-comments">No comments yet. Be the first to comment!</p>';
+  }
+  
+  return comments.map(comment => `
+    <div class="comment" data-comment-id="${comment.comment_id}">
+      <span class="comment-author">${comment.username}</span>
+      <p>${comment.text}</p>
+      <span class="comment-date">${formatDate(comment.created_at)}</span>
+      <div class="comment-actions">
+        <span class="likes">${comment.likes_count} Likes</span>
+        <button class="btn like-btn-sm ${comment.IsLiked ? 'active' : ''}" 
+                data-comment-id="${comment.comment_id}" 
+                data-action="like">Like</button>
+        <span class="dislikes">${comment.dislikes_count} Dislikes</span>
+        <button class="btn dislike-btn-sm ${comment.IsDisliked ? 'active' : ''}" 
+                data-comment-id="${comment.comment_id}" 
+                data-action="dislike">Dislike</button>
+        <button class="btn reply-btn-sm" 
+                data-comment-id="${comment.comment_id}">Reply</button>
+      </div>
+      ${comment.Replies && comment.Replies.length > 0 ? 
+        `<div class="replies">
+          ${renderComments(comment.replies)}
+        </div>` : 
+        ''}
+    </div>
+  `).join('');
+};
 
 export const createpost = (categories) => `
     <form id="create-post-form" action="/posts/create" method="POST" enctype="multipart/form-data">
@@ -205,7 +239,7 @@ export const createpost = (categories) => `
     </form>
   `;
 
-  export const startchat = (username) => `
+export const startchat = (username) => `
   <div class="chat-container">
     <div class="chathead">
       <h2>Chat with ${username}</h2><br /><br />
@@ -241,7 +275,7 @@ export function addMessage(sender, message, time) {
       minute: "2-digit",
     });
   } else {
-    time = formatTimestamp(time)
+    time = formatTimestamp(time);
   }
 
   // Add message content
@@ -280,11 +314,13 @@ function formatTimestamp(timestamp) {
   const date = new Date(timestamp);
 
   // Format date as "31-12-2025"
-  const formattedDate = date.toLocaleDateString("en-GB", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-  }).replace(/\//g, "-"); // Replace slashes with dashes
+  const formattedDate = date
+    .toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    })
+    .replace(/\//g, "-"); // Replace slashes with dashes
 
   // Format time as "11:30 AM"
   const formattedTime = date.toLocaleTimeString("en-US", {
@@ -295,3 +331,7 @@ function formatTimestamp(timestamp) {
 
   return `(${formattedDate}) at (${formattedTime})`;
 }
+const formatDate = (dateStr) => {
+  const date = new Date(dateStr);
+  return date.toLocaleString();
+};
