@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"time"
 
 	"real-time-forum/backend/models"
 )
@@ -14,6 +15,7 @@ type User struct {
 	UserId   string `json:"id"`
 	Username string `json:"name"`
 	Online   bool   `json:"online"`
+	Lasttime string `json:"lasttime"`
 }
 
 func (m *UserModel) InsertUser(id, first_name, last_name, username, email, gender, password string, age int) error {
@@ -82,24 +84,35 @@ func (m *UserModel) GetUserByEmailOrUsername(identifier string) (*models.User, e
 }
 
 func (u *UserModel) GetAllUsers(userid string) ([]User, error) {
-	// Query to fetch all users except the main user
+	fmt.Println(userid)
 	query := `
-        SELECT 
-            USERS.user_id,
-            USERS.username,
-            MAX(MESSAGES.timestamp) AS last_interaction
-        FROM 
-            USERS
-        LEFT JOIN 
-            MESSAGES ON (USERS.user_id = MESSAGES.senderId OR USERS.user_id = MESSAGES.receiverId)
-            AND (MESSAGES.senderId = ? OR MESSAGES.receiverId = ?)
-        WHERE 
-            USERS.user_id != ?
-        GROUP BY 
-            USERS.user_id
-        ORDER BY 
-            last_interaction DESC NULLS LAST, 
-    		USERS.username ASC;
+       WITH last_messages AS (
+			SELECT
+        		u.user_id AS id,
+        		u.username,
+        		COALESCE(
+            		(SELECT strftime('%Y-%m-%dT%H:%M:%SZ', MAX(m.timestamp))
+             		FROM MESSAGES m
+             		WHERE (m.senderId = u.user_id AND m.receiverId = ?)
+                		OR (m.senderId = ? AND m.receiverId = u.user_id)
+            		), 
+            		''
+        		) AS sort_time
+    		FROM 
+       			USERS u
+    		WHERE 
+        		u.user_id != ?
+		)
+		SELECT 
+    		id AS user_id,
+    		username,
+    		sort_time
+		FROM 
+    		last_messages
+		ORDER BY 
+    		CASE WHEN sort_time = '' THEN 1 ELSE 0 END,
+    		sort_time DESC,
+    		username ASC;
     `
 
 	rows, err := u.DB.Query(query, userid, userid, userid)
@@ -111,11 +124,24 @@ func (u *UserModel) GetAllUsers(userid string) ([]User, error) {
 	var users []User
 	for rows.Next() {
 		var one User
-		var lastInteraction sql.NullString // Use sql.NullString to handle NULL values
+		var lastInteraction sql.NullString
+
 		err := rows.Scan(&one.UserId, &one.Username, &lastInteraction)
 		if err != nil {
 			return nil, err
 		}
+
+		if lastInteraction.Valid {
+			// Parse the timestamp and format it
+			if t, err := time.Parse("2006-01-02 15:04:05", lastInteraction.String); err == nil {
+				one.Lasttime = t.Format(time.RFC3339) // Convert to ISO8601 format
+			} else {
+				one.Lasttime = "" // If parsing fails, set empty string
+			}
+		} else {
+			one.Lasttime = "" // Set empty string if no interaction
+		}
+
 		users = append(users, one)
 	}
 
