@@ -35,6 +35,7 @@ type CommentThread struct {
 	UpdatedAt     time.Time       `json:"updated_at"`
 	LikesCount    int             `json:"likes_count"`
 	DislikesCount int             `json:"dislikes_count"`
+	CommentsCount int             `json:"comments_count"`
 	IsLiked       bool            `json:"is_liked"`
 	IsDisliked    bool            `json:"is_disliked"`
 	Replies       []CommentThread `json:"replies"`
@@ -122,7 +123,13 @@ func (u *UserModel) GetAllPosts(currentUserID string) ([]Post, error) {
 		if err != nil {
 			return nil, err
 		}
+		comments, err := u.GetPostComments(post.ContentID)
+		if err != nil {
+			return nil, err
+		}
+
 		post.Categories = categories
+		post.Comments = comments
 		posts = append(posts, post)
 	}
 	return posts, nil
@@ -194,16 +201,13 @@ func (u *UserModel) GetPost(contentID string, currentUserID string) (*Post, erro
 	if err != nil {
 		return nil, err
 	}
+	comments, err := u.GetPostComments(post.ContentID)
+	if err != nil {
+		return nil, err
+	}
 	post.Categories = categories
+	post.Comments = comments
 
 	return &post, nil
 }
 
-func (u *UserModel) GetContentCommentCount(tx *sql.Tx, contentID string) (int, error) {
-	var count int
-	err := tx.QueryRow(`SELECT COUNT(*) FROM CONTENTS WHERE parent_id = ?`, contentID).Scan(&count)
-	if err != nil {
-		return 0, err
-	}
-	return count, nil
-}
