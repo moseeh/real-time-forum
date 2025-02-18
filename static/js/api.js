@@ -221,6 +221,7 @@ async function startSocket() {
       if (data.senderId === Reciver[1]) {
         addMessage(Reciver[0], data.message);
       }
+      newusers(Data);
       showNotification(data.sendername,`New Message from ${data.sendername}`, data.senderId);
     } else if (data.userId) {
       if (data.userId !== Sender[1] && data.online === true) {
@@ -233,16 +234,16 @@ async function startSocket() {
 }
 
 async function newusers(Data) {
-  const old = Users.length;
+  // const old = Users;
   await fetchUsers(Data.userID);
-  if (Users.length > old) {
+  // if (Users !== old) {
     const content = document.getElementById("body");
     const user = document.getElementById("userlist");
     if (user) {
       user.remove();
     }
     content.innerHTML += rightBar(Users, Data.username);
-  }
+  // }
 }
 
 function changestatus(id, online) {
@@ -375,6 +376,9 @@ function sendMessage() {
     addMessage(Sender[0], message); // Display the message locally
     messageInput.value = ""; // Clear input field
   }
+  const userData = localStorage.getItem("userData");
+  const Data = JSON.parse(userData);
+  newusers(Data)
 }
 
 async function fetchMessages() {
