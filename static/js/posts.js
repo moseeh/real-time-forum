@@ -88,6 +88,7 @@ export async function displayPosts() {
 
       // Setup submit comment button listener once
       submitComment.addEventListener("click", async () => {
+        console.log("moses is a fool")
         if (commentText.value.trim() && currentPostId) {
           try {
             const response = await fetch("/api/comments", {
@@ -132,6 +133,8 @@ export async function displayPosts() {
 
       mainContent.addEventListener("click", async (e) => {
         const postArticle = e.target.closest(".post");
+        
+        //clicked on post
         if (postArticle && !e.target.closest(".buttons")) {
           const postId = postArticle.getAttribute("data-post-id");
           console.log("Post ID:", postId);
@@ -161,6 +164,7 @@ export async function displayPosts() {
             }
           }
         }
+        // clicked on like/dislike button
         const voteButton = e.target.matches(".upvote-btn, .downvote-btn")
           ? e.target
           : e.target.closest(".upvote-btn, .downvote-btn");
@@ -199,7 +203,8 @@ export async function displayPosts() {
           }
           return;
         }
-        // Handle comment button
+        
+        // clicked on comment button
         const commentButton = e.target.matches(".comment-btn")
           ? e.target
           : e.target.closest(".comment-btn");

@@ -178,7 +178,7 @@ export const singlepost = (post) => `
     <!-- Add Comment Form -->
     <div class="add-comment">
       <textarea placeholder="Add a comment..." rows="3"></textarea>
-      <button class="btn submit-btn" data-post-id="${
+      <button class="btn submit-btn" id="submitComment" data-post-id="${
         post.post_id
       }">Submit</button>
     </div>
