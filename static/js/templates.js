@@ -144,66 +144,93 @@ export const allposts = (posts) => `
 `;
 
 export const singlepost = (post) => `
-  <div class="post">
-    <h4>${post.title}</h4>
+   <article class="post" data-post-id="${post.post_id}">
+    <header>
+      <h3>${post.title}</h3>
+    </header>
     <p>${post.content}</p>
-    <span class="post-author">${post.username} at ${formatDate(post.created_at)}</span><br>
-    <div class="post-actions">
-      <span class="likes">${post.likes_count} Likes</span>
-      <button class="btn like-btn ${post.IsLiked ? 'active' : ''}" 
-              data-post-id="${post.post_id}" 
-              data-action="like">Like</button>
-      <span class="dislikes">${post.dislikes_count} Dislikes</span>
-      <button class="btn dislike-btn ${post.IsDisliked ? 'active' : ''}" 
-              data-post-id="${post.post_id}" 
-              data-action="dislike">Dislike</button>
-    </div>
-  </div>
+    <footer class="post-actions">
+      <span class="author">By: ${post.username}</span>
+      <div class="buttons">
+        <button class="btn upvote-btn ${
+          post.IsLiked ? "active" : ""
+        }" aria-label="Upvote" data-post-id="${post.post_id}">
+          <i class="fa-solid fa-thumbs-up"></i><span>${post.likes_count}</span>
+        </button>
+        <button class="btn downvote-btn ${
+          post.IsDisliked ? "active" : ""
+        }" aria-label="Downvote" data-post-id="${post.post_id}">
+          <i class="fa-solid fa-thumbs-down"></i><span>${
+            post.dislikes_count
+          }</span>
+        </button>
+        <button class="btn comment-btn" data-post-id="${post.post_id}">
+          <i class="fa-regular fa-comment"></i><span>${
+            post.comments_count
+          }</span>
+        </button>
+      </div>
+    </footer>
+ </article>
 
   <!-- Comments Section -->
   <div class="comments-section">
-    <h3>Comments (${post.comments_count})</h3>
-    ${renderComments(post.comments)}
-
     <!-- Add Comment Form -->
     <div class="add-comment">
       <textarea placeholder="Add a comment..." rows="3"></textarea>
-      <button class="btn comment-btn" data-post-id="${post.post_id}">Submit</button>
+      <button class="btn submit-btn" data-post-id="${
+        post.post_id
+      }">Submit</button>
     </div>
+    <h3>Comments (${post.comments_count})</h3>
+    ${renderComments(post.comments)}
   </div>
 `;
-
 const renderComments = (comments) => {
   if (!comments || comments.length === 0) {
     return '<p class="no-comments">No comments yet. Be the first to comment!</p>';
   }
-  
-  return comments.map(comment => `
+
+  return comments
+    .map(
+      (comment) => `
     <div class="comment" data-comment-id="${comment.comment_id}">
       <span class="comment-author">${comment.username}</span>
       <p>${comment.text}</p>
       <span class="comment-date">${formatDate(comment.created_at)}</span>
       <div class="comment-actions">
-        <span class="likes">${comment.likes_count} Likes</span>
-        <button class="btn like-btn-sm ${comment.IsLiked ? 'active' : ''}" 
-                data-comment-id="${comment.comment_id}" 
-                data-action="like">Like</button>
-        <span class="dislikes">${comment.dislikes_count} Dislikes</span>
-        <button class="btn dislike-btn-sm ${comment.IsDisliked ? 'active' : ''}" 
-                data-comment-id="${comment.comment_id}" 
-                data-action="dislike">Dislike</button>
-        <button class="btn reply-btn-sm" 
-                data-comment-id="${comment.comment_id}">Reply</button>
+        <button class="btn upvote-btn-sm ${
+          comment.IsLiked ? "active" : ""
+        }" aria-label="Upvote" data-comment-id="${comment.comment_id}">
+          <i class="fa-solid fa-thumbs-up"></i><span>${
+            comment.likes_count
+          }</span>
+        </button>
+        <button class="btn downvote-btn-sm ${
+          comment.IsDisliked ? "active" : ""
+        }" aria-label="Downvote" data-comment-id="${comment.comment_id}">
+          <i class="fa-solid fa-thumbs-down"></i><span>${
+            comment.dislikes_count
+          }</span>
+        </button>
+        <button class="btn reply-btn-sm" data-comment-id="${
+          comment.comment_id
+        }">
+          <i class="fa-solid fa-reply"></i><span>Reply</span>
+        </button>
       </div>
-      ${comment.Replies && comment.Replies.length > 0 ? 
-        `<div class="replies">
-          ${renderComments(comment.replies)}
-        </div>` : 
-        ''}
+      ${
+        comment.Replies && comment.Replies.length > 0
+          ? `<div class="replies">
+          ${renderComments(comment.Replies)}
+        </div>`
+          : ""
+      }
     </div>
-  `).join('');
+  `
+    )
+    .join("");
 };
-
 export const createpost = (categories) => `
     <form id="create-post-form" action="/posts/create" method="POST" enctype="multipart/form-data">
       <input type="text" name="title" placeholder="Post Title" required />
@@ -264,14 +291,14 @@ export const startchat = (username) => `
 export function addMessage(sender, message, time) {
   const chatMessages = document.getElementById("chat-messages");
   if (!chatMessages) return;
-  
+
   const messageDiv = document.createElement("div");
   messageDiv.classList.add("message");
-  
+
   if (time === undefined) {
     time = new Date().getTime();
   }
-  
+
   // Add message content
   messageDiv.innerHTML = `
     <div>
@@ -280,7 +307,7 @@ export function addMessage(sender, message, time) {
     </div>
     <div class="content">${message}</div>
   `;
-  
+
   // Append the message to the chat
   chatMessages.appendChild(messageDiv);
   // Scroll to the bottom of the chat
@@ -292,14 +319,14 @@ function formatTimestamp(timestamp) {
   const now = new Date();
   const diffInMinutes = Math.floor((now - date) / (1000 * 60));
   const diffInDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
-  
+
   // Format time as "09:40 AM"
   const formattedTime = date.toLocaleTimeString("en-US", {
     hour: "2-digit",
     minute: "2-digit",
-    hour12: true
+    hour12: true,
   });
-  
+
   // If message is from today
   if (diffInDays === 0) {
     if (diffInMinutes < 60) {
@@ -308,19 +335,21 @@ function formatTimestamp(timestamp) {
     }
     return `today at ${formattedTime}`;
   }
-  
+
   // If message is from yesterday
   if (diffInDays === 1) {
     return `yesterday at ${formattedTime}`;
   }
-  
+
   // For older messages, show full date
-  const formattedDate = date.toLocaleDateString("en-GB", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric"
-  }).replace(/\//g, "-");
-  
+  const formattedDate = date
+    .toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    })
+    .replace(/\//g, "-");
+
   return `${formattedDate} at ${formattedTime}`;
 }
 
