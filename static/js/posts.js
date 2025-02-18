@@ -145,9 +145,7 @@ export async function displayPosts() {
                   credentials: "include",
                 }
               );
-              console.log("Click detected on mainContent");
               if (!response.ok) {
-                console.log(1);
                 console.error(
                   `Server responded with status: ${response.status}`
                 );
@@ -197,7 +195,7 @@ export async function displayPosts() {
             updateButtonUI(downvoteBtn, data.dislikes_count, data.is_disliked);
           } catch (error) {
             console.error("Error:", error);
-            alert("Failed to update vote. Please try again.");
+            alert("Failed to update vote. Please try again.", error);
           }
           return;
         }
