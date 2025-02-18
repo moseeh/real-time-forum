@@ -324,22 +324,6 @@ function formatTimestamp(timestamp) {
   return `${formattedDate} at ${formattedTime}`;
 }
 
-// Function to show a notification
-export function showNotification(senderName) {
-  // Create the notification element
-  const notification = document.createElement("div");
-  notification.className = "notification";
-  notification.textContent = `${senderName}`;
-
-  // Append the notification to the body
-  document.body.appendChild(notification);
-
-  // Remove the notification after 2 seconds
-  setTimeout(() => {
-    notification.remove();
-  }, 5000);
-}
-
 const formatDate = (dateStr) => {
   const date = new Date(dateStr);
   return date.toLocaleString();

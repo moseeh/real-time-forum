@@ -6,7 +6,6 @@ import {
   loggedInTemplate,
   leftBar,
   addMessage,
-  showNotification,
   startchat,
 } from "./templates.js";
 import { Categories, getUserData, Users, Messages } from "./states.js";
@@ -222,10 +221,10 @@ async function startSocket() {
       if (data.senderId === Reciver[1]) {
         addMessage(Reciver[0], data.message);
       }
-      showNotification(`New Message from ${data.sendername}`);
+      showNotification(data.sendername,`New Message from ${data.sendername}`, data.senderId);
     } else if (data.userId) {
       if (data.userId !== Sender[1] && data.online === true) {
-        showNotification(`${data.name} is online`);
+        showNotification(data.name,`${data.name} is online`, data.userId);
         newusers(Data);
       }
       changestatus(data.userId, data.online);
@@ -418,4 +417,25 @@ async function displayMessages(page) {
 
   // Restore the scroll position to maintain the user's view
   chatMessages.scrollTop = chatMessages.scrollHeight - scrollHeightBefore;
+}
+
+function showNotification(senderName, message, id) {
+  // Create the notification element
+  const notification = document.createElement("div");
+  notification.className = "notification";
+  notification.textContent = message;
+
+  // Add a click event listener to the notification
+  notification.addEventListener("click", () => {
+    Chat(senderName, id); // Call the Chat function with the sender's name and ID
+    notification.remove(); // Remove the notification after clicking
+  });
+
+  // Append the notification to the body
+  document.body.appendChild(notification);
+
+  // Remove the notification after 5 seconds
+  setTimeout(() => {
+    notification.remove();
+  }, 5000);
 }
