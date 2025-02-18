@@ -261,37 +261,67 @@ export const startchat = (username) => `
   </div>
 `;
 
-// Function to add a new message
 export function addMessage(sender, message, time) {
   const chatMessages = document.getElementById("chat-messages");
   if (!chatMessages) return;
+  
   const messageDiv = document.createElement("div");
   messageDiv.classList.add("message");
-
+  
   if (time === undefined) {
-    // Get current time
-    time = new Date().toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  } else {
-    time = formatTimestamp(time);
+    time = new Date().getTime();
   }
-
+  
   // Add message content
   messageDiv.innerHTML = `
     <div>
       <span class="sender">${sender}</span>
-      <span class="time">${time}</span>
+      <span class="time">${formatTimestamp(time)}</span>
     </div>
     <div class="content">${message}</div>
   `;
-
+  
   // Append the message to the chat
   chatMessages.appendChild(messageDiv);
-
   // Scroll to the bottom of the chat
   chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function formatTimestamp(timestamp) {
+  const date = new Date(timestamp);
+  const now = new Date();
+  const diffInMinutes = Math.floor((now - date) / (1000 * 60));
+  const diffInDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
+  
+  // Format time as "09:40 AM"
+  const formattedTime = date.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true
+  });
+  
+  // If message is from today
+  if (diffInDays === 0) {
+    if (diffInMinutes < 60) {
+      // Show "X minutes ago" for messages less than an hour old
+      return diffInMinutes <= 1 ? "just now" : `${diffInMinutes} minutes ago`;
+    }
+    return `today at ${formattedTime}`;
+  }
+  
+  // If message is from yesterday
+  if (diffInDays === 1) {
+    return `yesterday at ${formattedTime}`;
+  }
+  
+  // For older messages, show full date
+  const formattedDate = date.toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric"
+  }).replace(/\//g, "-");
+  
+  return `${formattedDate} at ${formattedTime}`;
 }
 
 // Function to show a notification
@@ -310,27 +340,6 @@ export function showNotification(senderName) {
   }, 5000);
 }
 
-function formatTimestamp(timestamp) {
-  const date = new Date(timestamp);
-
-  // Format date as "31-12-2025"
-  const formattedDate = date
-    .toLocaleDateString("en-GB", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    })
-    .replace(/\//g, "-"); // Replace slashes with dashes
-
-  // Format time as "11:30 AM"
-  const formattedTime = date.toLocaleTimeString("en-US", {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: true,
-  });
-
-  return `(${formattedDate}) at (${formattedTime})`;
-}
 const formatDate = (dateStr) => {
   const date = new Date(dateStr);
   return date.toLocaleString();
