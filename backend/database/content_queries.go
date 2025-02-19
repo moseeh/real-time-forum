@@ -136,6 +136,7 @@ func (u *UserModel) GetAllPosts(currentUserID string) ([]Post, error) {
 }
 
 func (u *UserModel) GetPost(contentID string, currentUserID string) (*Post, error) {
+	fmt.Println(contentID)
 	query := `
     SELECT
         c.content_id,
@@ -165,8 +166,7 @@ func (u *UserModel) GetPost(contentID string, currentUserID string) (*Post, erro
         c.content_id = ui_dislike.content_id
         AND ui_dislike.user_id = ?
         AND ui_dislike.interaction_type = 'dislike'
-    WHERE c.content_type = 'post'
-    AND c.content_id = ?
+   WHERE c.content_id = ?
     `
 
 	var post Post
