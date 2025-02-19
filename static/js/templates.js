@@ -194,29 +194,29 @@ const renderComments = (comments) => {
   return comments
     .map(
       (comment) => `
-    <div class="comment" data-comment-id="${comment.comment_id}">
+    <article class="post" data-post-id="${comment.comment_id}">
       <span class="comment-author">${comment.username}</span>
       <p>${comment.text}</p>
       <span class="comment-date">${formatDate(comment.created_at)}</span>
       <div class="comment-actions">
-        <button class="btn upvote-btn-sm ${
+        <button class="btn upvote-btn ${
           comment.IsLiked ? "active" : ""
-        }" aria-label="Upvote" data-comment-id="${comment.comment_id}">
+        }" aria-label="Upvote" data-post-id="${comment.comment_id}">
           <i class="fa-solid fa-thumbs-up"></i><span>${
             comment.likes_count
           }</span>
         </button>
-        <button class="btn downvote-btn-sm ${
+        <button class="btn downvote-btn ${
           comment.IsDisliked ? "active" : ""
-        }" aria-label="Downvote" data-comment-id="${comment.comment_id}">
+        }" aria-label="Downvote" data-post-id="${comment.comment_id}">
           <i class="fa-solid fa-thumbs-down"></i><span>${
             comment.dislikes_count
           }</span>
         </button>
-        <button class="btn reply-btn-sm" data-comment-id="${
+        <button class="btn comment-btn" data-post-id="${
           comment.comment_id
         }">
-          <i class="fa-solid fa-reply"></i><span>Reply</span>
+          <i class="fa-regular fa-comment"></i><span>${comment.comments_count}</span>
         </button>
       </div>
       ${
@@ -226,7 +226,7 @@ const renderComments = (comments) => {
         </div>`
           : ""
       }
-    </div>
+    </article>
   `
     )
     .join("");
