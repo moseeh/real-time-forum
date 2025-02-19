@@ -46,12 +46,12 @@ func (h *Handler) HandleInteraction(w http.ResponseWriter, r *http.Request) {
 		InteractionType: req.InteractionType,
 	}
 	if err := h.Users.AddUserInteraction(interaction); err != nil {
-		http.Error(w, "Failed to add interaction", http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	post, err := h.Users.GetPost(req.ContentID, user_id)
 	if err != nil {
-		http.Error(w, "Failed to get updated post data", http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	response := InteractionResponse{
