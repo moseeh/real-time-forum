@@ -1,3 +1,5 @@
+import { formatDate } from "./time.js";
+
 export const loginTemplate = () => `
   <div class="login-form-container">
     <h1>Login</h1>
@@ -89,7 +91,7 @@ export const leftBar = (categories) => `
 `;
 
 export const allposts = (posts) => `
-  <div class="main-content" id="main">
+   <div class="main-content" id="main">
     <h2>All Posts</h2>
     ${
       posts?.length
@@ -103,34 +105,56 @@ export const allposts = (posts) => `
                 dislikes_count,
                 post_id,
                 comments_count,
+                categories,
+                created_at,
+                is_liked,
+                is_disliked,
               }) => `
-          <article class="post" data-post-id="${post_id}">
-            <header>
-              <h3>${title}</h3>
-            </header>
-            <p>${content}</p>
-            <footer class="post-actions">
-              <span class="author">By: ${username}</span>
-              <div class="buttons">
-                <button class="btn upvote-btn" aria-label="Upvote" data-post-id="${post_id}">
-                  <i class="fa-solid fa-thumbs-up"></i><span>${likes_count}</span>
-                </button>
-                <button class="btn downvote-btn" aria-label="Downvote" data-post-id="${post_id}">
-                  <i class="fa-solid fa-thumbs-down"></i><span>${dislikes_count}</span>
-                </button>
-                <button class="btn comment-btn" data-post-id="${post_id}">
-                  <i class="fa-regular fa-comment"></i><span>${comments_count}</span>
-                </button>
-              </div>
-            </footer>
-          </article>`
+               <article class="post" data-post-id="${post_id}">
+                <div class="post-header">
+                 <img src="static/images/default-avatar.png" alt="author avatar" class="avatar">
+                  <div class="author-info">
+                    <p class="author-name">${username}</p>
+                    <p class="post-date">${formatDate(created_at)}</p>
+                  </div>
+                </div>
+                <h2 class="post-title">${title}</h2> 
+                <p class="post-text">${content}</p>
+                  <div class="categories">
+                    ${
+                      categories?.length
+                        ? categories
+                            .map(
+                              (category) =>
+                                `<span class="category">${category.name}</span>`
+                            )
+                            .join(" ")
+                        : ""
+                    }
+                  </div>
+                  <footer class="post-actions">
+                      <button class="action-button upvote-btn ${
+                        is_liked ? "active" : ""
+                      }" aria-label="Upvote" data-post-id="${post_id}">
+                        <i class="fa-solid fa-thumbs-up"></i><span>${likes_count}</span>
+                      </button>
+                      <button class="action-button downvote-btn ${
+                        is_disliked ? "active" : ""
+                      }" aria-label="Downvote" data-post-id="${post_id}">
+                        <i class="fa-solid fa-thumbs-down"></i><span>${dislikes_count}</span>
+                      </button>
+                      <button class="action-button comment-btn" data-post-id="${post_id}">
+                        <i class="fa-regular fa-comment"></i><span>${comments_count}</span>
+                      </button>
+                  </footer>
+              </article>`
             )
             .join("")
-        : ""
+        : '<p class="empty-state">No posts available</p>'
     }
   </div>
 
-   <div class="modal-overlay" id="commentModal">
+  <div class="modal-overlay" id="commentModal">
     <div class="modal">
       <h3>Add Comment</h3>
       <textarea id="commentText" placeholder="Type your comment here..."></textarea>
@@ -140,38 +164,47 @@ export const allposts = (posts) => `
       </div>
     </div>
   </div>
-
 `;
 
 export const singlepost = (post) => `
-   <article class="post" data-post-id="${post.post_id}">
-    <header>
-      <h3>${post.title}</h3>
-    </header>
-    <p>${post.content}</p>
-    <footer class="post-actions">
-      <span class="author">By: ${post.username}</span>
-      <div class="buttons">
-        <button class="btn upvote-btn ${
-          post.IsLiked ? "active" : ""
-        }" aria-label="Upvote" data-post-id="${post.post_id}">
-          <i class="fa-solid fa-thumbs-up"></i><span>${post.likes_count}</span>
-        </button>
-        <button class="btn downvote-btn ${
-          post.IsDisliked ? "active" : ""
-        }" aria-label="Downvote" data-post-id="${post.post_id}">
-          <i class="fa-solid fa-thumbs-down"></i><span>${
-            post.dislikes_count
-          }</span>
-        </button>
-        <button class="btn comment-btn" data-post-id="${post.post_id}">
-          <i class="fa-regular fa-comment"></i><span>${
-            post.comments_count
-          }</span>
-        </button>
-      </div>
-    </footer>
- </article>
+          <article class="post" data-post-id="${post.post_id}">
+            <div class="post-header">
+              <img src="static/images/default-avatar.png" alt="author avatar" class="avatar">
+              <div class="author-info">
+                <p class="author-name">${post.username}</p>
+                <p class="post-date">${formatDate(post.created_at)}</p>
+              </div>
+            </div>
+            <h2 class="post-title">${post.title}</h2> 
+            <p class="post-text">${post.content}</p>
+            <div class="categories">
+              ${
+                post.categories?.length
+                  ? post.categories
+                      .map(
+                        (category) =>
+                          `<span class="category">${category.name}</span>`
+                      )
+                      .join(" ")
+                  : ""
+              }
+            </div>
+            <footer class="post-actions">
+              <button class="action-button upvote-btn ${
+                post.is_liked ? "active" : ""
+              }" aria-label="Upvote" data-post-id="${post.post_id}">
+                  <i class="fa-solid fa-thumbs-up"></i><span>${post.likes_count}</span>
+              </button>
+              <button class="action-button downvote-btn ${
+                post.is_disliked ? "active" : ""
+              }" aria-label="Downvote" data-post-id="${post.post_id}">
+                  <i class="fa-solid fa-thumbs-down"></i><span>${post.dislikes_count}</span>
+              </button>
+              <button class="action-button comment-btn" data-post-id="${post.post_id}">
+                  <i class="fa-regular fa-comment"></i><span>${post.comments_count}</span>
+              </button>
+            </footer>
+          </article>
 
   <!-- Comments Section -->
   <div class="comments-section">
@@ -195,30 +228,32 @@ const renderComments = (comments) => {
     .map(
       (comment) => `
     <article class="post" data-post-id="${comment.comment_id}">
-      <span class="comment-author">${comment.username}</span>
-      <p>${comment.text}</p>
-      <span class="comment-date">${formatDate(comment.created_at)}</span>
-      <div class="comment-actions">
-        <button class="btn upvote-btn ${
-          comment.IsLiked ? "active" : ""
-        }" aria-label="Upvote" data-post-id="${comment.comment_id}">
-          <i class="fa-solid fa-thumbs-up"></i><span>${
-            comment.likes_count
-          }</span>
-        </button>
-        <button class="btn downvote-btn ${
-          comment.IsDisliked ? "active" : ""
-        }" aria-label="Downvote" data-post-id="${comment.comment_id}">
-          <i class="fa-solid fa-thumbs-down"></i><span>${
-            comment.dislikes_count
-          }</span>
-        </button>
-        <button class="btn comment-btn" data-post-id="${
-          comment.comment_id
-        }">
-          <i class="fa-regular fa-comment"></i><span>${comment.comments_count}</span>
-        </button>
-      </div>
+        <div class="post-header">
+         <img src="static/images/default-avatar.png" alt="author avatar" class="avatar">
+         <div class="author-info">
+            <p class="author-name">${comment.username}</p>
+            <p class="post-date">${formatDate(comment.created_at)}</p>
+          </div>
+        </div>
+        <p class="post-text">${comment.text}</p>
+        <footer class="post-actions">
+          <button class="action-button upvote-btn ${
+            comment.is_liked ? "active" : ""
+            }" aria-label="Upvote" data-post-id="${comment.comment_id}">
+              <i class="fa-solid fa-thumbs-up"></i><span>${comment.likes_count}</span>
+          </button>
+
+          <button class="action-button downvote-btn ${
+            comment.is_disliked ? "active" : ""
+            }" aria-label="Downvote" data-post-id="${comment.comment_id}">
+            <i class="fa-solid fa-thumbs-down"></i><span>${comment.dislikes_count}</span>
+          </button>
+                     
+          <button class="action-button comment-btn" data-post-id="${comment.comment_id}">
+            <i class="fa-regular fa-comment"></i><span>${comment.comments_count}</span>
+          </button>
+        </footer>
+
       ${
         comment.Replies && comment.Replies.length > 0
           ? `<div class="replies">
@@ -352,8 +387,3 @@ function formatTimestamp(timestamp) {
 
   return `${formattedDate} at ${formattedTime}`;
 }
-
-const formatDate = (dateStr) => {
-  const date = new Date(dateStr);
-  return date.toLocaleString();
-};
