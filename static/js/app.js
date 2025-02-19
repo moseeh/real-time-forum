@@ -1,10 +1,6 @@
 import { render } from "./ui.js";
-import {
-  signupTemplate,
-  loginTemplate,
-  loggedInTemplate,
-} from "./templates.js";
-import { fetchCategories, Homepage, LoginApi, SignupAPi } from "./api.js";
+import { signupTemplate, loginTemplate } from "./templates.js";
+import { Homepage, LoginApi, SignupAPi } from "./api.js";
 import { validateEmail, validateUsername } from "./validators.js";
 import { getUserData } from "./states.js";
 
@@ -35,11 +31,17 @@ export function signup() {
     console.log("Checking password");
     const passwordtxt = password.value.trim();
     const available = document.getElementById("passwordcheck");
-    if (passwordtxt.length >= 8 && /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(passwordtxt)) {
+    if (
+      passwordtxt.length >= 8 &&
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(
+        passwordtxt
+      )
+    ) {
       available.style.display = "none";
       isPasswordValid = true;
     } else {
-      available.textContent = "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character.";
+      available.textContent =
+        "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character.";
       available.style.fontSize = "12px";
       available.style.display = "block";
       isPasswordValid = false;
@@ -168,7 +170,13 @@ export function signup() {
   }
 
   function checkAllValidations() {
-    if (isUsernameValid && isEmailValid && isFirstNameValid && isSecondNameValid && isPasswordValid) {
+    if (
+      isUsernameValid &&
+      isEmailValid &&
+      isFirstNameValid &&
+      isSecondNameValid &&
+      isPasswordValid
+    ) {
       signupButton.disabled = false;
     } else {
       signupButton.disabled = true;
@@ -194,13 +202,13 @@ export function login() {
   }
 }
 
-document.addEventListener("DOMContentLoaded", async() => {
+document.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("signup-button").addEventListener("click", signup);
   document.getElementById("login-button").addEventListener("click", login);
-  const userData = getUserData()
+  const userData = getUserData();
   if (userData) {
-    console.log(userData)
-    Homepage()
+    console.log(userData);
+    Homepage();
   } else {
     login();
   }
