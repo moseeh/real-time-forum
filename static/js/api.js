@@ -118,7 +118,6 @@ export async function Homepage() {
   }
 
   const content = document.getElementById("body");
-  let data = ["username", "password"];
   content.innerHTML += leftBar(Categories);
   await displayPosts();
   content.innerHTML += rightBar(Users, UserData.username);
