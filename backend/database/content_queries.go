@@ -136,7 +136,6 @@ func (u *UserModel) GetAllPosts(currentUserID string) ([]Post, error) {
 }
 
 func (u *UserModel) GetPost(contentID string, currentUserID string) (*Post, error) {
-	fmt.Println(contentID)
 	query := `
     SELECT
         c.content_id,
