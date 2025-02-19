@@ -9,8 +9,8 @@ import {
   startchat,
 } from "./templates.js";
 import { Categories, getUserData, Users, Messages } from "./states.js";
-import { displayCreate } from "./posts.js";
-import { displayPosts } from "./posts.js";
+import { displayCreate } from "./posts/createpost.js";
+import { displayPosts } from "./posts/posts.js";
 
 let Sender = [];
 let Reciver = [];
