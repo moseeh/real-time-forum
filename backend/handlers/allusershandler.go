@@ -6,7 +6,7 @@ import (
 )
 
 type User struct {
-	ID string `json:"iusername"`
+	ID string `json:"username"`
 }
 
 func (h *Handler) GetUsers(w http.ResponseWriter, r *http.Request) {
