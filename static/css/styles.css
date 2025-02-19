@@ -9,6 +9,84 @@ body {
   height: fit-content;
 }
 
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.post-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.author-info {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.author-name {
+  font-weight: 600;
+  margin: 0;
+}
+.post-date {
+  font-size: 14px;
+  margin: 0;
+}
+.post-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 0 0 12px 0;
+}
+
+.post-text {
+  line-height: 1.6;
+  margin: 0 0 16px 0;
+}
+.action-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 0;
+  font-size: 16px;
+  transition: color 0.2s ease;
+}
+.action-button:hover{
+  color: grey;
+  opacity: 0.8;
+}
+/* Style for like button when active */
+.action-button.upvote-btn.active {
+  color: #4ade80; /* Green color for likes */
+}
+
+/* Style for dislike button when active */
+.action-button.downvote-btn.active {
+  color: #f87171; /* Red color for dislikes */
+}
+
+.categories {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.category {
+  background: #e6f0ff;
+  color: black;
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 14px;
+}
 /* Header Styles */
 .card {
   background: black;
@@ -61,7 +139,6 @@ body {
   transform: translateX(5px);
   cursor: pointer;
 }
-
 
 #create-post-btn {
   background-color: rgb(56, 189, 149);
@@ -153,30 +230,6 @@ body {
   font-size: 1.5rem;
   margin-bottom: 1rem;
   color: white;
-}
-
-.post {
-  background-color: rgba(255, 255, 255, 0.2);
-  padding: 1rem;
-  margin-bottom: 1rem;
-  border-radius: 7px;
-}
-
-.post h4 {
-  font-size: 1.1rem;
-  margin-bottom: 0.5rem;
-  color: white;
-}
-
-.post p {
-  font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.8);
-  margin-bottom: 0.5rem;
-}
-
-.post-author {
-  font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.6);
 }
 
 /* Right Sidebar Styles */
@@ -335,7 +388,6 @@ body {
   outline: none;
   background-color: rgb(56, 102, 189);
   cursor: pointer;
-
 }
 
 .login-form-button:hover {
@@ -397,61 +449,11 @@ body {
   margin-bottom: 1rem;
 }
 
-.post h4 {
-  font-size: 1.2rem;
-  margin-bottom: 0.5rem;
-  color: white;
-}
-
-.post p {
-  font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.8);
-  margin-bottom: 0.5rem;
-}
-
-.post-author {
-  font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.6);
-}
-
 .post-actions {
   display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-top: 0.5rem;
-}
-
-.likes,
-.dislikes {
-  font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.8);
-}
-
-.btn.like-btn {
-  background-color: rgb(56, 189, 149);
-}
-
-.btn.dislike-btn {
-  background-color: rgb(189, 56, 56);
-}
-
-.btn.like-btn:hover {
-  background-color: rgb(45, 158, 124);
-}
-
-.btn.dislike-btn:hover {
-  background-color: rgb(158, 45, 45);
-}
-
-/* Comments Section Styles */
-.comments-section {
-  margin-top: 1.5rem;
-}
-
-.comments-section h3 {
-  font-size: 1.2rem;
-  margin-bottom: 1rem;
-  color: white;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid #eee;
 }
 
 .comment {
@@ -644,7 +646,8 @@ body {
 
 /* Blinking Cursor Animation */
 @keyframes blink {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {
