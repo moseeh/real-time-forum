@@ -12,8 +12,8 @@ import (
 )
 
 type CreatePostResponse struct {
-	PostID  string `json:"post_id"`
-	Message string `json:"message"`
+	Post    interface{} `json:"post"`
+	Message string      `json:"message"`
 }
 
 func (h *Handler) CreatePost(w http.ResponseWriter, r *http.Request) {
@@ -102,9 +102,14 @@ func (h *Handler) CreatePost(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to commit transaction", http.StatusInternalServerError)
 		return
 	}
+	responsePost, err := h.Users.GetPost(post.ID, post.AuthorID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	// Prepare response
 	response := CreatePostResponse{
-		PostID:  post.ID,
+		Post:    responsePost,
 		Message: "Post created successfully",
 	}
 	// Send response
