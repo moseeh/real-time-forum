@@ -21,16 +21,9 @@ type InteractionResponse struct {
 }
 
 func (h *Handler) HandleInteraction(w http.ResponseWriter, r *http.Request) {
-	sessionid, err := r.Cookie("session_id")
-	if err != nil {
-		// json respose to be implemented
-		http.Error(w, "unauthorized", http.StatusUnauthorized)
-		return
-	}
-	user_id, err := h.Users.GetUserIdFromSession(sessionid.Value)
-	if err != nil {
-		// json respose to be implemented
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+	user_id, ok := r.Context().Value(UserIDKey).(string)
+	if !ok {
+		SendJSONError(w, http.StatusInternalServerError, "User ID not found in context")
 		return
 	}
 	var req InteractionRequest

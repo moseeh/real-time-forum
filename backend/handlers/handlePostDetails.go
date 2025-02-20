@@ -13,6 +13,7 @@ type PostDetailsResponse struct {
 }
 
 type ErrorResponse struct {
+	Status  string `json:"status"`
 	Success bool   `json:"success"`
 	Message string `json:"message"`
 }
@@ -27,23 +28,10 @@ func writeJSONError(w http.ResponseWriter, message string, statusCode int) {
 }
 
 func (h *Handler) HandlePostDetails(w http.ResponseWriter, r *http.Request) {
-	// Only allow GET method
-	if r.Method != http.MethodGet {
-		writeJSONError(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
 	// Check for session cookie
-	sessionID, err := r.Cookie("session_id")
-	if err != nil {
-		writeJSONError(w, "Unauthorized - no valid session", http.StatusUnauthorized)
-		return
-	}
-
-	// Get user ID from session
-	userID, err := h.Users.GetUserIdFromSession(sessionID.Value)
-	if err != nil {
-		writeJSONError(w, "Invalid session", http.StatusUnauthorized)
+	userID, ok := r.Context().Value(UserIDKey).(string)
+	if !ok {
+		SendJSONError(w, http.StatusInternalServerError, "User ID not found in context")
 		return
 	}
 

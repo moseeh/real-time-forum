@@ -18,18 +18,12 @@ type CommentResponse struct {
 
 func (h *Handler) HandleComments(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	sessionid, err := r.Cookie("session_id")
-	if err != nil {
-		// json respose to be implemented
-		http.Error(w, "unauthorized", http.StatusUnauthorized)
+	user_id, ok := r.Context().Value(UserIDKey).(string)
+	if !ok {
+		SendJSONError(w, http.StatusInternalServerError, "User ID not found in context")
 		return
 	}
-	user_id, err := h.Users.GetUserIdFromSession(sessionid.Value)
-	if err != nil {
-		// json respose to be implemented
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+
 	var comment Comment
 	if err := json.NewDecoder(r.Body).Decode(&comment); err != nil {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
@@ -68,4 +62,14 @@ func (h *Handler) HandleComments(w http.ResponseWriter, r *http.Request) {
 	response.CommentsCount = comment_count
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
+}
+
+// SendJSONError sends a JSON error response
+func SendJSONError(w http.ResponseWriter, status int, message string) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status)
+	json.NewEncoder(w).Encode(ErrorResponse{
+		Status:  "error",
+		Message: message,
+	})
 }
