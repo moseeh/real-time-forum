@@ -1,5 +1,5 @@
-import { Categories } from "../states.js";
-import { createpost } from "../templates.js";
+import { Categories, Posts } from "../states.js";
+import { createpost, allposts } from "../templates.js";
 
 export function displayCreate() {
   const mainSection = document.getElementById("main");
@@ -17,9 +17,11 @@ export function displayCreate() {
       });
 
       if (response.ok) {
-        const result = await response.text();
+        const result = await response.json();
         console.log("Post created successfully:", result);
-        mainSection.innerHTML = "";
+        console.log(result.post)
+        Posts.unshift(result.post)
+        mainSection.innerHTML = allposts(Posts);
       } else {
         const errorText = await response.text();
         console.error("Error creating post:", errorText);
@@ -30,6 +32,6 @@ export function displayCreate() {
   });
   const closeModalBtn = document.getElementById("closeModal");
   closeModalBtn.addEventListener("click", () => {
-    mainSection.innerHTML = "";
+    mainSection.innerHTML = allposts(Posts);
   });
 }

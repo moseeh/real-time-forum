@@ -4,12 +4,17 @@ import { setupCommentModal } from "./comments.js";
 import { handleVoteClick } from "./likes.js";
 import { handleCommentClick } from "./comments.js";
 import { setupSidebarEventListener } from "./filter.js";
+import { Posts } from "../states.js";
 // Main function to display posts
+
 export async function displayPosts() {
   try {
     const posts = await fetchPosts();
-    renderInitialPosts(posts);
-    setupEventListeners(posts);
+    Posts.length = 0;
+    Posts.push(...posts);
+
+    renderInitialPosts(Posts);
+    setupEventListeners(Posts);
   } catch (error) {
     handleError(error, "Error displaying posts:");
   }
@@ -25,14 +30,14 @@ function renderInitialPosts(posts) {
 function setupEventListeners(posts) {
   setTimeout(() => {
     const mainContent = document.getElementById("main");
-    const leftSidebar = document.querySelector('.sidebar-left')
+    const leftSidebar = document.querySelector(".sidebar-left");
     if (!mainContent || !leftSidebar) {
       console.error("Could not find main element");
       return;
     }
     const { modal, commentText, currentPostId } = setupCommentModal();
     setupMainContentListeners(mainContent, modal, commentText, currentPostId);
-    setupSidebarEventListener(leftSidebar, posts, mainContent)
+    setupSidebarEventListener(leftSidebar, posts, mainContent);
   });
 }
 
