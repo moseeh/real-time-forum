@@ -63,6 +63,7 @@ export const headerTemplate = (username) => `
       <div class="header-actions">
         <div class="user-menu">
           <span class="username">Welcome, ${username}</span>
+          <img src="static/images/default-avatar.png" alt="author avatar" class="avatar">
           <button class="btn" id="create-post-btn">Create Post</button>
           <button class="btn" id="logout-btn">Logout</button>
         </div>
