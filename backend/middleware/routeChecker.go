@@ -22,25 +22,26 @@ func (app *App) Routes() http.Handler {
 		log.Fatalf("Failed to get absolute path of static directory: %v", err)
 	}
 	fs := http.FileServer(http.Dir(absStaticDir))
-
 	mux := http.NewServeMux()
+
+	// Public routes
 	mux.Handle("GET /static/", http.StripPrefix("/static/", fs))
 	mux.HandleFunc("GET /", app.Handlers.ServeIndex)
-
-	//
 	mux.HandleFunc("POST /api/login", app.Handlers.LoginHandler)
 	mux.HandleFunc("POST /api/signup", app.Handlers.SignupHandler)
 	mux.HandleFunc("POST /check-username", app.Handlers.ConfirmName)
-	mux.HandleFunc("POST /api/logout", app.Handlers.LogoutHandler)
-	mux.HandleFunc("GET /api/categories", app.Handlers.GetCategories)
-	mux.HandleFunc("POST /api/allusers", app.Handlers.GetUsers)
-	mux.HandleFunc("POST /posts/create", app.Handlers.CreatePost)
-	mux.HandleFunc("GET /api/posts", app.Handlers.GetPosts)
-	mux.HandleFunc("POST /api/comments", app.Handlers.HandleComments)
-	mux.HandleFunc("POST /api/interactions", app.Handlers.HandleInteraction)
-	mux.HandleFunc("GET /ws", app.Handlers.HandleWebSocket)
-	mux.HandleFunc("POST /api/messages", app.Handlers.FetchMessages)
-	mux.HandleFunc("GET /api/post/details", app.Handlers.HandlePostDetails)
+
+	// Protected routes with auth middleware
+	mux.HandleFunc("POST /api/logout", app.AuthMiddleware(app.Handlers.LogoutHandler))
+	mux.HandleFunc("GET /api/categories", app.AuthMiddleware(app.Handlers.GetCategories))
+	mux.HandleFunc("POST /api/allusers", app.AuthMiddleware(app.Handlers.GetUsers))
+	mux.HandleFunc("POST /posts/create", app.AuthMiddleware(app.Handlers.CreatePost))
+	mux.HandleFunc("GET /api/posts", app.AuthMiddleware(app.Handlers.GetPosts))
+	mux.HandleFunc("POST /api/comments", app.AuthMiddleware(app.Handlers.HandleComments))
+	mux.HandleFunc("POST /api/interactions", app.AuthMiddleware(app.Handlers.HandleInteraction))
+	mux.HandleFunc("GET /ws", app.AuthMiddleware(app.Handlers.HandleWebSocket))
+	mux.HandleFunc("POST /api/messages", app.AuthMiddleware(app.Handlers.FetchMessages))
+	mux.HandleFunc("GET /api/post/details", app.AuthMiddleware(app.Handlers.HandlePostDetails))
 
 	return mux
 }
