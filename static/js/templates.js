@@ -70,24 +70,27 @@ export const headerTemplate = (username) => `
     </div>
   `;
 export const leftBar = (categories) => `
-      <div class="sidebar-left">
-          <div class="posts-section">
-            <h3>Posts</h3>
+    <div class="sidebar-left">
+        <div class="posts-section">
+            <h2>Posts</h2>
             <ul>
-              <li><a href="#" class="active">All Posts</a></li>
-              <li><a href="#">Created Posts</a></li>
-              <li><a href="#">Liked Posts</a></li>
+                <li><a href="#" class="filter-link active" data-filter="all">All Posts</a></li>
+                <li><a href="#" class="filter-link" data-filter="created">Created Posts</a></li>
+                <li><a href="#" class="filter-link" data-filter="liked">Liked Posts</a></li>
             </ul>
-          </div>
-          <div class="categories-section">
-            <h3>Categories</h3>
-            <ul id="category">
-              ${categories
-                .map((category) => `<li><a href="#">${category.name}</a></li>`)
-                .join("")}
-            </ul>
-          </div>
         </div>
+        <div class="categories-section">
+            <h2>Categories</h2>
+            <ul id="category">
+                ${categories
+                  .map(
+                    (category) =>
+                      `<li><a href="#" class="filter-link" data-filter="category-${category.name}">${category.name}</a></li>`
+                  )
+                  .join("")}
+            </ul>
+        </div>
+    </div>
 `;
 
 export const allposts = (posts) => `
@@ -193,15 +196,23 @@ export const singlepost = (post) => `
               <button class="action-button upvote-btn ${
                 post.is_liked ? "active" : ""
               }" aria-label="Upvote" data-post-id="${post.post_id}">
-                  <i class="fa-solid fa-thumbs-up"></i><span>${post.likes_count}</span>
+                  <i class="fa-solid fa-thumbs-up"></i><span>${
+                    post.likes_count
+                  }</span>
               </button>
               <button class="action-button downvote-btn ${
                 post.is_disliked ? "active" : ""
               }" aria-label="Downvote" data-post-id="${post.post_id}">
-                  <i class="fa-solid fa-thumbs-down"></i><span>${post.dislikes_count}</span>
+                  <i class="fa-solid fa-thumbs-down"></i><span>${
+                    post.dislikes_count
+                  }</span>
               </button>
-              <button class="action-button comment-btn" data-post-id="${post.post_id}">
-                  <i class="fa-regular fa-comment"></i><span>${post.comments_count}</span>
+              <button class="action-button comment-btn" data-post-id="${
+                post.post_id
+              }">
+                  <i class="fa-regular fa-comment"></i><span>${
+                    post.comments_count
+                  }</span>
               </button>
             </footer>
           </article>
@@ -210,7 +221,7 @@ export const singlepost = (post) => `
   <div class="comments-section">
     <!-- Add Comment Form -->
     <div class="add-comment">
-      <textarea placeholder="Add a comment..." rows="3"></textarea>
+      <textarea placeholder="Join the conversation ..." rows="3"></textarea>
       <button class="btn submit-btn" id="submitComment" data-post-id="${
         post.post_id
       }">Submit</button>
@@ -239,18 +250,26 @@ const renderComments = (comments) => {
         <footer class="post-actions">
           <button class="action-button upvote-btn ${
             comment.is_liked ? "active" : ""
-            }" aria-label="Upvote" data-post-id="${comment.comment_id}">
-              <i class="fa-solid fa-thumbs-up"></i><span>${comment.likes_count}</span>
+          }" aria-label="Upvote" data-post-id="${comment.comment_id}">
+              <i class="fa-solid fa-thumbs-up"></i><span>${
+                comment.likes_count
+              }</span>
           </button>
 
           <button class="action-button downvote-btn ${
             comment.is_disliked ? "active" : ""
-            }" aria-label="Downvote" data-post-id="${comment.comment_id}">
-            <i class="fa-solid fa-thumbs-down"></i><span>${comment.dislikes_count}</span>
+          }" aria-label="Downvote" data-post-id="${comment.comment_id}">
+            <i class="fa-solid fa-thumbs-down"></i><span>${
+              comment.dislikes_count
+            }</span>
           </button>
                      
-          <button class="action-button comment-btn" data-post-id="${comment.comment_id}">
-            <i class="fa-regular fa-comment"></i><span>${comment.comments_count}</span>
+          <button class="action-button comment-btn" data-post-id="${
+            comment.comment_id
+          }">
+            <i class="fa-regular fa-comment"></i><span>${
+              comment.comments_count
+            }</span>
           </button>
         </footer>
 
