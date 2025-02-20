@@ -5,7 +5,6 @@ import {
   headerTemplate,
   loggedInTemplate,
   leftBar,
-  addMessage,
   startchat,
 } from "./templates.js";
 import { Categories, getUserData, Users, Messages } from "./states.js";
@@ -296,10 +295,11 @@ const rightBar = (users, username) => `
 window.Chat = async function (username, id) {
   console.log(`Starting chat with ${username}`);
   const mainSection = document.getElementById("main");
+  const userData = localStorage.getItem("userData");
+  const Data = JSON.parse(userData);
   mainSection.innerHTML = startchat(username);
   let page = 1;
   let isLoading = false; // Flag to prevent multiple fetches
-  // console.log(data)
   Reciver = [username, id];
   await fetchMessages();
   await displayMessages(page);
@@ -327,6 +327,7 @@ window.Chat = async function (username, id) {
 };
 
 function sendTyping() {
+  console.log("send typing")
   const data = {
     senderId: Sender[1],
     sendername: Sender[0],
@@ -348,6 +349,7 @@ function displaytyping() {
 }
 
 function typingonlist(userId) {
+  console.log("receive typing")
   const list = document.getElementById(userId);
   if (list) {
     list.style.color = "rgb(225, 236, 229)"; // Green for online
@@ -412,13 +414,20 @@ async function displayMessages(page) {
   const start = (page - 1) * 10;
   const end = start + 10;
   const messages = Messages.slice(start, end);
+
   // Add messages to the chat
   messages.map((message) =>
     addMessage(message.sender_username, message.message, message.timestamp)
   );
 
   // Restore the scroll position to maintain the user's view
-  chatMessages.scrollTop = chatMessages.scrollHeight - scrollHeightBefore;
+  if (page > 1) {
+    const scrollHeightAfter = chatMessages.scrollHeight;
+    chatMessages.scrollTop = scrollHeightAfter - scrollHeightBefore;
+  } else {
+    // Scroll to the bottom if it's the first page
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
 }
 
 function showNotification(senderName, message, id) {
@@ -440,4 +449,72 @@ function showNotification(senderName, message, id) {
   setTimeout(() => {
     notification.remove();
   }, 5000);
+}
+
+function addMessage(sender, message, time, single = false) {
+  const chatMessages = document.getElementById("chat-messages");
+  if (!chatMessages) return;
+
+  const messageDiv = document.createElement("div");
+  messageDiv.classList.add("message");
+
+  if (time === undefined) {
+    time = new Date().getTime();
+  }
+
+  // Add message content
+  messageDiv.innerHTML = `
+    <div>
+      <span class="sender">${sender}</span>
+      <span class="time">${formatTimestamp(time)}</span>
+    </div>
+    <div class="content">${message}</div>
+  `;
+
+  // Append the message to the chat
+  chatMessages.appendChild(messageDiv);
+
+  // Scroll to the bottom if it's a new message
+  // if (single !== true) {
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  // }
+}
+
+function formatTimestamp(timestamp) {
+  const date = new Date(timestamp);
+  const now = new Date();
+  const diffInMinutes = Math.floor((now - date) / (1000 * 60));
+  const diffInDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
+
+  // Format time as "09:40 AM"
+  const formattedTime = date.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  });
+
+  // If message is from today
+  if (diffInDays === 0) {
+    if (diffInMinutes < 60) {
+      // Show "X minutes ago" for messages less than an hour old
+      return diffInMinutes <= 1 ? "just now" : `${diffInMinutes} minutes ago`;
+    }
+    return `today at ${formattedTime}`;
+  }
+
+  // If message is from yesterday
+  if (diffInDays === 1) {
+    return `yesterday at ${formattedTime}`;
+  }
+
+  // For older messages, show full date
+  const formattedDate = date
+    .toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    })
+    .replace(/\//g, "-");
+
+  return `${formattedDate} at ${formattedTime}`;
 }
