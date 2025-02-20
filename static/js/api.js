@@ -29,8 +29,7 @@ export async function LoginApi(event) {
     });
     if (response.success) {
       localStorage.setItem("userData", JSON.stringify(response.data));
-      render(loggedInTemplate);
-      setTimeout(Homepage, 2000);
+      setTimeout(Homepage, 100);
     } else {
       console.log(response.message);
       alert(response.message);
