@@ -59,7 +59,7 @@ body {
   font-size: 16px;
   transition: color 0.2s ease;
 }
-.action-button:hover{
+.action-button:hover {
   color: grey;
   opacity: 0.8;
 }
@@ -177,18 +177,20 @@ body {
   border-radius: 5px;
   color: white;
 }
+.categories-section {
+  margin-top: 30px;
+}
 
 /* Sidebar Styles */
 .sidebar-left,
 .sidebar-right {
   background-color: rgba(255, 255, 255, 0.1);
-  padding: 1rem;
+  padding: 24px;
   border-radius: 7px;
 }
 
-.sidebar-left h3,
+.sidebar-left h2,
 .sidebar-right h3 {
-  font-size: 1.2rem;
   margin-bottom: 1rem;
   color: white;
 }
@@ -202,21 +204,28 @@ body {
 .sidebar-left ul li,
 .sidebar-right ul li {
   margin: 0.5rem 0;
+  margin-bottom: 10px;
 }
-
-.sidebar-left ul li a {
-  color: white;
+.filter-link {
+  display: block;
+  padding: 8px 12px;
+  border: 1px solid #999;
+  border-radius: 4px;
   text-decoration: none;
-  transition: color 0.3s ease;
+  color: white;
+  transition: all 0.3s ease;
 }
 
-.sidebar-left ul li a:hover {
-  color: rgb(56, 189, 149);
+.filter-link:hover {
+  background-color:#BDBDBD;
+  border-color: #999;
+  color: #000;
 }
 
-.sidebar-left ul li a.active {
-  color: rgb(56, 189, 149);
-  font-weight: bold;
+.filter-link.active {
+  background-color: #007bff;
+  color: white;
+  border-color: #0056b3;
 }
 
 /* Main Content Styles */
