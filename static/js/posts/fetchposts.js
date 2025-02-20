@@ -7,7 +7,12 @@ export async function fetchPosts() {
       },
       credentials: "include", // to include cookies for auth
     });
-
+    if (response.status === 401) {
+      localStorage.removeItem("userData");
+      localStorage.clear();
+      window.location.href = "/";
+      return;
+    }
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -27,6 +32,12 @@ export async function fetchPostDetails(postId) {
     headers: { "Content-Type": "application/json" },
     credentials: "include",
   });
+  if (response.status === 401) {
+    localStorage.removeItem("userData");
+    localStorage.clear();
+    window.location.href = "/";
+    return;
+  }
 
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);

@@ -137,7 +137,8 @@ async function logout() {
       method: "POST",
       credentials: "include",
     });
-    if (response.ok) {
+
+    if (response.ok || response.status === 401) {
       localStorage.removeItem("userData");
       localStorage.clear();
       window.location.href = "/";
@@ -155,6 +156,12 @@ export async function fetchCategories() {
       method: "GET",
       credentials: "include",
     });
+    if (response.status === 401) {
+      localStorage.removeItem("userData");
+      localStorage.clear();
+      window.location.href = "/";
+      return;
+    }
     if (response.ok) {
       const responseData = await response.json();
 
@@ -175,6 +182,12 @@ export async function fetchUsers(user) {
       credentials: "include",
       body: JSON.stringify({ username: user }),
     });
+    if (response.status === 401) {
+      localStorage.removeItem("userData");
+      localStorage.clear();
+      window.location.href = "/";
+      return;
+    }
 
     if (response.ok) {
       const responseData = await response.json();
@@ -219,10 +232,14 @@ async function startSocket() {
         addMessage(Reciver[0], data.message);
       }
       newusers(Data);
-      showNotification(data.sendername,`New Message from ${data.sendername}`, data.senderId);
+      showNotification(
+        data.sendername,
+        `New Message from ${data.sendername}`,
+        data.senderId
+      );
     } else if (data.userId) {
       if (data.userId !== Sender[1] && data.online === true) {
-        showNotification(data.name,`${data.name} is online`, data.userId);
+        showNotification(data.name, `${data.name} is online`, data.userId);
         newusers(Data);
       }
       changestatus(data.userId, data.online);
@@ -234,12 +251,12 @@ async function newusers(Data) {
   // const old = Users;
   await fetchUsers(Data.userID);
   // if (Users !== old) {
-    const content = document.getElementById("body");
-    const user = document.getElementById("userlist");
-    if (user) {
-      user.remove();
-    }
-    content.innerHTML += rightBar(Users, Data.username);
+  const content = document.getElementById("body");
+  const user = document.getElementById("userlist");
+  if (user) {
+    user.remove();
+  }
+  content.innerHTML += rightBar(Users, Data.username);
   // }
 }
 
@@ -327,7 +344,7 @@ window.Chat = async function (username, id) {
 };
 
 function sendTyping() {
-  console.log("send typing")
+  console.log("send typing");
   const data = {
     senderId: Sender[1],
     sendername: Sender[0],
@@ -349,7 +366,7 @@ function displaytyping() {
 }
 
 function typingonlist(userId) {
-  console.log("receive typing")
+  console.log("receive typing");
   const list = document.getElementById(userId);
   if (list) {
     list.style.color = "rgb(225, 236, 229)"; // Green for online
@@ -378,7 +395,7 @@ function sendMessage() {
   }
   const userData = localStorage.getItem("userData");
   const Data = JSON.parse(userData);
-  newusers(Data)
+  newusers(Data);
 }
 
 async function fetchMessages() {
@@ -391,6 +408,12 @@ async function fetchMessages() {
       },
       body: JSON.stringify({ senderId: Sender[1], receiverId: Reciver[1] }),
     });
+    if (response.status === 401) {
+      localStorage.removeItem("userData");
+      localStorage.clear();
+      window.location.href = "/";
+      return;
+    }
     if (response.ok) {
       let responseData = await response.json();
 
@@ -476,7 +499,7 @@ function addMessage(sender, message, time, single = false) {
 
   // Scroll to the bottom if it's a new message
   // if (single !== true) {
-    chatMessages.scrollTop = chatMessages.scrollHeight;
+  chatMessages.scrollTop = chatMessages.scrollHeight;
   // }
 }
 

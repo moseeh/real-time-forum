@@ -28,6 +28,12 @@ export async function submitVote(postId, interactionType) {
       interaction_type: interactionType,
     }),
   });
+  if (response.status === 401) {
+    localStorage.removeItem("userData");
+    localStorage.clear();
+    window.location.href = "/";
+    return;
+  }
 
   if (!response.ok) {
     throw new Error("Failed to update interaction");

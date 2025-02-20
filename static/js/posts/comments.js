@@ -60,6 +60,12 @@ export async function submitComment(postId, comment) {
       comment: comment,
     }),
   });
+  if (response.status === 401) {
+    localStorage.removeItem("userData");
+    localStorage.clear();
+    window.location.href = "/";
+    return;
+  }
 
   if (!response.ok) {
     throw new Error("Failed to submit comment");

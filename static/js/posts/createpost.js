@@ -16,12 +16,18 @@ export function displayCreate() {
         body: formData,
         credentials: "include",
       });
+      if (response.status === 401) {
+        localStorage.removeItem("userData");
+        localStorage.clear();
+        window.location.href = "/";
+        return;
+      }
 
       if (response.ok) {
         const result = await response.json();
         console.log("Post created successfully:", result);
-        console.log(result.post)
-        Posts.unshift(result.post)
+        console.log(result.post);
+        Posts.unshift(result.post);
         mainSection.innerHTML = allposts(Posts);
       } else {
         const errorText = await response.text();
