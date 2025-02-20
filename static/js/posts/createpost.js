@@ -14,6 +14,7 @@ export function displayCreate() {
       const response = await fetch(form.action, {
         method: form.method,
         body: formData,
+        credentials: "include",
       });
 
       if (response.ok) {

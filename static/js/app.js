@@ -87,6 +87,7 @@ export function signup() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ username: user }),
+        credentials: "include",
       });
 
       if (!response.ok) {
@@ -134,6 +135,7 @@ export function signup() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ email: mail }),
+        credentials: "include",
       });
 
       if (!response.ok) {
