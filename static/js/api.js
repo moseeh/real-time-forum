@@ -14,6 +14,7 @@ import { displayPosts } from "./posts/posts.js";
 let Sender = [];
 let Reciver = [];
 let Socket;
+let UserData;
 
 export async function LoginApi(event) {
   if (event) event.preventDefault();
@@ -106,8 +107,8 @@ export async function Homepage() {
     authdiv.remove();
   }
   await fetchCategories();
+  UserData = getUserData();
   await startSocket();
-  const UserData = getUserData();
   await fetchUsers(UserData.userID);
   const header = document.querySelector("header.card");
   if (header) {
@@ -205,10 +206,9 @@ export async function fetchUsers(user) {
 async function startSocket() {
   Socket = new WebSocket(`ws://${window.location.host}/ws`);
 
-  const userData = localStorage.getItem("userData");
-  const Data = JSON.parse(userData);
+  // const Data = UserData
   // console.log(data)
-  Sender = [Data.username, Data.userID];
+  Sender = [UserData.username, UserData.userID];
   Socket.onopen = () => {
     const data = {
       senderId: Sender[1],
@@ -231,7 +231,7 @@ async function startSocket() {
       if (data.senderId === Reciver[1]) {
         addMessage(Reciver[0], data.message);
       }
-      newusers(Data);
+      newusers();
       showNotification(
         data.sendername,
         `New Message from ${data.sendername}`,
@@ -240,24 +240,18 @@ async function startSocket() {
     } else if (data.userId) {
       if (data.userId !== Sender[1] && data.online === true) {
         showNotification(data.name, `${data.name} is online`, data.userId);
-        newusers(Data);
+        newusers();
       }
       changestatus(data.userId, data.online);
     }
   };
 }
 
-async function newusers(Data) {
-  // const old = Users;
-  await fetchUsers(Data.userID);
-  // if (Users !== old) {
-  const content = document.getElementById("body");
+async function newusers() {
+  await fetchUsers(UserData.userID);
   const user = document.getElementById("userlist");
-  if (user) {
-    user.remove();
-  }
-  content.innerHTML += rightBar(Users, Data.username);
-  // }
+  user.innerHTML = reorder(Users, UserData.username)
+  
 }
 
 function changestatus(id, online) {
@@ -309,11 +303,43 @@ const rightBar = (users, username) => `
   </div>
 `;
 
+const reorder = (users, username) => `
+    <h3>All Users</h3>
+    <ul id="users">
+      ${users
+        .map((user) => {
+          // Only create a list item if the user's name is not the same as the current username
+          if (user.name !== username) {
+            // Determine the color based on the user's online status
+            const statusColor = user.online
+              ? "rgb(0, 255, 0)"
+              : "rgb(255, 255, 255)";
+            return `
+              <li>
+                <a href="#" id="${
+                  user.id
+                }" style="color: ${statusColor};" onclick="Chat('${
+              user.name
+            }','${user.id}')">
+                  ${user.name} ${user.online ? "(Online)" : "(Offline)"}
+                </a>
+                <span id="typing-${
+                  user.id
+                }" class="typing-indicator" style="display: none;">
+                  <span class="typing-text">typing...</span>
+                  <span class="blinking-cursor">|</span>
+                </span>
+              </li>`;
+          }
+          return ""; // Skip this user
+        })
+        .join("")}
+    </ul>
+`
+
 window.Chat = async function (username, id) {
   console.log(`Starting chat with ${username}`);
   const mainSection = document.getElementById("main");
-  const userData = localStorage.getItem("userData");
-  const Data = JSON.parse(userData);
   mainSection.innerHTML = startchat(username);
   let page = 1;
   let isLoading = false; // Flag to prevent multiple fetches
@@ -393,9 +419,8 @@ function sendMessage() {
     addMessage(Sender[0], message); // Display the message locally
     messageInput.value = ""; // Clear input field
   }
-  const userData = localStorage.getItem("userData");
-  const Data = JSON.parse(userData);
-  newusers(Data);
+  
+  newusers()
 }
 
 async function fetchMessages() {
