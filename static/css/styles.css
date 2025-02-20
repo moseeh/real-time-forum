@@ -65,7 +65,7 @@ body {
 }
 /* Style for like button when active */
 .action-button.upvote-btn.active {
-  color: #4ade80; /* Green color for likes */
+  color: #007bff; /* Green color for likes */
 }
 
 /* Style for dislike button when active */
@@ -90,7 +90,7 @@ body {
 /* Header Styles */
 .card {
   background: black;
-  padding: 1rem;
+  padding: 0.5rem;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
@@ -98,16 +98,26 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 0 1rem;
 }
+.logo a {
+  text-decoration: none;
+}
 
 .logo h1 {
-  color: white;
-  font-size: 2rem;
+  color: #007bff;
+  font-family: "Poppins", sans-serif;
+  font-size: 3rem;
   text-shadow: 2px 2px 3px rgba(14, 48, 122, 0.5);
   letter-spacing: 1.5px;
+  transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+.logo h1:hover {
+  color: #0056b3; /* Darker blue */
+  text-shadow: 3px 3px 5px rgba(14, 48, 122, 0.7);
 }
 
 .user-menu {
@@ -129,7 +139,7 @@ body {
   cursor: pointer;
   font-size: 14px;
   transition: all 0.3s ease;
-  color: rgb(10, 9, 9);
+  color: white;
 }
 .post {
   transition: transform 0.3s ease;
@@ -141,19 +151,17 @@ body {
 }
 
 #create-post-btn {
-  background-color: rgb(56, 189, 149);
+  background-color: #007bff;
 }
 
 #create-post-btn:hover {
-  background-color: rgb(45, 158, 124);
+  background-color: #0056b3;
 }
-
 #logout-btn {
-  background-color: rgb(14, 48, 122);
+  background-color: #007bff;
 }
-
 #logout-btn:hover {
-  background-color: rgb(11, 38, 98);
+  background-color: #0056b3;
 }
 
 .authentication {
@@ -168,12 +176,13 @@ body {
 
 /* Container Layout */
 .container {
+  max-width: 1400px;
   display: grid;
   grid-template-columns: 1fr 2fr 1fr; /* Left, Middle, Right */
   gap: 1rem;
   background: black;
   margin: 2% auto;
-  padding: 1rem;
+  padding: 0.5rem;
   border-radius: 5px;
   color: white;
 }
@@ -217,7 +226,7 @@ body {
 }
 
 .filter-link:hover {
-  background-color:#BDBDBD;
+  background-color: #bdbdbd;
   border-color: #999;
   color: #000;
 }
