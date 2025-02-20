@@ -39,22 +39,35 @@ func (m *UserModel) DeleteSession(session_id string) error {
 	return err
 }
 
-func (m *UserModel) GetUserIdFromSession(sessionid string) (string, error) {
-	query := `SELECT user_id FROM SESSIONS WHERE session_id = ?;`
+func (m *UserModel) GetUserIdFromSession(sessionID string) (string, error) {
+	var userID string
+	query := `
+        SELECT user_id 
+        FROM SESSIONS 
+        WHERE session_id = ? 
+        AND expires_at > CURRENT_TIMESTAMP`
 
-	var user_id string
-
-	stmt, err := m.DB.Prepare(query)
-	if err != nil {
-		return "", nil
-	}
-	defer stmt.Close()
-	err = stmt.QueryRow(sessionid).Scan(&user_id)
+	err := m.DB.QueryRow(query, sessionID).Scan(&userID)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return "", ErrNoRecord
+			return "", fmt.Errorf("session not found")
 		}
 		return "", err
 	}
-	return user_id, nil
+	return userID, nil
+}
+
+func (m *UserModel) IsSessionValid(sessionID string) (bool, error) {
+	var count int
+	query := `
+        SELECT COUNT(*) 
+        FROM SESSIONS 
+        WHERE session_id = ? 
+        AND expires_at > CURRENT_TIMESTAMP`
+
+	err := m.DB.QueryRow(query, sessionID).Scan(&count)
+	if err != nil {
+		return false, err
+	}
+	return count > 0, nil
 }
