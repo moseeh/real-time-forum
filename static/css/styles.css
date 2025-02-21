@@ -226,6 +226,19 @@ body {
   margin: 0.5rem 0;
   margin-bottom: 10px;
 }
+.chat-link{
+  text-decoration: none;
+  display: flex;
+  border: 1px ;
+  border-radius: 4px;
+  align-content: baseline;
+  align-items: flex-end;
+  gap: 10px;
+}
+.user {
+  padding-bottom: 0.7em;
+  font-size: 15px;
+}
 .filter-link {
   display: block;
   padding: 8px 12px;
