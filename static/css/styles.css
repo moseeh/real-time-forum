@@ -178,7 +178,7 @@ body {
 .authentication {
   display: grid;
   grid-template-columns: 1fr 2fr;
-  background: linear-gradient(to bottom, rgb(6, 108, 100), rgb(14, 48, 122));
+  background: linear-gradient(to bottom, rgb(48, 15, 235), rgb(0, 34, 105));
   width: 800px;
   height: 500px;
   margin: 10% auto;
@@ -313,19 +313,19 @@ body {
 
 /* Style the select when opened (the dropdown) */
 .gender:focus {
-  border-color: rgb(6, 108, 100); /* Matches your gradient start color */
+  border-color: rgb(31, 44, 230); /* Matches your gradient start color */
   box-shadow: 0 0 3px rgba(6, 108, 100, 0.3);
 }
 
 /* Style for when hovering over options */
 .gender option:hover {
-  background-color: rgb(6, 108, 100);
+  background-color: rgb(20, 40, 219);
   color: white;
 }
 
 /* Style for when an option is checked/selected */
 .gender option:checked {
-  background-color: rgb(14, 48, 122); /* Matches your gradient end color */
+  background-color: #407cff; /* Matches your gradient end color */
   color: white;
 }
 .content-holder {
@@ -461,11 +461,11 @@ body {
   border: none;
   width: 250px;
   outline: none;
-  background-color: rgb(56, 189, 149);
+  background-color: rgb(8, 29, 212);
   cursor: pointer;
 }
 .signup-form-button:hover {
-  background-color: rgb(30, 150, 129); /* Example hover color change */
+  background-color: rgb(22, 18, 240); /* Example hover color change */
 }
 
 /*test ppost pafe*/
@@ -640,11 +640,11 @@ body {
 }
 
 #create-post-form .btn[type="submit"] {
-  background-color: rgb(56, 189, 149);
+  background-color: rgb(47, 11, 255);
 }
 
 #create-post-form .btn[type="submit"]:hover {
-  background-color: rgb(45, 158, 124);
+  background-color: rgba(2, 0, 124, 0.473);
 }
 
 #create-post-form #closeModal {
@@ -662,7 +662,7 @@ body {
   padding: 1rem;
   max-width: 600px;
   margin: 0 auto;
-  height: 400px;
+  height: 710px;
   display: flex;
   flex-direction: column;
 }
@@ -723,7 +723,7 @@ body {
 
 .message .sender {
   font-weight: bold;
-  color: rgb(56, 189, 149);
+  color: rgb(255, 255, 255);
 }
 
 .message .time {
@@ -760,7 +760,7 @@ body {
 }
 
 #send-btn {
-  background-color: rgb(56, 189, 149);
+  background-color: rgb(75, 65, 221);
   color: white;
   border: none;
   border-radius: 7px;
@@ -770,7 +770,7 @@ body {
 }
 
 #send-btn:hover {
-  background-color: rgb(45, 158, 124);
+  background-color: rgb(50, 24, 199);
 }
 
 /* Notification Styles */
@@ -778,7 +778,7 @@ body {
   position: fixed;
   top: 20px;
   right: 20px;
-  background-color: rgba(56, 189, 149, 0.9); /* Teal with transparency */
+  background-color: rgba(41, 49, 170, 0.9); /* Teal with transparency */
   color: white;
   padding: 10px 20px;
   border-radius: 7px;
