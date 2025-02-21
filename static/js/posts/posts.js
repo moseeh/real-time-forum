@@ -1,4 +1,4 @@
-import { allposts, singlepost } from "../templates.js";
+import { allposts, singlepost, nullpost } from "../templates.js";
 import { fetchPosts, fetchPostDetails } from "./fetchposts.js";
 import { setupCommentModal } from "./comments.js";
 import { handleVoteClick } from "./likes.js";
@@ -89,5 +89,5 @@ async function handlePostClick(e, mainContent) {
 function handleError(error, message) {
   console.error(message, error);
   const content = document.getElementById("body");
-  content.innerHTML += `<div class="error">Error loading posts: ${error.message}</div>`;
+  content.innerHTML += nullpost()
 }

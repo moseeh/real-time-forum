@@ -93,7 +93,11 @@ export const leftBar = (categories) => `
         </div>
     </div>
 `;
-
+export const nullpost = () => `
+    <div class="main-content" id="main">
+    <h2>No posts found.</h2>
+    </div>
+`
 export const allposts = (posts) => `
    <div class="main-content" id="main">
     <h2>All Posts</h2>
