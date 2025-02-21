@@ -250,8 +250,7 @@ async function startSocket() {
 async function newusers() {
   await fetchUsers(UserData.userID);
   const user = document.getElementById("userlist");
-  user.innerHTML = reorder(Users, UserData.username)
-  
+  user.innerHTML = reorder(Users, UserData.username);
 }
 
 function changestatus(id, online) {
@@ -281,12 +280,15 @@ const rightBar = (users, username) => `
               : "rgb(255, 255, 255)";
             return `
               <li>
-                <a href="#" id="${
+                <a href="#" class="chat-link" id="${
                   user.id
                 }" style="color: ${statusColor};" onclick="Chat('${
               user.name
             }','${user.id}')">
-                  ${user.name} ${user.online ? "(Online)" : "(Offline)"}
+                 <img src="static/images/default-avatar.png" alt="author avatar" class="avatar">
+                  <span class="user">${user.name} ${
+              user.online ? "(Online)" : "(Offline)"
+            }</span>
                 </a>
                 <span id="typing-${
                   user.id
@@ -294,7 +296,8 @@ const rightBar = (users, username) => `
                   <span class="typing-text">typing...</span>
                   <span class="blinking-cursor">|</span>
                 </span>
-              </li>`;
+              </li>
+              <hr>`;
           }
           return ""; // Skip this user
         })
@@ -316,12 +319,15 @@ const reorder = (users, username) => `
               : "rgb(255, 255, 255)";
             return `
               <li>
-                <a href="#" id="${
+                <a href="#" class="chat-link" id="${
                   user.id
                 }" style="color: ${statusColor};" onclick="Chat('${
               user.name
             }','${user.id}')">
-                  ${user.name} ${user.online ? "(Online)" : "(Offline)"}
+                 <img src="static/images/default-avatar.png" alt="author avatar" class="avatar">
+                  <span class="user">${user.name} ${
+              user.online ? "(Online)" : "(Offline)"
+            }</span>
                 </a>
                 <span id="typing-${
                   user.id
@@ -329,13 +335,14 @@ const reorder = (users, username) => `
                   <span class="typing-text">typing...</span>
                   <span class="blinking-cursor">|</span>
                 </span>
-              </li>`;
+              </li>
+              <hr>`;
           }
           return ""; // Skip this user
         })
         .join("")}
     </ul>
-`
+`;
 
 window.Chat = async function (username, id) {
   console.log(`Starting chat with ${username}`);
@@ -419,8 +426,8 @@ function sendMessage() {
     addMessage(Sender[0], message); // Display the message locally
     messageInput.value = ""; // Clear input field
   }
-  
-  newusers()
+
+  newusers();
 }
 
 async function fetchMessages() {
