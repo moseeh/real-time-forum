@@ -47,6 +47,17 @@ body {
   line-height: 1.6;
   margin: 0 0 16px 0;
 }
+
+.post-image {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.post-image img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
 .action-button {
   display: flex;
   align-items: center;
