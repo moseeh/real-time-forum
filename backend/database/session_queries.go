@@ -1,6 +1,7 @@
 package database
 
 import (
+	"database/sql"
 	"fmt"
 	"time"
 )
@@ -30,4 +31,43 @@ func (m *UserModel) CreateSession(session_id, user_id string) error {
 		return fmt.Errorf("failed to commit transaction: %v", err)
 	}
 	return nil
+}
+
+func (m *UserModel) DeleteSession(session_id string) error {
+	query := `DELETE FROM SESSIONS WHERE session_id = ?;`
+	_, err := m.DB.Exec(query, session_id)
+	return err
+}
+
+func (m *UserModel) GetUserIdFromSession(sessionID string) (string, error) {
+	var userID string
+	query := `
+        SELECT user_id 
+        FROM SESSIONS 
+        WHERE session_id = ? 
+        AND expires_at > CURRENT_TIMESTAMP`
+
+	err := m.DB.QueryRow(query, sessionID).Scan(&userID)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return "", fmt.Errorf("session not found")
+		}
+		return "", err
+	}
+	return userID, nil
+}
+
+func (m *UserModel) IsSessionValid(sessionID string) (bool, error) {
+	var count int
+	query := `
+        SELECT COUNT(*) 
+        FROM SESSIONS 
+        WHERE session_id = ? 
+        AND expires_at > CURRENT_TIMESTAMP`
+
+	err := m.DB.QueryRow(query, sessionID).Scan(&count)
+	if err != nil {
+		return false, err
+	}
+	return count > 0, nil
 }

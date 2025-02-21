@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
+	"strings"
 
 	"real-time-forum/backend/utils"
 )
@@ -59,7 +60,7 @@ func (h *Handler) SignupHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.Users.InsertUser(userID, req.FirstName, req.LastName, req.Username, req.Email, req.Gender, hashedPassword, req.Age)
+	err = h.Users.InsertUser(userID, req.FirstName, req.LastName, strings.ToLower(strings.TrimSpace(req.Username)), req.Email, req.Gender, hashedPassword, req.Age)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(ApiResponse{

@@ -1,9 +1,12 @@
+import { formatDate } from "./time.js";
+
 export const loginTemplate = () => `
   <div class="login-form-container">
     <h1>Login</h1>
     <input type="text" id="login-username" placeholder="Username or Email" class="input-field" />
     <br /><br />
     <input type="password" id="login-password" placeholder="Password" class="input-field" />
+    <div id="logincheck" style="display:none;color:red;"></div>
     <br /><br />
     <button id="login-form-button" class="login-form-button" type="button">Login</button>
   </div>
@@ -12,13 +15,17 @@ export const loginTemplate = () => `
 export const signupTemplate = () => `
   <div class="signup-form-container">
     <h1>Sign Up</h1>
-    <input type="text" id="first-name" placeholder="First Name" class="input-field" />
+    <input type="text" id="first-name" placeholder="First Name" class="input-field" required />
+    <div id="firstcheck" style="display:none;color:red;"></div>
     <br /><br />
-    <input type="text" id="second-name" placeholder="Second Name" class="input-field" />
+    <input type="text" id="second-name" placeholder="Second Name" class="input-field" required />
+    <div id="secondcheck" style="display:none;color:red;"></div>
     <br /><br />
-    <input type="text" id="signup-username" placeholder="Username" class="input-field" />
+    <input type="text" id="signup-username" placeholder="Username" class="input-field" required />
+    <div id="nameavailable" style="display:none;color:red;"></div>
     <br /><br />
-    <input type="email" id="signup-email" placeholder="Email" class="input-field" />
+    <input type="email" id="signup-email" placeholder="Email" class="input-field" required />
+    <div id="emailavailable" style="display:none;color:red;"></div>
     <br /><br />
     <div class="gender-container">
       <label for="gender" class="gender-label">Gender:</label>
@@ -29,11 +36,12 @@ export const signupTemplate = () => `
     </div>
     <br /><br />
     <!-- Age Input -->
-    <input type="number" id="age" class="input-field" placeholder="Enter age" />
+    <input type="number" id="age" class="input-field" placeholder="Enter age" required />
     <br /><br />
-    <input type="password" id="signup-password" placeholder="Password" class="input-field" />
+    <input type="password" id="signup-password" placeholder="Password" class="input-field" required/>
+    <div id="passwordcheck" style="display:none;color:red;"></div>
     <br /><br />
-    <input type="password" id="confirm-password" placeholder="Confirm Password" class="input-field" />
+    <input type="password" id="confirm-password" placeholder="Confirm Password" class="input-field" required/>
     <br /><br />
     <button id="signup-form-button" class="signup-form-button" type="button">Sign Up</button>
   </div>
@@ -55,6 +63,7 @@ export const headerTemplate = (username) => `
       <div class="header-actions">
         <div class="user-menu">
           <span class="username">Welcome, ${username}</span>
+          <img src="static/images/default-avatar.png" alt="author avatar" class="avatar">
           <button class="btn" id="create-post-btn">Create Post</button>
           <button class="btn" id="logout-btn">Logout</button>
         </div>
@@ -62,76 +71,275 @@ export const headerTemplate = (username) => `
     </div>
   `;
 export const leftBar = (categories) => `
-      <div class="sidebar-left">
-          <div class="posts-section">
-            <h3>Posts</h3>
+    <div class="sidebar-left">
+        <div class="posts-section">
+            <h2>Posts</h2>
             <ul>
-              <li><a href="#" class="active">All Posts</a></li>
-              <li><a href="#">Created Posts</a></li>
-              <li><a href="#">Liked Posts</a></li>
+                <li><a href="#" class="filter-link active" data-filter="all">All Posts</a></li>
+                <li><a href="#" class="filter-link" data-filter="created">Created Posts</a></li>
+                <li><a href="#" class="filter-link" data-filter="liked">Liked Posts</a></li>
             </ul>
-          </div>
-          <div class="categories-section">
-            <h3>Categories</h3>
+        </div>
+        <div class="categories-section">
+            <h2>Categories</h2>
             <ul id="category">
-              ${categories.map((category) => `<li><a href="#">${category}</a></li>`).join("")}
+                ${categories
+                  .map(
+                    (category) =>
+                      `<li><a href="#" class="filter-link" data-filter="category-${category.name}">${category.name}</a></li>`
+                  )
+                  .join("")}
             </ul>
-          </div>
         </div>
-`;
-
-export const rightBar = (users) => `
-        <div class="sidebar-right">
-          <h3>All Users</h3>
-          <ul id="users">
-            ${users.map((user) => `<li><a href="#">${user}</a></li>`).join("")}
-          </ul>
-        </div>
+    </div>
 `;
 
 export const allposts = (posts) => `
-        <div class="main-content">
-          <h2>All Posts</h2>
-        ${posts.map((post) => `<div class="post">
-          <h3>${post.title}</h3>
-          <p>${post.content}</p>
-          <div class="post-actions">
-            <span class="author">Author: ${post.author}</span>
-            <span class="likes">${post.likes} Likes</span>
-            <button class="btn">Like</button>
-            <span class="dislikes">${post.dislikes} Dislikes</span>
-            <button class="btn">Dislikes</button>
-          </div>
-        </div>`).join("")}
-        </div>
+   <div class="main-content" id="main">
+    <h2>All Posts</h2>
+    ${
+      posts?.length
+        ? posts
+            .map(
+              ({
+                title,
+                content,
+                username,
+                likes_count,
+                dislikes_count,
+                post_id,
+                comments_count,
+                categories,
+                created_at,
+                is_liked,
+                is_disliked,
+              }) => `
+               <article class="post" data-post-id="${post_id}">
+                <div class="post-header">
+                 <img src="static/images/default-avatar.png" alt="author avatar" class="avatar">
+                  <div class="author-info">
+                    <p class="author-name">${username}</p>
+                    <p class="post-date">${formatDate(created_at)}</p>
+                  </div>
+                </div>
+                <h2 class="post-title">${title}</h2> 
+                <p class="post-text">${content}</p>
+                  <div class="categories">
+                    ${
+                      categories?.length
+                        ? categories
+                            .map(
+                              (category) =>
+                                `<span class="category">${category.name}</span>`
+                            )
+                            .join(" ")
+                        : ""
+                    }
+                  </div>
+                  <footer class="post-actions">
+                      <button class="action-button upvote-btn ${
+                        is_liked ? "active" : ""
+                      }" aria-label="Upvote" data-post-id="${post_id}">
+                        <i class="fa-solid fa-thumbs-up"></i><span>${likes_count}</span>
+                      </button>
+                      <button class="action-button downvote-btn ${
+                        is_disliked ? "active" : ""
+                      }" aria-label="Downvote" data-post-id="${post_id}">
+                        <i class="fa-solid fa-thumbs-down"></i><span>${dislikes_count}</span>
+                      </button>
+                      <button class="action-button comment-btn" data-post-id="${post_id}">
+                        <i class="fa-regular fa-comment"></i><span>${comments_count}</span>
+                      </button>
+                  </footer>
+              </article>`
+            )
+            .join("")
+        : '<p class="empty-state">No posts available</p>'
+    }
+  </div>
+
+  <div class="modal-overlay" id="commentModal">
+    <div class="modal">
+      <h3>Add Comment</h3>
+      <textarea id="commentText" placeholder="Type your comment here..."></textarea>
+      <div class="modal-buttons">
+        <button class="btn cancel-btn" id="cancelComment">Cancel</button>
+        <button class="btn submit-btn" id="submitComment">Submit</button>
+      </div>
+    </div>
+  </div>
 `;
 
 export const singlepost = (post) => `
-          <div class="post">
-            <h4>${post.title}</h4>
-            <p>${post.content}</p>
-            <span class="post-author">${post.author} at ${post.createdat}</span><br>
-            <div class="post-actions">
-              <span class="likes">${post.likes} Likes</span>
-              <button class="btn like-btn">Like</button>
-              <span class="dislikes">${post.dislikes} Dislikes</span>
-              <button class="btn dislike-btn">Dislike</button>
+          <article class="post" data-post-id="${post.post_id}">
+            <div class="post-header">
+              <img src="static/images/default-avatar.png" alt="author avatar" class="avatar">
+              <div class="author-info">
+                <p class="author-name">${post.username}</p>
+                <p class="post-date">${formatDate(post.created_at)}</p>
+              </div>
             </div>
-          </div>
-        
-          <!-- Comments Section -->
-          <div class="comments-section">
-            <h3>Comments</h3>
-            ${post.contents.map((comment) => `<div class="comment">
-              <span class="comment-author">${comment.author}</span>
-              <p>${comment.content}</p>
-              <span class="comment-date">${comment.createdat}</span>
-            </div>`).join("")}
-        
-            <!-- Add Comment Form -->
-            <div class="add-comment">
-              <textarea placeholder="Add a comment..." rows="3"></textarea>
-              <button class="btn comment-btn">Submit</button>
+            <h2 class="post-title">${post.title}</h2> 
+            <p class="post-text">${post.content}</p>
+            <div class="categories">
+              ${
+                post.categories?.length
+                  ? post.categories
+                      .map(
+                        (category) =>
+                          `<span class="category">${category.name}</span>`
+                      )
+                      .join(" ")
+                  : ""
+              }
             </div>
-          </div>
+            <footer class="post-actions">
+              <button class="action-button upvote-btn ${
+                post.is_liked ? "active" : ""
+              }" aria-label="Upvote" data-post-id="${post.post_id}">
+                  <i class="fa-solid fa-thumbs-up"></i><span>${
+                    post.likes_count
+                  }</span>
+              </button>
+              <button class="action-button downvote-btn ${
+                post.is_disliked ? "active" : ""
+              }" aria-label="Downvote" data-post-id="${post.post_id}">
+                  <i class="fa-solid fa-thumbs-down"></i><span>${
+                    post.dislikes_count
+                  }</span>
+              </button>
+              <button class="action-button comment-btn" data-post-id="${
+                post.post_id
+              }">
+                  <i class="fa-regular fa-comment"></i><span>${
+                    post.comments_count
+                  }</span>
+              </button>
+            </footer>
+          </article>
+
+  <!-- Comments Section -->
+  <div class="comments-section">
+    <!-- Add Comment Form -->
+    <div class="add-comment">
+      <textarea placeholder="Join the conversation ..." rows="3"></textarea>
+      <button class="btn submit-btn" id="submitComment" data-post-id="${
+        post.post_id
+      }">Submit</button>
+    </div>
+    <h3>Comments (${post.comments_count})</h3>
+    ${renderComments(post.comments)}
+  </div>
 `;
+const renderComments = (comments) => {
+  if (!comments || comments.length === 0) {
+    return '<p class="no-comments">No comments yet. Be the first to comment!</p>';
+  }
+
+  return comments
+    .map(
+      (comment) => `
+    <article class="post" data-post-id="${comment.comment_id}">
+        <div class="post-header">
+         <img src="static/images/default-avatar.png" alt="author avatar" class="avatar">
+         <div class="author-info">
+            <p class="author-name">${comment.username}</p>
+            <p class="post-date">${formatDate(comment.created_at)}</p>
+          </div>
+        </div>
+        <p class="post-text">${comment.text}</p>
+        <footer class="post-actions">
+          <button class="action-button upvote-btn ${
+            comment.is_liked ? "active" : ""
+          }" aria-label="Upvote" data-post-id="${comment.comment_id}">
+              <i class="fa-solid fa-thumbs-up"></i><span>${
+                comment.likes_count
+              }</span>
+          </button>
+
+          <button class="action-button downvote-btn ${
+            comment.is_disliked ? "active" : ""
+          }" aria-label="Downvote" data-post-id="${comment.comment_id}">
+            <i class="fa-solid fa-thumbs-down"></i><span>${
+              comment.dislikes_count
+            }</span>
+          </button>
+                     
+          <button class="action-button comment-btn" data-post-id="${
+            comment.comment_id
+          }">
+            <i class="fa-regular fa-comment"></i><span>${
+              comment.comments_count
+            }</span>
+          </button>
+        </footer>
+
+      ${
+        comment.Replies && comment.Replies.length > 0
+          ? `<div class="replies">
+          ${renderComments(comment.Replies)}
+        </div>`
+          : ""
+      }
+    </article>
+  `
+    )
+    .join("");
+};
+export const createpost = (categories) => `
+    <form id="create-post-form" action="/posts/create" method="POST" enctype="multipart/form-data">
+      <input type="text" name="title" placeholder="Post Title" required />
+      <textarea name="content" placeholder="Post Content" required></textarea>
+
+      <div class="categories-section">
+        ${
+          categories.length > 0
+            ? `
+          <label>Select Categories (Choose one or more):</label>
+          <div class="categories-grid">
+            ${categories
+              .map(
+                (category) => `
+              <div class="category-item">
+                <input type="checkbox" name="categories[]" value="${category.id}" id="category-${category.id}" class="category-checkbox" />
+                <label for="category-${category.id}">${category.name}</label>
+              </div>
+            `
+              )
+              .join("")}
+          </div>
+        `
+            : "<p>No categories available</p>"
+        }
+      </div>
+
+      <label for="image-upload">Upload Image (Max: 20MB)</label>
+      <input type="file" id="image-upload" name="image" accept="image/*" />
+
+      <button type="submit" id="submitBtn" class="btn">Submit Post</button><br>
+      <button type="button" id="closeModal" class="btn">Close</button>
+    </form>
+  `;
+
+export const startchat = (username) => `
+  <div class="chat-container">
+    <div class="chathead">
+      <h2>Chat with ${username}</h2><br /><br />
+      <div id="typing" class="typing-indicator">
+        <span class="typing-text">typing...</span>
+        <span class="blinking-cursor">|</span>
+      </div>
+    </div>
+    <!-- Chat Messages Display -->
+    <div class="chat-messages" id="chat-messages">
+      <!-- Messages will be dynamically added here -->
+    </div>
+
+    <!-- Typing Textarea -->
+    <div class="chat-input">
+      <textarea id="chat-textarea" placeholder="Type your message..."></textarea>
+      <button id="send-btn" class="btn">Send</button>
+    </div>
+  </div>
+`;
+

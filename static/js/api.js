@@ -1,7 +1,20 @@
 import { API_ENDPOINTS } from "./constants.js";
 import { login, signup } from "./app.js";
 import { render } from "./ui.js";
-import { loggedInTemplate } from "./templates.js";
+import {
+  headerTemplate,
+  loggedInTemplate,
+  leftBar,
+  startchat,
+} from "./templates.js";
+import { Categories, getUserData, Users, Messages } from "./states.js";
+import { displayCreate } from "./posts/createpost.js";
+import { displayPosts } from "./posts/posts.js";
+
+let Sender = [];
+let Reciver = [];
+let Socket;
+let UserData;
 
 export async function LoginApi(event) {
   if (event) event.preventDefault();
@@ -15,12 +28,18 @@ export async function LoginApi(event) {
       password,
     });
     if (response.success) {
-      render(loggedInTemplate)
+      localStorage.setItem("userData", JSON.stringify(response.data));
+      setTimeout(Homepage, 100);
     } else {
-      alert(response.message)
+      console.log(response.message);
+      alert(response.message);
     }
   } catch (error) {
     console.error("Login Failed", error);
+    // alert("Invalid credentials");
+    const errorMessage = document.getElementById("logincheck");
+    errorMessage.textContent = "Invalid credentials";
+    errorMessage.style.display = "block";
   }
 }
 
@@ -48,9 +67,9 @@ export async function SignupAPi(event) {
     const response = await fetchAPI(API_ENDPOINTS.signup, userData);
 
     if (response.success) {
-      login()
+      login();
     } else {
-      alert(response.message)
+      alert(response.message);
     }
   } catch (error) {
     console.error("signup failed:", error);
@@ -64,18 +83,486 @@ async function fetchAPI(url, data) {
       headers: {
         "Content-Type": "application/json",
       },
-      credentials: 'include',
+      credentials: "include",
       body: JSON.stringify(data),
     });
 
-    const responseData = await response.json()
+    const responseData = await response.json();
 
     if (!response.ok) {
-      throw new Error(responseData.message || `HTTP ERROR! status: ${response.status}`);
+      throw new Error(
+        responseData.message || `HTTP ERROR! status: ${response.status}`
+      );
     }
     return responseData;
   } catch (error) {
     console.error("API error:", error);
     throw error;
   }
+}
+
+export async function Homepage() {
+  const authdiv = document.getElementById("authentication");
+  if (authdiv) {
+    authdiv.remove();
+  }
+  await fetchCategories();
+  UserData = getUserData();
+  await startSocket();
+  await fetchUsers(UserData.userID);
+  const header = document.querySelector("header.card");
+  if (header) {
+    const username = UserData.username;
+    header.innerHTML = headerTemplate(username);
+  }
+
+  const content = document.getElementById("body");
+  content.innerHTML += leftBar(Categories);
+  await displayPosts();
+  content.innerHTML += rightBar(Users, UserData.username);
+  content.style.display = "grid";
+
+  const create = document.getElementById("create-post-btn");
+  if (create) {
+    create.addEventListener("click", displayCreate);
+  }
+  const logoutBtn = document.getElementById("logout-btn");
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", logout);
+  }
+}
+
+async function logout() {
+  try {
+    const response = await fetch(API_ENDPOINTS.logout, {
+      method: "POST",
+      credentials: "include",
+    });
+
+    if (response.ok || response.status === 401) {
+      localStorage.removeItem("userData");
+      localStorage.clear();
+      window.location.href = "/";
+    } else {
+      console.error("Logout failed");
+    }
+  } catch (error) {
+    console.error("Logout error:", error);
+  }
+}
+
+export async function fetchCategories() {
+  try {
+    const response = await fetch(API_ENDPOINTS.categories, {
+      method: "GET",
+      credentials: "include",
+    });
+    if (response.status === 401) {
+      localStorage.removeItem("userData");
+      localStorage.clear();
+      window.location.href = "/";
+      return;
+    }
+    if (response.ok) {
+      const responseData = await response.json();
+
+      Categories.length = 0; // Clear the array
+      Categories.push(...responseData.data);
+    } else {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+  } catch (error) {
+    console.error("Error fetching categories", error);
+  }
+}
+
+export async function fetchUsers(user) {
+  try {
+    const response = await fetch(API_ENDPOINTS.allusers, {
+      method: "POST",
+      credentials: "include",
+      body: JSON.stringify({ username: user }),
+    });
+    if (response.status === 401) {
+      localStorage.removeItem("userData");
+      localStorage.clear();
+      window.location.href = "/";
+      return;
+    }
+
+    if (response.ok) {
+      const responseData = await response.json();
+
+      Users.length = 0; // Clear the array
+      Users.push(...responseData.data);
+    } else {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+  } catch (error) {
+    console.error("Error fetching users", error);
+  }
+}
+
+async function startSocket() {
+  Socket = new WebSocket(`ws://${window.location.host}/ws`);
+
+  // const Data = UserData
+  // console.log(data)
+  Sender = [UserData.username, UserData.userID];
+  Socket.onopen = () => {
+    const data = {
+      senderId: Sender[1],
+      name: Sender[0],
+    };
+    Socket.send(JSON.stringify(data));
+    console.log("Connected to WebSocket server");
+  };
+
+  Socket.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+    if (data.istyping === true) {
+      // displayTyping(data.name);
+      if (data.senderId === Reciver[1]) {
+        displaytyping();
+      }
+      typingonlist(data.senderId);
+    } else if (data.senderId) {
+      // Display chat message
+      if (data.senderId === Reciver[1]) {
+        addMessage(Reciver[0], data.message);
+      }
+      newusers();
+      showNotification(
+        data.sendername,
+        `New Message from ${data.sendername}`,
+        data.senderId
+      );
+    } else if (data.userId) {
+      if (data.userId !== Sender[1] && data.online === true) {
+        showNotification(data.name, `${data.name} is online`, data.userId);
+        newusers();
+      }
+      changestatus(data.userId, data.online);
+    }
+  };
+}
+
+async function newusers() {
+  await fetchUsers(UserData.userID);
+  const user = document.getElementById("userlist");
+  user.innerHTML = reorder(Users, UserData.username)
+  
+}
+
+function changestatus(id, online) {
+  const list = document.getElementById(id);
+  if (list) {
+    if (online) {
+      list.style.color = "rgb(0, 255, 0)"; // Green for online
+      list.innerHTML = list.innerHTML.replace("(Offline)", "(Online)"); // Update status text
+    } else {
+      list.style.color = "rgb(255, 255, 255)"; // White for offline
+      list.innerHTML = list.innerHTML.replace("(Online)", "(Offline)"); // Update status text
+    }
+  }
+}
+
+const rightBar = (users, username) => `
+  <div class="sidebar-right" id="userlist">
+    <h3>All Users</h3>
+    <ul id="users">
+      ${users
+        .map((user) => {
+          // Only create a list item if the user's name is not the same as the current username
+          if (user.name !== username) {
+            // Determine the color based on the user's online status
+            const statusColor = user.online
+              ? "rgb(0, 255, 0)"
+              : "rgb(255, 255, 255)";
+            return `
+              <li>
+                <a href="#" id="${
+                  user.id
+                }" style="color: ${statusColor};" onclick="Chat('${
+              user.name
+            }','${user.id}')">
+                  ${user.name} ${user.online ? "(Online)" : "(Offline)"}
+                </a>
+                <span id="typing-${
+                  user.id
+                }" class="typing-indicator" style="display: none;">
+                  <span class="typing-text">typing...</span>
+                  <span class="blinking-cursor">|</span>
+                </span>
+              </li>`;
+          }
+          return ""; // Skip this user
+        })
+        .join("")}
+    </ul>
+  </div>
+`;
+
+const reorder = (users, username) => `
+    <h3>All Users</h3>
+    <ul id="users">
+      ${users
+        .map((user) => {
+          // Only create a list item if the user's name is not the same as the current username
+          if (user.name !== username) {
+            // Determine the color based on the user's online status
+            const statusColor = user.online
+              ? "rgb(0, 255, 0)"
+              : "rgb(255, 255, 255)";
+            return `
+              <li>
+                <a href="#" id="${
+                  user.id
+                }" style="color: ${statusColor};" onclick="Chat('${
+              user.name
+            }','${user.id}')">
+                  ${user.name} ${user.online ? "(Online)" : "(Offline)"}
+                </a>
+                <span id="typing-${
+                  user.id
+                }" class="typing-indicator" style="display: none;">
+                  <span class="typing-text">typing...</span>
+                  <span class="blinking-cursor">|</span>
+                </span>
+              </li>`;
+          }
+          return ""; // Skip this user
+        })
+        .join("")}
+    </ul>
+`
+
+window.Chat = async function (username, id) {
+  console.log(`Starting chat with ${username}`);
+  const mainSection = document.getElementById("main");
+  mainSection.innerHTML = startchat(username);
+  let page = 1;
+  let isLoading = false; // Flag to prevent multiple fetches
+  Reciver = [username, id];
+  await fetchMessages();
+  await displayMessages(page);
+
+  const chatMessages = document.getElementById("chat-messages");
+  if (chatMessages) {
+    chatMessages.addEventListener("scroll", async () => {
+      if (chatMessages.scrollTop === 0 && !isLoading) {
+        isLoading = true; // Set flag to prevent multiple fetches
+        page++; // Increment page
+        await displayMessages(page); // Display the new messages
+        isLoading = false; // Reset flag
+      }
+    });
+  }
+
+  const sendBtn = document.getElementById("send-btn");
+  if (sendBtn) {
+    sendBtn.addEventListener("click", sendMessage);
+  }
+  const chatInput = document.getElementById("chat-textarea");
+  if (chatInput) {
+    chatInput.addEventListener("input", sendTyping);
+  }
+};
+
+function sendTyping() {
+  console.log("send typing");
+  const data = {
+    senderId: Sender[1],
+    sendername: Sender[0],
+    receiverId: Reciver[1],
+    istyping: true,
+  };
+  Socket.send(JSON.stringify(data));
+}
+
+function displaytyping() {
+  // Show the typing indicator in the chat container
+  const typingDiv = document.getElementById("typing");
+  if (typingDiv) {
+    typingDiv.classList.add("show");
+    setTimeout(() => {
+      typingDiv.classList.remove("show");
+    }, 2000);
+  }
+}
+
+function typingonlist(userId) {
+  console.log("receive typing");
+  const list = document.getElementById(userId);
+  if (list) {
+    list.style.color = "rgb(225, 236, 229)"; // Green for online
+    list.innerHTML = list.innerHTML.replace("(Online)", "(Typing)"); // Update status text
+    setTimeout(() => {
+      list.style.color = "rgb(49, 238, 11)"; // White for offline
+      list.innerHTML = list.innerHTML.replace("(Typing)", "(Online)"); // Update status text
+    }, 2000);
+  }
+}
+
+function sendMessage() {
+  const messageInput = document.getElementById("chat-textarea");
+  const message = messageInput.value;
+
+  if (message) {
+    const data = {
+      senderId: Sender[1],
+      sendername: Sender[0],
+      receiverId: Reciver[1],
+      message: message,
+    };
+    Socket.send(JSON.stringify(data));
+    addMessage(Sender[0], message); // Display the message locally
+    messageInput.value = ""; // Clear input field
+  }
+  
+  newusers()
+}
+
+async function fetchMessages() {
+  try {
+    const response = await fetch(API_ENDPOINTS.messages, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ senderId: Sender[1], receiverId: Reciver[1] }),
+    });
+    if (response.status === 401) {
+      localStorage.removeItem("userData");
+      localStorage.clear();
+      window.location.href = "/";
+      return;
+    }
+    if (response.ok) {
+      let responseData = await response.json();
+
+      Messages.length = 0; // Clear the array
+      Messages.push(...responseData);
+      console.log(Messages);
+    } else {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+  } catch (error) {
+    console.error("Error fetching messages", error);
+  }
+}
+
+async function displayMessages(page) {
+  const chatMessages = document.getElementById("chat-messages");
+  if (!chatMessages) return;
+
+  // Store the current scroll height
+  const scrollHeightBefore = chatMessages.scrollHeight;
+  const start = (page - 1) * 10;
+  const end = start + 10;
+  const messages = Messages.slice(start, end);
+
+  // Add messages to the chat
+  messages.map((message) =>
+    addMessage(message.sender_username, message.message, message.timestamp)
+  );
+
+  // Restore the scroll position to maintain the user's view
+  if (page > 1) {
+    const scrollHeightAfter = chatMessages.scrollHeight;
+    chatMessages.scrollTop = scrollHeightAfter - scrollHeightBefore;
+  } else {
+    // Scroll to the bottom if it's the first page
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+}
+
+function showNotification(senderName, message, id) {
+  // Create the notification element
+  const notification = document.createElement("div");
+  notification.className = "notification";
+  notification.textContent = message;
+
+  // Add a click event listener to the notification
+  notification.addEventListener("click", () => {
+    Chat(senderName, id); // Call the Chat function with the sender's name and ID
+    notification.remove(); // Remove the notification after clicking
+  });
+
+  // Append the notification to the body
+  document.body.appendChild(notification);
+
+  // Remove the notification after 5 seconds
+  setTimeout(() => {
+    notification.remove();
+  }, 5000);
+}
+
+function addMessage(sender, message, time, single = false) {
+  const chatMessages = document.getElementById("chat-messages");
+  if (!chatMessages) return;
+
+  const messageDiv = document.createElement("div");
+  messageDiv.classList.add("message");
+
+  if (time === undefined) {
+    time = new Date().getTime();
+  }
+
+  // Add message content
+  messageDiv.innerHTML = `
+    <div>
+      <span class="sender">${sender}</span>
+      <span class="time">${formatTimestamp(time)}</span>
+    </div>
+    <div class="content">${message}</div>
+  `;
+
+  // Append the message to the chat
+  chatMessages.appendChild(messageDiv);
+
+  // Scroll to the bottom if it's a new message
+  // if (single !== true) {
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+  // }
+}
+
+function formatTimestamp(timestamp) {
+  const date = new Date(timestamp);
+  const now = new Date();
+  const diffInMinutes = Math.floor((now - date) / (1000 * 60));
+  const diffInDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
+
+  // Format time as "09:40 AM"
+  const formattedTime = date.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  });
+
+  // If message is from today
+  if (diffInDays === 0) {
+    if (diffInMinutes < 60) {
+      // Show "X minutes ago" for messages less than an hour old
+      return diffInMinutes <= 1 ? "just now" : `${diffInMinutes} minutes ago`;
+    }
+    return `today at ${formattedTime}`;
+  }
+
+  // If message is from yesterday
+  if (diffInDays === 1) {
+    return `yesterday at ${formattedTime}`;
+  }
+
+  // For older messages, show full date
+  const formattedDate = date
+    .toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    })
+    .replace(/\//g, "-");
+
+  return `${formattedDate} at ${formattedTime}`;
 }

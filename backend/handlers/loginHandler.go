@@ -19,6 +19,12 @@ type ApiResponse struct {
 	Data    interface{} `json:"data,omitempty"`
 }
 
+type contextKey string
+
+const (
+	UserIDKey contextKey = "userID"
+)
+
 func (h *Handler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var req LoginRequest
@@ -78,7 +84,7 @@ func (h *Handler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 		Success: true,
 		Message: "Login Successful",
 		Data: map[string]any{
-			"username":  req.Username,
+			"username":  user.Username,
 			"email":     user.Email,
 			"userID":    user.ID,
 			"firstName": user.FirstName,
