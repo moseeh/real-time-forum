@@ -111,6 +111,7 @@ export const allposts = (posts) => `
                 username,
                 likes_count,
                 dislikes_count,
+                image_url,
                 post_id,
                 comments_count,
                 categories,
@@ -140,6 +141,13 @@ export const allposts = (posts) => `
                         : ""
                     }
                   </div>
+                  ${
+                    image_url
+                      ? `<div class="post-image">
+                          <img src="static/images/${image_url}" alt="Post image" class="post-image">
+                         </div>`
+                      : ""
+                  }
                   <footer class="post-actions">
                       <button class="action-button upvote-btn ${
                         is_liked ? "active" : ""
@@ -194,6 +202,13 @@ export const singlepost = (post) => `
                           `<span class="category">${category.name}</span>`
                       )
                       .join(" ")
+                  : ""
+              }
+              ${
+                post.image_url
+                  ? `<div class="post-image">
+                      <img src="static/images/${post.image_url}" alt="Post image" class="post-image">
+                     </div>`
                   : ""
               }
             </div>
