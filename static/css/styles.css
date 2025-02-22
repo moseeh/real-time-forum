@@ -10,8 +10,8 @@ body {
 }
 
 .avatar {
-  width: 40px;
-  height: 40px;
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
   object-fit: cover;
 }
@@ -22,6 +22,7 @@ body {
   gap: 12px;
   margin-bottom: 16px;
 }
+
 .author-info {
   display: flex;
   flex-direction: row;
@@ -33,10 +34,12 @@ body {
   font-weight: 600;
   margin: 0;
 }
+
 .post-date {
   font-size: 14px;
   margin: 0;
 }
+
 .post-title {
   font-size: 24px;
   font-weight: bold;
@@ -58,6 +61,7 @@ body {
   height: auto;
   border-radius: 8px;
 }
+
 .action-button {
   display: flex;
   align-items: center;
@@ -70,18 +74,46 @@ body {
   font-size: 16px;
   transition: color 0.2s ease;
 }
+
 .action-button:hover {
   color: grey;
   opacity: 0.8;
 }
+
+.profile-container {
+  width: 48px;
+  height: 48px;
+  display: inline-block;
+  position: relative;
+}
+
+.online-indicator {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 10px;
+  height: 10px;
+  background-color: #44b700;
+  border-radius: 50%;
+  border: 1.5px solid white;
+  box-shadow: 0 0 0 2px #44b70033;
+  animation: pulse 2s infinite;
+}
+
+.offline {
+  background-color: #bdbdbd;
+}
+
 /* Style for like button when active */
 .action-button.upvote-btn.active {
-  color: #007bff; /* Green color for likes */
+  color: #007bff;
+  /* Green color for likes */
 }
 
 /* Style for dislike button when active */
 .action-button.downvote-btn.active {
-  color: #f87171; /* Red color for dislikes */
+  color: #f87171;
+  /* Red color for dislikes */
 }
 
 .categories {
@@ -98,6 +130,7 @@ body {
   border-radius: 16px;
   font-size: 14px;
 }
+
 /* Header Styles */
 .card {
   background: black;
@@ -113,6 +146,7 @@ body {
   margin: 0 auto;
   padding: 0 1rem;
 }
+
 .logo a {
   text-decoration: none;
 }
@@ -127,7 +161,8 @@ body {
 }
 
 .logo h1:hover {
-  color: #0056b3; /* Darker blue */
+  color: #0056b3;
+  /* Darker blue */
   text-shadow: 3px 3px 5px rgba(14, 48, 122, 0.7);
 }
 
@@ -152,6 +187,7 @@ body {
   transition: all 0.3s ease;
   color: white;
 }
+
 .post {
   transition: transform 0.3s ease;
 }
@@ -165,12 +201,25 @@ body {
   background-color: #007bff;
 }
 
+.submit-btn,
+.cancel-btn {
+  background-color: #007bff;
+
+}
+
+.submit-btn:hover,
+.cancel-btn:hover {
+  background-color: #0056b3;
+}
+
 #create-post-btn:hover {
   background-color: #0056b3;
 }
+
 #logout-btn {
   background-color: #007bff;
 }
+
 #logout-btn:hover {
   background-color: #0056b3;
 }
@@ -189,7 +238,8 @@ body {
 .container {
   max-width: 1400px;
   display: grid;
-  grid-template-columns: 1fr 2fr 1fr; /* Left, Middle, Right */
+  grid-template-columns: 1fr 2fr 1fr;
+  /* Left, Middle, Right */
   gap: 1rem;
   background: black;
   margin: 2% auto;
@@ -197,6 +247,7 @@ body {
   border-radius: 5px;
   color: white;
 }
+
 .categories-section {
   margin-top: 30px;
 }
@@ -226,19 +277,22 @@ body {
   margin: 0.5rem 0;
   margin-bottom: 10px;
 }
-.chat-link{
+
+.chat-link {
   text-decoration: none;
   display: flex;
-  border: 1px ;
+  border: 1px;
   border-radius: 4px;
   align-content: baseline;
   align-items: flex-end;
   gap: 10px;
 }
+
 .user {
-  padding-bottom: 0.7em;
-  font-size: 15px;
+  padding-bottom: 0.8em;
+  font-size: 18px;
 }
+
 .filter-link {
   display: block;
   padding: 8px 12px;
@@ -279,10 +333,12 @@ body {
   color: white;
   font-size: 0.9rem;
 }
+
 .gender-container {
   display: inline-flex;
   align-items: center;
-  width: 400px; /* Same as input-field width */
+  width: 400px;
+  /* Same as input-field width */
   margin: 0 auto;
 }
 
@@ -304,6 +360,7 @@ body {
   outline: none;
   width: 100%;
 }
+
 /* Style the select dropdown options */
 .gender option {
   font-size: 14px;
@@ -313,7 +370,8 @@ body {
 
 /* Style the select when opened (the dropdown) */
 .gender:focus {
-  border-color: rgb(31, 44, 230); /* Matches your gradient start color */
+  border-color: rgb(31, 44, 230);
+  /* Matches your gradient start color */
   box-shadow: 0 0 3px rgba(6, 108, 100, 0.3);
 }
 
@@ -325,9 +383,11 @@ body {
 
 /* Style for when an option is checked/selected */
 .gender option:checked {
-  background-color: #407cff; /* Matches your gradient end color */
+  background-color: #407cff;
+  /* Matches your gradient end color */
   color: white;
 }
+
 .content-holder {
   text-align: center;
   color: white;
@@ -382,6 +442,7 @@ body {
   width: 400px;
   outline: none;
 }
+
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -433,7 +494,8 @@ body {
 }
 
 .login-form-button:hover {
-  background-color: rgb(30, 80, 169); /* Example hover color change */
+  background-color: rgb(30, 80, 169);
+  /* Example hover color change */
 }
 
 .signup-form-container {
@@ -464,8 +526,10 @@ body {
   background-color: rgb(8, 29, 212);
   cursor: pointer;
 }
+
 .signup-form-button:hover {
-  background-color: rgb(22, 18, 240); /* Example hover color change */
+  background-color: rgb(22, 18, 240);
+  /* Example hover color change */
 }
 
 /*test ppost pafe*/
@@ -678,27 +742,33 @@ body {
   gap: 5px;
   font-size: 0.9rem;
   color: rgba(255, 255, 255, 0.8);
-  opacity: 0; /* Start with opacity 0 */
-  transition: opacity 0.3s ease; /* Smooth fade-in/out */
+  opacity: 0;
+  /* Start with opacity 0 */
+  transition: opacity 0.3s ease;
+  /* Smooth fade-in/out */
 }
 
 .typing-indicator.show {
-  opacity: 1; /* Fully visible when the "show" class is added */
+  opacity: 1;
+  /* Fully visible when the "show" class is added */
 }
 
 /* Blinking Cursor Animation */
 @keyframes blink {
+
   0%,
   100% {
     opacity: 1;
   }
+
   50% {
     opacity: 0;
   }
 }
 
 .blinking-cursor {
-  animation: blink 1s infinite; /* Blinking effect */
+  animation: blink 1s infinite;
+  /* Blinking effect */
   font-weight: bold;
 }
 
@@ -778,7 +848,8 @@ body {
   position: fixed;
   top: 20px;
   right: 20px;
-  background-color: rgba(41, 49, 170, 0.9); /* Teal with transparency */
+  background-color: rgba(41, 49, 170, 0.9);
+  /* Teal with transparency */
   color: white;
   padding: 10px 20px;
   border-radius: 7px;
@@ -792,6 +863,7 @@ body {
     transform: translateX(100%);
     opacity: 0;
   }
+
   to {
     transform: translateX(0);
     opacity: 1;
@@ -802,6 +874,7 @@ body {
   from {
     opacity: 1;
   }
+
   to {
     opacity: 0;
   }

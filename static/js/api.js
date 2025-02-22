@@ -263,6 +263,14 @@ function changestatus(id, online) {
       list.style.color = "rgb(255, 255, 255)"; // White for offline
       list.innerHTML = list.innerHTML.replace("(Online)", "(Offline)"); // Update status text
     }
+    const indicator = list.querySelector('.online-indicator');
+    if (indicator) {
+      if (online) {
+        indicator.classList.remove('offline');
+      } else {
+        indicator.classList.add('offline');
+      }
+    }
   }
 }
 
@@ -280,18 +288,16 @@ const rightBar = (users, username) => `
           : "rgb(255, 255, 255)";
         return `
               <li>
-                <a href="#" class="chat-link" id="${
-                  user.id
-                }" style="color: ${statusColor};" onclick="Chat('${
-              user.name
+                <a href="#" class="chat-link" id="${user.id
+          }" style="color: ${statusColor};" onclick="Chat('${user.name
           }','${user.id}')">
+              <div class="profile-container">
                  <img src="static/images/default-avatar.png" alt="author avatar" class="avatar">
-                  <span class="user">${user.name} ${
-              user.online ? "(Online)" : "(Offline)"
-          }</span>
+                 <div class="online-indicator ${user.online ? "" : "offline"}"></div>
+              </div>
+                  <span class="user">${user.name}</span>
                 </a>
-                <span id="typing-${
-                  user.id
+                <span id="typing-${user.id
           }" class="typing-indicator" style="display: none;">
                   <span class="typing-text">typing...</span>
                   <span class="blinking-cursor">|</span>
@@ -319,18 +325,16 @@ const reorder = (users, username) => `
           : "rgb(255, 255, 255)";
         return `
               <li>
-                <a href="#" class="chat-link" id="${
-                  user.id
-                }" style="color: ${statusColor};" onclick="Chat('${
-              user.name
+                <a href="#" class="chat-link" id="${user.id
+          }" style="color: ${statusColor};" onclick="Chat('${user.name
           }','${user.id}')">
+              <div class="profile-container">
                  <img src="static/images/default-avatar.png" alt="author avatar" class="avatar">
-                  <span class="user">${user.name} ${
-              user.online ? "(Online)" : "(Offline)"
-          }</span>
+                 <div class="online-indicator ${user.online ? "" : "offline"}"></div>
+              </div>
+                  <span class="user">${user.name}</span>
                 </a>
-                <span id="typing-${
-                  user.id
+                <span id="typing-${user.id
           }" class="typing-indicator" style="display: none;">
                   <span class="typing-text">typing...</span>
                   <span class="blinking-cursor">|</span>
