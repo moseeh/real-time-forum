@@ -271,37 +271,37 @@ const rightBar = (users, username) => `
     <h3>All Users</h3>
     <ul id="users">
       ${users
-        .map((user) => {
-          // Only create a list item if the user's name is not the same as the current username
-          if (user.name !== username) {
-            // Determine the color based on the user's online status
-            const statusColor = user.online
-              ? "rgb(0, 255, 0)"
-              : "rgb(255, 255, 255)";
-            return `
+    .map((user) => {
+      // Only create a list item if the user's name is not the same as the current username
+      if (user.name !== username) {
+        // Determine the color based on the user's online status
+        const statusColor = user.online
+          ? "rgb(0, 255, 0)"
+          : "rgb(255, 255, 255)";
+        return `
               <li>
                 <a href="#" class="chat-link" id="${
                   user.id
                 }" style="color: ${statusColor};" onclick="Chat('${
               user.name
-            }','${user.id}')">
+          }','${user.id}')">
                  <img src="static/images/default-avatar.png" alt="author avatar" class="avatar">
                   <span class="user">${user.name} ${
               user.online ? "(Online)" : "(Offline)"
-            }</span>
+          }</span>
                 </a>
                 <span id="typing-${
                   user.id
-                }" class="typing-indicator" style="display: none;">
+          }" class="typing-indicator" style="display: none;">
                   <span class="typing-text">typing...</span>
                   <span class="blinking-cursor">|</span>
                 </span>
               </li>
               <hr>`;
-          }
-          return ""; // Skip this user
-        })
-        .join("")}
+      }
+      return ""; // Skip this user
+    })
+    .join("")}
     </ul>
   </div>
 `;
@@ -310,37 +310,37 @@ const reorder = (users, username) => `
     <h3>All Users</h3>
     <ul id="users">
       ${users
-        .map((user) => {
-          // Only create a list item if the user's name is not the same as the current username
-          if (user.name !== username) {
-            // Determine the color based on the user's online status
-            const statusColor = user.online
-              ? "rgb(0, 255, 0)"
-              : "rgb(255, 255, 255)";
-            return `
+    .map((user) => {
+      // Only create a list item if the user's name is not the same as the current username
+      if (user.name !== username) {
+        // Determine the color based on the user's online status
+        const statusColor = user.online
+          ? "rgb(0, 255, 0)"
+          : "rgb(255, 255, 255)";
+        return `
               <li>
                 <a href="#" class="chat-link" id="${
                   user.id
                 }" style="color: ${statusColor};" onclick="Chat('${
               user.name
-            }','${user.id}')">
+          }','${user.id}')">
                  <img src="static/images/default-avatar.png" alt="author avatar" class="avatar">
                   <span class="user">${user.name} ${
               user.online ? "(Online)" : "(Offline)"
-            }</span>
+          }</span>
                 </a>
                 <span id="typing-${
                   user.id
-                }" class="typing-indicator" style="display: none;">
+          }" class="typing-indicator" style="display: none;">
                   <span class="typing-text">typing...</span>
                   <span class="blinking-cursor">|</span>
                 </span>
               </li>
               <hr>`;
-          }
-          return ""; // Skip this user
-        })
-        .join("")}
+      }
+      return ""; // Skip this user
+    })
+    .join("")}
     </ul>
 `;
 
@@ -370,6 +370,12 @@ window.Chat = async function (username, id) {
   if (sendBtn) {
     sendBtn.addEventListener("click", sendMessage);
   }
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault(); // Prevents new line in textarea
+      sendMessage(); // Call the function that sends the message
+    }
+  });
   const chatInput = document.getElementById("chat-textarea");
   if (chatInput) {
     chatInput.addEventListener("input", sendTyping);
@@ -466,12 +472,16 @@ async function displayMessages(page) {
 
   // Store the current scroll height
   const scrollHeightBefore = chatMessages.scrollHeight;
-  const start = (page - 1) * 10;
-  const end = start + 10;
+  const start = 0
+  const end = page * 10;
+  console.log(`Page: ${page}, Start: ${start}, End: ${end}`);
   const messages = Messages.slice(start, end);
+  console.log(messages);
 
+  const reversemessages = [...messages].reverse();
+  chatMessages.innerHTML = ""
   // Add messages to the chat
-  messages.map((message) =>
+  reversemessages.map((message) =>
     addMessage(message.sender_username, message.message, message.timestamp)
   );
 
