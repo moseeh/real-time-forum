@@ -476,17 +476,15 @@ async function displayMessages(page) {
 
   // Store the current scroll height
   const scrollHeightBefore = chatMessages.scrollHeight;
-  const start = 0
+  const start = (page-1) * 10
   const end = page * 10;
   console.log(`Page: ${page}, Start: ${start}, End: ${end}`);
   const messages = Messages.slice(start, end);
   console.log(messages);
 
-  const reversemessages = [...messages].reverse();
-  chatMessages.innerHTML = ""
   // Add messages to the chat
-  reversemessages.map((message) =>
-    addMessage(message.sender_username, message.message, message.timestamp)
+  messages.map((message) =>
+    addMessage(message.sender_username, message.message, message.timestamp, false)
   );
 
   // Restore the scroll position to maintain the user's view
@@ -520,7 +518,7 @@ function showNotification(senderName, message, id) {
   }, 5000);
 }
 
-function addMessage(sender, message, time, single = false) {
+function addMessage(sender, message, time, single = true) {
   const chatMessages = document.getElementById("chat-messages");
   if (!chatMessages) return;
 
@@ -541,12 +539,13 @@ function addMessage(sender, message, time, single = false) {
   `;
 
   // Append the message to the chat
-  chatMessages.appendChild(messageDiv);
+  if (single) {
+    chatMessages.appendChild(messageDiv);
+  } else {
+    chatMessages.prepend(messageDiv)
+  }
 
-  // Scroll to the bottom if it's a new message
-  // if (single !== true) {
   chatMessages.scrollTop = chatMessages.scrollHeight;
-  // }
 }
 
 function formatTimestamp(timestamp) {
