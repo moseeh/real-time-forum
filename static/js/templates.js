@@ -345,7 +345,7 @@ export const startchat = (username) => `
     <div class="chathead">
       <h2>Chat with ${username}</h2><br /><br />
       <div id="typing" class="typing-indicator">
-        <span class="typing-text">typing ...</span>
+        <span class="typing-text"> Typing ...</span>
         <span class="blinking-cursor">|</span>
       </div>
     </div>
