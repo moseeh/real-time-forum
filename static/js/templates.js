@@ -345,7 +345,7 @@ export const startchat = (username) => `
     <div class="chathead">
       <h2>Chat with ${username}</h2><br /><br />
       <div id="typing" class="typing-indicator">
-        <span class="typing-text">typing...</span>
+        <span class="typing-text">typing ...</span>
         <span class="blinking-cursor">|</span>
       </div>
     </div>
@@ -356,7 +356,7 @@ export const startchat = (username) => `
 
     <!-- Typing Textarea -->
     <div class="chat-input">
-      <textarea id="chat-textarea" placeholder="Type your message..."></textarea>
+      <textarea id="chat-textarea" placeholder="Type your message ..."></textarea>
       <button id="send-btn" class="btn">Send</button>
     </div>
   </div>

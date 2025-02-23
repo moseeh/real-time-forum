@@ -258,10 +258,8 @@ function changestatus(id, online) {
   if (list) {
     if (online) {
       list.style.color = "rgb(0, 255, 0)"; // Green for online
-      list.innerHTML = list.innerHTML.replace("(Offline)", "(Online)"); // Update status text
     } else {
       list.style.color = "rgb(255, 255, 255)"; // White for offline
-      list.innerHTML = list.innerHTML.replace("(Online)", "(Offline)"); // Update status text
     }
     const indicator = list.querySelector('.online-indicator');
     if (indicator) {
@@ -299,7 +297,7 @@ const rightBar = (users, username) => `
                 </a>
                 <span id="typing-${user.id
           }" class="typing-indicator" style="display: none;">
-                  <span class="typing-text">typing...</span>
+                  <span class="typing-text">typing ...</span>
                   <span class="blinking-cursor">|</span>
                 </span>
               </li>
@@ -336,7 +334,7 @@ const reorder = (users, username) => `
                 </a>
                 <span id="typing-${user.id
           }" class="typing-indicator" style="display: none;">
-                  <span class="typing-text">typing...</span>
+                  <span class="typing-text">typing ...</span>
                   <span class="blinking-cursor">|</span>
                 </span>
               </li>
@@ -412,10 +410,10 @@ function typingonlist(userId) {
   console.log("receive typing");
   const list = document.getElementById(userId);
   if (list) {
-    list.style.color = "rgb(225, 236, 229)"; // Green for online
-    list.innerHTML = list.innerHTML.replace("(Online)", "(Typing)"); // Update status text
+    list.style.color = "rgb(49, 238, 11)";
+    list.innerHTML += "(Typing)"; // Update status text
     setTimeout(() => {
-      list.style.color = "rgb(49, 238, 11)"; // White for offline
+      list.style.color = "rgb(49, 238, 11)"; 
       list.innerHTML = list.innerHTML.replace("(Typing)", "(Online)"); // Update status text
     }, 2000);
   }
