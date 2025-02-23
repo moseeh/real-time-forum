@@ -399,7 +399,7 @@ function displaytyping() {
   if (typingDiv) {
     typingDiv.classList.add("show");
     if (typingTimers["typing"]) {
-      clearTimeout(typingTimers["typing"])
+      clearTimeout(typingTimers["typing"]);
     }
     typingTimers["typing"] = setTimeout(() => {
       typingDiv.classList.remove("show");
@@ -537,8 +537,17 @@ function addMessage(sender, message, time, single = true) {
   const chatMessages = document.getElementById("chat-messages");
   if (!chatMessages) return;
 
+  const isCurrentUser = sender === UserData.username;
+
+  // Create a wrapper for alignment
+  const wrapperDiv = document.createElement("div");
+  wrapperDiv.classList.add(
+    "message-wrapper",
+    isCurrentUser ? "sent-wrapper" : "received-wrapper"
+  );
+
   const messageDiv = document.createElement("div");
-  messageDiv.classList.add("message");
+  messageDiv.classList.add("message", isCurrentUser ? "sent" : "received");
 
   if (time === undefined) {
     time = new Date().getTime();
@@ -546,20 +555,24 @@ function addMessage(sender, message, time, single = true) {
 
   // Add message content
   messageDiv.innerHTML = `
-    <div>
+    <div class="message-info">
       <span class="sender">${sender}</span>
       <span class="time">${formatTimestamp(time)}</span>
     </div>
     <div class="content">${message}</div>
   `;
 
+  // Append message inside its wrapper
+  wrapperDiv.appendChild(messageDiv);
+
   // Append the message to the chat
   if (single) {
-    chatMessages.appendChild(messageDiv);
+    chatMessages.appendChild(wrapperDiv);
   } else {
-    chatMessages.prepend(messageDiv);
+    chatMessages.prepend(wrapperDiv);
   }
 
+  // Ensure smooth scrolling to the latest message
   chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
