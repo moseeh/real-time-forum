@@ -733,6 +733,8 @@ body {
 
 .chathead {
   display: flex;
+  align-items: center;
+  gap: 5px;
 }
 
 /* Typing Indicator */
@@ -740,8 +742,8 @@ body {
   display: flex;
   align-items: center;
   gap: 5px;
-  font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.8);
+  font-size: 1.2rem;
+  color: rgb(49, 238, 11);
   opacity: 0;
   /* Start with opacity 0 */
   transition: opacity 0.3s ease;
