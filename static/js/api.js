@@ -15,6 +15,7 @@ let Sender = [];
 let Reciver = [];
 let Socket;
 let UserData;
+const typingTimers = {};
 
 export async function LoginApi(event) {
   if (event) event.preventDefault();
@@ -261,12 +262,12 @@ function changestatus(id, online) {
     } else {
       list.style.color = "rgb(255, 255, 255)"; // White for offline
     }
-    const indicator = list.querySelector('.online-indicator');
+    const indicator = list.querySelector(".online-indicator");
     if (indicator) {
       if (online) {
-        indicator.classList.remove('offline');
+        indicator.classList.remove("offline");
       } else {
-        indicator.classList.add('offline');
+        indicator.classList.add("offline");
       }
     }
   }
@@ -277,35 +278,34 @@ const rightBar = (users, username) => `
     <h3>All Users</h3>
     <ul id="users">
       ${users
-    .map((user) => {
-      // Only create a list item if the user's name is not the same as the current username
-      if (user.name !== username) {
-        // Determine the color based on the user's online status
-        const statusColor = user.online
-          ? "rgb(0, 255, 0)"
-          : "rgb(255, 255, 255)";
-        return `
+        .map((user) => {
+          // Only create a list item if the user's name is not the same as the current username
+          if (user.name !== username) {
+            // Determine the color based on the user's online status
+            const statusColor = user.online
+              ? "rgb(0, 255, 0)"
+              : "rgb(255, 255, 255)";
+            return `
               <li>
-                <a href="#" class="chat-link" id="${user.id
-          }" style="color: ${statusColor};" onclick="Chat('${user.name
-          }','${user.id}')">
+                <a href="#" class="chat-link" id="${
+                  user.id
+                }" style="color: ${statusColor};" onclick="Chat('${
+              user.name
+            }','${user.id}')">
               <div class="profile-container">
                  <img src="static/images/default-avatar.png" alt="author avatar" class="avatar">
-                 <div class="online-indicator ${user.online ? "" : "offline"}"></div>
+                 <div class="online-indicator ${
+                   user.online ? "" : "offline"
+                 }"></div>
               </div>
-                  <span class="user">${user.name}</span>
+                  <span id="user-${user.id}" class="user">${user.name}</span>
                 </a>
-                <span id="typing-${user.id
-          }" class="typing-indicator" style="display: none;">
-                  <span class="typing-text">typing ...</span>
-                  <span class="blinking-cursor">|</span>
-                </span>
               </li>
               <hr>`;
-      }
-      return ""; // Skip this user
-    })
-    .join("")}
+          }
+          return ""; // Skip this user
+        })
+        .join("")}
     </ul>
   </div>
 `;
@@ -314,35 +314,34 @@ const reorder = (users, username) => `
     <h3>All Users</h3>
     <ul id="users">
       ${users
-    .map((user) => {
-      // Only create a list item if the user's name is not the same as the current username
-      if (user.name !== username) {
-        // Determine the color based on the user's online status
-        const statusColor = user.online
-          ? "rgb(0, 255, 0)"
-          : "rgb(255, 255, 255)";
-        return `
+        .map((user) => {
+          // Only create a list item if the user's name is not the same as the current username
+          if (user.name !== username) {
+            // Determine the color based on the user's online status
+            const statusColor = user.online
+              ? "rgb(0, 255, 0)"
+              : "rgb(255, 255, 255)";
+            return `
               <li>
-                <a href="#" class="chat-link" id="${user.id
-          }" style="color: ${statusColor};" onclick="Chat('${user.name
-          }','${user.id}')">
+                <a href="#" class="chat-link" id="${
+                  user.id
+                }" style="color: ${statusColor};" onclick="Chat('${
+              user.name
+            }','${user.id}')">
               <div class="profile-container">
                  <img src="static/images/default-avatar.png" alt="author avatar" class="avatar">
-                 <div class="online-indicator ${user.online ? "" : "offline"}"></div>
+                 <div class="online-indicator ${
+                   user.online ? "" : "offline"
+                 }"></div>
               </div>
-                  <span class="user">${user.name}</span>
+                  <span id="user-${user.id}" class="user">${user.name}</span>
                 </a>
-                <span id="typing-${user.id
-          }" class="typing-indicator" style="display: none;">
-                  <span class="typing-text">typing ...</span>
-                  <span class="blinking-cursor">|</span>
-                </span>
               </li>
               <hr>`;
-      }
-      return ""; // Skip this user
-    })
-    .join("")}
+          }
+          return ""; // Skip this user
+        })
+        .join("")}
     </ul>
 `;
 
@@ -385,7 +384,6 @@ window.Chat = async function (username, id) {
 };
 
 function sendTyping() {
-  console.log("send typing");
   const data = {
     senderId: Sender[1],
     sendername: Sender[0],
@@ -400,7 +398,10 @@ function displaytyping() {
   const typingDiv = document.getElementById("typing");
   if (typingDiv) {
     typingDiv.classList.add("show");
-    setTimeout(() => {
+    if (typingTimers["typing"]) {
+      clearTimeout(typingTimers["typing"])
+    }
+    typingTimers["typing"] = setTimeout(() => {
       typingDiv.classList.remove("show");
     }, 2000);
   }
@@ -408,14 +409,25 @@ function displaytyping() {
 
 function typingonlist(userId) {
   console.log("receive typing");
-  const list = document.getElementById(userId);
+  const list = document.getElementById(`user-${userId}`);
+
   if (list) {
     list.style.color = "rgb(49, 238, 11)";
-    list.innerHTML += "(Typing)"; // Update status text
-    setTimeout(() => {
-      list.style.color = "rgb(49, 238, 11)"; 
-      list.innerHTML = list.innerHTML.replace("(Typing)", "(Online)"); // Update status text
-    }, 2000);
+    if (!list.innerHTML.includes("(Typing ...)")) {
+      list.innerHTML += " (Typing ...)";
+    }
+
+    // Clear the previous timeout if typing continues
+    if (typingTimers[userId]) {
+      clearTimeout(typingTimers[userId]);
+    }
+
+    // Set a timeout to remove the indicator after inactivity
+    typingTimers[userId] = setTimeout(() => {
+      list.style.color = "rgb(49, 238, 11)"; // Reset to default color
+      list.innerHTML = list.innerHTML.replace(" (Typing ...)", "");
+      delete typingTimers[userId];
+    }, 2000); // Adjusted to 2 seconds for better smoothness
   }
 }
 
@@ -474,7 +486,7 @@ async function displayMessages(page) {
 
   // Store the current scroll height
   const scrollHeightBefore = chatMessages.scrollHeight;
-  const start = (page-1) * 10
+  const start = (page - 1) * 10;
   const end = page * 10;
   console.log(`Page: ${page}, Start: ${start}, End: ${end}`);
   const messages = Messages.slice(start, end);
@@ -482,7 +494,12 @@ async function displayMessages(page) {
 
   // Add messages to the chat
   messages.map((message) =>
-    addMessage(message.sender_username, message.message, message.timestamp, false)
+    addMessage(
+      message.sender_username,
+      message.message,
+      message.timestamp,
+      false
+    )
   );
 
   // Restore the scroll position to maintain the user's view
@@ -540,7 +557,7 @@ function addMessage(sender, message, time, single = true) {
   if (single) {
     chatMessages.appendChild(messageDiv);
   } else {
-    chatMessages.prepend(messageDiv)
+    chatMessages.prepend(messageDiv);
   }
 
   chatMessages.scrollTop = chatMessages.scrollHeight;
