@@ -482,7 +482,36 @@ body {
   color: #fff;
   resize: vertical;
 }
+.new-posts-notification {
+  background-color: #1a1a1a;
+  border: 1px solid #3b82f6;
+  color: #ffffff;
+  padding: 10px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.2s;
+}
 
+.new-posts-notification:hover {
+  background-color: #3b82f6;
+}
+
+.new-posts-notification i {
+  color: #3b82f6;
+}
+
+.new-posts-notification:hover i {
+  color: #ffffff;
+}
 .modal textarea:focus {
   outline: none;
   border-color: #0066cc; /* Blue highlight */
