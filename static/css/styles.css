@@ -546,7 +546,13 @@ body {
   background-color: #0066cc; /* Blue */
   color: #fff;
 }
+.typing-animation {
+  display: none; /* Hidden by default */
+}
 
+.typing-animation.active {
+  display: block; /* Show when active */
+}
 .submit-btn:hover {
   background-color: #0052a3; /* Darker blue */
 }
