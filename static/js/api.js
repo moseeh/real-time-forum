@@ -7,9 +7,17 @@ import {
   leftBar,
   startchat,
 } from "./templates.js";
-import { Categories, getUserData, Users, Messages, Posts, setNewPostsAvailable } from "./states.js";
+import {
+  Categories,
+  getUserData,
+  Users,
+  Messages,
+  Posts,
+  setNewPostsAvailable,
+} from "./states.js";
 import { displayCreate } from "./posts/createpost.js";
 import { displayPosts } from "./posts/posts.js";
+import { updateInteractionToAllUsers } from "./posts/likes.js";
 
 let Sender = [];
 let Reciver = [];
@@ -119,7 +127,7 @@ export async function Homepage() {
 
   const content = document.getElementById("body");
   content.innerHTML += leftBar(Categories);
-  content.innerHTML += `<div class="main-content" id="main"></div>`
+  content.innerHTML += `<div class="main-content" id="main"></div>`;
   await displayPosts();
   content.innerHTML += rightBar(Users, UserData.username);
   content.style.display = "grid";
@@ -246,15 +254,18 @@ async function startSocket() {
         Posts.unshift(data.post);
         showNewPostsNotification();
       }
+    } else if (data.type === "interaction") {
+      if (data.senderId !== Sender[1]) {
+        updateInteractionToAllUsers(data);
+      }
     }
   };
 }
 function showNewPostsNotification() {
-  const notification = document.getElementById('new-posts-notification');
-  notification.style.display = 'flex';
-  setNewPostsAvailable(true); 
+  const notification = document.getElementById("new-posts-notification");
+  notification.style.display = "flex";
+  setNewPostsAvailable(true);
 }
-
 
 async function newusers() {
   await fetchUsers(UserData.userID);
