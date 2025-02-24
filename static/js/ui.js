@@ -1,5 +1,3 @@
-import { loginTemplate, signupTemplate } from "./templates.js";
-
 export const render = (template, containerSelector = '.box-2') => {
     const container = document.querySelector(containerSelector)
     container.innerHTML = template()
