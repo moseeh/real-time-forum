@@ -18,6 +18,7 @@ import {
 import { displayCreate } from "./posts/createpost.js";
 import { displayPosts } from "./posts/posts.js";
 import { updateInteractionToAllUsers } from "./posts/likes.js";
+import { updateCommentCount } from "./posts/comments.js";
 
 let Sender = [];
 let Reciver = [];
@@ -257,6 +258,10 @@ async function startSocket() {
     } else if (data.type === "interaction") {
       if (data.senderId !== Sender[1]) {
         updateInteractionToAllUsers(data);
+      }
+    } else if (data.type === "comment") {
+      if (data.senderId !== Sender[1]) {
+        updateCommentCount(data.post.content_id, data.post.comments_count);
       }
     }
   };
