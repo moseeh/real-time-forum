@@ -4,7 +4,7 @@ import { setupCommentModal } from "./comments.js";
 import { handleVoteClick } from "./likes.js";
 import { handleCommentClick } from "./comments.js";
 import { setupSidebarEventListener } from "./filter.js";
-import { Posts } from "../states.js";
+import { Posts, newPostsAvailable, setNewPostsAvailable } from "../states.js";
 // Main function to display posts
 
 export async function displayPosts() {
@@ -70,6 +70,17 @@ function setupMainContentListeners(mainContent, modal, commentText) {
       return;
     }
   });
+
+  document
+    .getElementById("new-posts-notification")
+    .addEventListener("click", () => {
+      if (newPostsAvailable) {
+        document.getElementById("new-posts-notification").style.display =
+          "none";
+          setNewPostsAvailable(false); 
+        mainContent     .innerHTML = allposts(Posts);
+      }
+    });
 }
 async function handlePostClick(e, mainContent) {
   const postArticle = e.target.closest(".post");
@@ -89,5 +100,5 @@ async function handlePostClick(e, mainContent) {
 function handleError(error, message) {
   console.error(message, error);
   const content = document.getElementById("body");
-  content.innerHTML += nullpost()
+  content.innerHTML += nullpost();
 }
