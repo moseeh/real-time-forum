@@ -7,7 +7,7 @@ import {
   leftBar,
   startchat,
 } from "./templates.js";
-import { Categories, getUserData, Users, Messages } from "./states.js";
+import { Categories, getUserData, Users, Messages, Posts, setNewPostsAvailable } from "./states.js";
 import { displayCreate } from "./posts/createpost.js";
 import { displayPosts } from "./posts/posts.js";
 
@@ -206,9 +206,6 @@ export async function fetchUsers(user) {
 
 async function startSocket() {
   Socket = new WebSocket(`ws://${window.location.host}/ws`);
-
-  // const Data = UserData
-  // console.log(data)
   Sender = [UserData.username, UserData.userID];
   Socket.onopen = () => {
     const data = {
@@ -222,12 +219,11 @@ async function startSocket() {
   Socket.onmessage = (event) => {
     const data = JSON.parse(event.data);
     if (data.istyping === true) {
-      // displayTyping(data.name);
       if (data.senderId === Reciver[1]) {
         displaytyping();
       }
       typingonlist(data.senderId);
-    } else if (data.senderId) {
+    } else if (data.senderId && !data.type) {
       // Display chat message
       if (data.senderId === Reciver[1]) {
         addMessage(Reciver[0], data.message);
@@ -244,9 +240,20 @@ async function startSocket() {
         newusers();
       }
       changestatus(data.userId, data.online);
+    } else if (data.type === "new_post") {
+      if (data.senderId !== Sender[1]) {
+        Posts.unshift(data.post);
+        showNewPostsNotification();
+      }
     }
   };
 }
+function showNewPostsNotification() {
+  const notification = document.getElementById('new-posts-notification');
+  notification.style.display = 'flex';
+  setNewPostsAvailable(true); 
+}
+
 
 async function newusers() {
   await fetchUsers(UserData.userID);
