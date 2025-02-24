@@ -98,7 +98,7 @@ func (h *Handler) CreatePost(w http.ResponseWriter, r *http.Request) {
 	// Start database transaction
 	tx, err := h.Users.DB.Begin()
 	if err != nil {
-		
+
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -136,4 +136,17 @@ func (h *Handler) CreatePost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(response)
+
+	message := Message{
+		Type:       "new_post",
+		SenderID:   responsePost.UserID,
+		Sendername: responsePost.Username,
+		Post:       responsePost,
+	}
+
+	for userid, conn := range users {
+		if userid != responsePost.UserID {
+			conn.WriteJSON(message)
+		}
+	}
 }
