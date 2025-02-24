@@ -58,3 +58,26 @@ export function updateButtonUI(button, count, isActive) {
   countSpan.textContent = count;
   button.classList.toggle("active", isActive);
 }
+
+export function updateInteractionToAllUsers(data) {
+  const postId = data.post.content_id;
+  const article = document.querySelector(`article[data-post-id="${postId}"]`);
+
+  if (!article) {
+    console.warn(`Article with ID ${postId} not found`);
+    return;
+  }
+
+  // Get vote buttons
+  const upvoteBtn = article.querySelector(".upvote-btn");
+  const downvoteBtn = article.querySelector(".downvote-btn");
+
+  // Update the UI using existing function
+  const updateCountOnly = (button, count) => {
+    const countSpan = button.querySelector("span");
+    countSpan.textContent = count;
+  };
+
+  updateCountOnly(upvoteBtn, data.post.likes_count);
+  updateCountOnly(downvoteBtn, data.post.dislikes_count);
+}
