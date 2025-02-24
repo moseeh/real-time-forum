@@ -1,12 +1,6 @@
 import { API_ENDPOINTS } from "./constants.js";
 import { login, signup } from "./app.js";
-import { render } from "./ui.js";
-import {
-  headerTemplate,
-  loggedInTemplate,
-  leftBar,
-  startchat,
-} from "./templates.js";
+import { headerTemplate, leftBar, startchat } from "./templates.js";
 import {
   Categories,
   getUserData,
@@ -419,15 +413,18 @@ function sendTyping() {
 
 function displaytyping() {
   // Show the typing indicator in the chat container
-  const typingDiv = document.getElementById("typing");
-  if (typingDiv) {
-    typingDiv.classList.add("show");
+  const animation = document.querySelector(".typing-animation");
+  const chatMessages = document.getElementById("chat-messages");
+
+  if (animation) {
+    animation.classList.add("active");
+    chatMessages.scrollTop = chatMessages.scrollHeight;
     if (typingTimers["typing"]) {
       clearTimeout(typingTimers["typing"]);
     }
     typingTimers["typing"] = setTimeout(() => {
-      typingDiv.classList.remove("show");
-    }, 2000);
+      animation.classList.remove("active");
+    }, 1000);
   }
 }
 
@@ -451,7 +448,7 @@ function typingonlist(userId) {
       list.style.color = "rgb(49, 238, 11)"; // Reset to default color
       list.innerHTML = list.innerHTML.replace(" (Typing ...)", "");
       delete typingTimers[userId];
-    }, 2000); // Adjusted to 2 seconds for better smoothness
+    }, 1000); 
   }
 }
 
