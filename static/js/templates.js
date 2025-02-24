@@ -239,13 +239,7 @@ export const singlepost = (post) => `
 
   <!-- Comments Section -->
   <div class="comments-section">
-    <!-- Add Comment Form -->
-    <div class="add-comment">
-      <textarea placeholder="Join the conversation ..." rows="3"></textarea>
-      <button class="btn submit-btn" id="submitComment" data-post-id="${
-        post.post_id
-      }">Submit</button>
-    </div>
+    
     <h3>Comments (${post.comments_count})</h3>
     ${renderComments(post.comments)}
   </div>

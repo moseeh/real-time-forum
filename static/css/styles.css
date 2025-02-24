@@ -448,7 +448,7 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.75); /* Darker overlay */
   display: none;
   justify-content: center;
   align-items: center;
@@ -456,27 +456,70 @@ body {
 }
 
 .modal {
-  background-color: white;
+  background-color: #1a1a1a; /* Dark background */
   padding: 20px;
   border-radius: 8px;
   width: 90%;
   max-width: 500px;
   position: relative;
+  border: 1px solid #333; /* Subtle border */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.modal h3 {
+  color: #fff;
+  margin-bottom: 15px;
 }
 
 .modal textarea {
-  width: 100%;
+  width: 95%;
   min-height: 100px;
   margin: 15px 0;
   padding: 10px;
-  border: 1px solid #ddd;
+  border: 1px solid #333;
   border-radius: 4px;
+  background-color: #212121; /* Slightly lighter than modal bg */
+  color: #fff;
+  resize: vertical;
+}
+
+.modal textarea:focus {
+  outline: none;
+  border-color: #0066cc; /* Blue highlight */
+  box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.2);
 }
 
 .modal-buttons {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
+}
+
+.btn {
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.cancel-btn {
+  background-color: #333;
+  color: #fff;
+}
+
+.cancel-btn:hover {
+  background-color: #444;
+}
+
+.submit-btn {
+  background-color: #0066cc; /* Blue */
+  color: #fff;
+}
+
+.submit-btn:hover {
+  background-color: #0052a3; /* Darker blue */
 }
 
 .login-form-button {
@@ -585,7 +628,6 @@ body {
   color: rgba(255, 255, 255, 0.6);
 }
 
-/* Add Comment Form Styles */
 .add-comment {
   margin-top: 1rem;
 }
@@ -818,17 +860,16 @@ body {
   color: rgba(255, 255, 255, 0.6);
 }
 
-/* Adjust content spacing */
 .message .content {
   margin-top: 0.25rem;
   font-size: 0.9rem;
 }
 #chat-messages {
   background-image: url("../images/chat.jpg");
-  background-size: cover; /* Ensures the image covers the entire container */
-  background-position: center; /* Centers the image */
+  background-size: cover;
+  background-position: center;
   background-repeat: no-repeat;
-  height: 630px; /* Adjust as needed */
+  height: 630px;
   overflow-y: auto;
   padding: 10px;
   display: flex;
