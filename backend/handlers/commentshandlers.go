@@ -13,7 +13,8 @@ type Comment struct {
 	Comment   string `json:"comment"`
 }
 type CommentResponse struct {
-	CommentsCount int `json:"comments_count"`
+	CommentsCount int    `json:"comments_count"`
+	ContentID     string `json:"content_id"`
 }
 
 func (h *Handler) HandleComments(w http.ResponseWriter, r *http.Request) {
@@ -60,8 +61,20 @@ func (h *Handler) HandleComments(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	response.CommentsCount = comment_count
+	response.ContentID = comment.ContentID
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
+
+	message := Message{
+		Type:     "comment",
+		SenderID: user_id,
+		Post:     response,
+	}
+	for userid, conn := range users {
+		if userid != user_id {
+			conn.WriteJSON(message)
+		}
+	}
 }
 
 // SendJSONError sends a JSON error response
