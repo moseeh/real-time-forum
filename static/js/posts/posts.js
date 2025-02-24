@@ -22,8 +22,8 @@ export async function displayPosts() {
 
 // Render initial posts to the page
 function renderInitialPosts(posts) {
-  const content = document.getElementById("body");
-  content.innerHTML += allposts(posts);
+  const mainContent = document.getElementById("main");
+  mainContent.innerHTML = allposts(posts);
 }
 
 // Setup all event listeners
@@ -77,8 +77,8 @@ function setupMainContentListeners(mainContent, modal, commentText) {
       if (newPostsAvailable) {
         document.getElementById("new-posts-notification").style.display =
           "none";
-          setNewPostsAvailable(false); 
-        mainContent     .innerHTML = allposts(Posts);
+        setNewPostsAvailable(false);
+        mainContent.innerHTML = allposts(Posts);
       }
     });
 }

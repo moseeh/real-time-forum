@@ -97,9 +97,8 @@ export const nullpost = () => `
     <div class="main-content" id="main">
     <h2>No posts found.</h2>
     </div>
-`
+`;
 export const allposts = (posts) => `
-   <div class="main-content" id="main">
     <h2>All Posts</h2>
     ${
       posts?.length
@@ -168,7 +167,6 @@ export const allposts = (posts) => `
             .join("")
         : '<p class="empty-state">No posts available</p>'
     }
-  </div>
 
   <div class="modal-overlay" id="commentModal">
     <div class="modal">
@@ -355,4 +353,3 @@ export const startchat = (username) => `
     </div>
   </div>
 `;
-

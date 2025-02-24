@@ -119,6 +119,7 @@ export async function Homepage() {
 
   const content = document.getElementById("body");
   content.innerHTML += leftBar(Categories);
+  content.innerHTML += `<div class="main-content" id="main"></div>`
   await displayPosts();
   content.innerHTML += rightBar(Users, UserData.username);
   content.style.display = "grid";
