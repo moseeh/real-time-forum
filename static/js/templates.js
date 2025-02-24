@@ -241,6 +241,16 @@ export const singlepost = (post) => `
     <h3>Comments (${post.comments_count})</h3>
     ${renderComments(post.comments)}
   </div>
+  <div class="modal-overlay" id="commentModal">
+  <div class="modal">
+    <h3>Add Comment</h3>
+    <textarea id="commentText" placeholder="Type your comment here..."></textarea>
+    <div class="modal-buttons">
+      <button class="btn cancel-btn" id="cancelComment">Cancel</button>
+      <button class="btn submit-btn" id="submitComment">Submit</button>
+    </div>
+  </div>
+</div>
 `;
 const renderComments = (comments) => {
   if (!comments || comments.length === 0) {
@@ -336,15 +346,37 @@ export const startchat = (username) => `
   <div class="chat-container">
     <div class="chathead">
       <h2>Chat with ${username}</h2><br /><br />
-      <div id="typing" class="typing-indicator">
-        <span class="typing-text"> Typing ...</span>
-        <span class="blinking-cursor">|</span>
-      </div>
     </div>
     <!-- Chat Messages Display -->
     <div class="chat-messages" id="chat-messages">
       <!-- Messages will be dynamically added here -->
     </div>
+    <!-- Typing animation container - moved outside the message list -->
+    <div class="typing-animation" id="typing-animation">
+      <div class="message-wrapper received-wrapper">
+        <div class="message received">
+          <div class="message-info"> <span class="sender">${username} is typing</span> </div>
+          <div class="content">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 40">
+              <rect x="0" y="0" width="120" height="40" rx="20" fill="#E9E9EB">
+                <animate attributeName="opacity" values="0.5;1;0.5" dur="1.5s" repeatCount="indefinite"/>
+              </rect>
+              <circle cx="40" cy="20" r="4" fill="#8E8E93">
+                <animate attributeName="cy" values="20;16;20" dur="1s" repeatCount="indefinite"/>
+              </circle>
+              <circle cx="60" cy="20" r="4" fill="#8E8E93">
+                <animate attributeName="cy" values="20;16;20" dur="1s" begin="0.2s" repeatCount="indefinite"/>
+              </circle>
+              <circle cx="80" cy="20" r="4" fill="#8E8E93">
+                <animate attributeName="cy" values="20;16;20" dur="1s" begin="0.4s" repeatCount="indefinite"/>
+              </circle>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 
     <!-- Typing Textarea -->
     <div class="chat-input">
