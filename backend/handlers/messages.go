@@ -25,11 +25,13 @@ var (
 )
 
 type Message struct {
-	SenderID   string `json:"senderId"`
-	Sendername string `json:"sendername"`
-	ReceiverID string `json:"receiverId"`
-	Message    string `json:"message"`
-	Typing     bool   `json:"istyping"`
+	SenderID   string      `json:"senderId"`
+	Sendername string      `json:"sendername"`
+	ReceiverID string      `json:"receiverId"`
+	Message    string      `json:"message"`
+	Typing     bool        `json:"istyping"`
+	Type       string      `json:"type,omitempty"`
+	Post       interface{} `json:"post,omitempty"`
 }
 
 type Newuser struct {
