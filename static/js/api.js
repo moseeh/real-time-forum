@@ -137,6 +137,11 @@ export async function Homepage() {
   }
 }
 
+export function logouterr () {
+  logout()
+  
+}
+
 async function logout() {
   try {
     const response = await fetch(API_ENDPOINTS.logout, {
