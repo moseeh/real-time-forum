@@ -399,6 +399,12 @@ window.Chat = async function (username, id) {
   if (chatInput) {
     chatInput.addEventListener("input", sendTyping);
   }
+  const closechat = document.getElementById("closechat");
+  if (closechat) {
+    closechat.addEventListener("click", async() => {
+      await displayPosts();
+    });
+  }
 };
 
 function sendTyping() {
