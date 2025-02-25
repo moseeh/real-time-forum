@@ -15,6 +15,23 @@ type App struct {
 	Handlers *handlers.Handler
 }
 
+var allowedRoutes = map[string]bool{
+	"/":                 true,
+	"/api/login":        true,
+	"/api/signup":       true,
+	"/check-username":   true,
+	"/api/logout":       true,
+	"/api/categories":   true,
+	"/api/allusers":     true,
+	"/posts/create":     true,
+	"/api/posts":        true,
+	"/api/comments":     true,
+	"/api/interactions": true,
+	"/ws":               true,
+	"/api/messages":     true,
+	"/api/post/details": true,
+}
+
 func (app *App) Routes() http.Handler {
 	staticDir := "./static/"
 	absStaticDir, err := filepath.Abs(staticDir)
@@ -50,6 +67,11 @@ func (app *App) RouteChecker(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if strings.HasPrefix(r.URL.Path, "/static/") {
 			next.ServeHTTP(w, r)
+			return
+		}
+
+		if _, ok := allowedRoutes[r.URL.Path]; !ok {
+			SendJSONError(w, http.StatusNotFound, "Route not found")
 			return
 		}
 		next.ServeHTTP(w, r)
