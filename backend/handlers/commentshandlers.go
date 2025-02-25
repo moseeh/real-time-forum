@@ -21,13 +21,13 @@ func (h *Handler) HandleComments(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	user_id, ok := r.Context().Value(UserIDKey).(string)
 	if !ok {
-		SendJSONError(w, http.StatusInternalServerError, "User ID not found in context")
+		ServerErrorHandler(w,r)
 		return
 	}
 
 	var comment Comment
 	if err := json.NewDecoder(r.Body).Decode(&comment); err != nil {
-		SendJSONError(w, http.StatusBadRequest, "Invalid Request Body")
+		BadRequestHandler(w,r)
 		return
 	}
 	content := models.Content{
@@ -39,25 +39,25 @@ func (h *Handler) HandleComments(w http.ResponseWriter, r *http.Request) {
 	}
 	tx, err := h.Users.DB.Begin()
 	if err != nil {
-		SendJSONError(w, http.StatusInternalServerError, "Internal Server Error")
+		ServerErrorHandler(w,r)
 		return
 	}
 	defer tx.Rollback()
 
 	err = h.Users.InsertContent(tx, &content)
 	if err != nil {
-		SendJSONError(w, http.StatusInternalServerError, "Failed to insert comment")
+		ServerErrorHandler(w,r)
 		return
 	}
 	var response CommentResponse
 
 	comment_count, err := h.Users.GetContentCommentCount(tx, comment.ContentID)
 	if err != nil {
-		SendJSONError(w, http.StatusInternalServerError, "Failed to get comment count")
+		ServerErrorHandler(w,r)
 		return
 	}
 	if err = tx.Commit(); err != nil {
-		SendJSONError(w, http.StatusInternalServerError, "Failed to commit transaction")
+		ServerErrorHandler(w,r)
 		return
 	}
 	response.CommentsCount = comment_count

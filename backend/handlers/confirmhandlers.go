@@ -17,20 +17,12 @@ func (h *Handler) ConfirmName(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&data)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(ApiResponse{
-			Success: false,
-			Message: "Invalid request format",
-		})
+		BadRequestHandler(w,r)
 		return
 	}
 	exists, err := h.Users.UserExists(data.Email, data.Username)
 	if err != nil {
-		w.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(w).Encode(ApiResponse{
-			Success: false,
-			Message: "Invalid credentials",
-		})
+		NotAuthorized(w,r)
 		return
 	}
 	if exists {

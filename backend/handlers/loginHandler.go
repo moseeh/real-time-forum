@@ -31,28 +31,16 @@ func (h *Handler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(ApiResponse{
-			Success: false,
-			Message: "Invalid request format",
-		})
+		BadRequestHandler(w,r)
 		return
 	}
 	user, err := h.Users.GetUserByEmailOrUsername(req.Username)
 	if err != nil {
-		w.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(w).Encode(ApiResponse{
-			Success: false,
-			Message: "Invalid credentials",
-		})
+		NotAuthorized(w,r)
 		return
 	}
 	if !utils.CompareHash(user.PasswordHash, req.Password) {
-		w.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(w).Encode(ApiResponse{
-			Success: false,
-			Message: "Invalid credentials",
-		})
+		NotAuthorized(w,r)
 		return
 	}
 
@@ -60,11 +48,7 @@ func (h *Handler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	err = h.Users.CreateSession(sessionID, user.ID)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(ApiResponse{
-			Success: false,
-			Message: "Error creating session",
-		})
+		ServerErrorHandler(w,r)
 		return
 	}
 

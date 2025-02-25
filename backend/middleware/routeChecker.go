@@ -71,7 +71,7 @@ func (app *App) RouteChecker(next http.Handler) http.Handler {
 		}
 
 		if _, ok := allowedRoutes[r.URL.Path]; !ok {
-			SendJSONError(w, http.StatusNotFound, "Route not found")
+			handlers.BadRequestHandler(w,r)
 			return
 		}
 		next.ServeHTTP(w, r)

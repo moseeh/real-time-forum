@@ -16,15 +16,12 @@ func (h *Handler) GetPosts(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	user_id, ok := r.Context().Value(UserIDKey).(string)
 	if !ok {
-		SendJSONError(w, http.StatusInternalServerError, "User ID not found in context")
+		ServerErrorHandler(w,r)
 		return
 	}
 	posts, err := h.Users.GetAllPosts(user_id)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(PostResponse{
-			Error: "Failed to fetch posts",
-		})
+		ServerErrorHandler(w,r)
 		return
 	}
 	// Return successful response
