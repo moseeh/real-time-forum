@@ -63,7 +63,7 @@ export const headerTemplate = (username) => `
       </div>
       <div class="header-actions">
         <div class="user-menu">
-          <span class="username">Welcome, ${username}</span>
+          <span class="username">Welcome, ${escapeHtml(username)}</span>
           <img src="static/images/default-avatar.png" alt="author avatar" class="avatar">
           <button class="btn" id="create-post-btn">Create Post</button>
           <button class="btn" id="logout-btn">Logout</button>
@@ -122,19 +122,19 @@ export const allposts = (posts) => `
                 <div class="post-header">
                  <img src="static/images/default-avatar.png" alt="author avatar" class="avatar">
                   <div class="author-info">
-                    <p class="author-name">${username}</p>
+                    <p class="author-name">${escapeHtml(username)}</p>
                     <p class="post-date">${formatDate(created_at)}</p>
                   </div>
                 </div>
-                <h2 class="post-title">${title}</h2> 
-                <p class="post-text">${content}</p>
+                <h2 class="post-title">${escapeHtml(title)}</h2> 
+                <p class="post-text">${escapeHtml(content)}</p>
                   <div class="categories">
                     ${
                       categories?.length
                         ? categories
                             .map(
                               (category) =>
-                                `<span class="category">${category.name}</span>`
+                                `<span class="category">${escapeHtml(category.name)}</span>`
                             )
                             .join(" ")
                         : ""
@@ -185,19 +185,19 @@ export const singlepost = (post) => `
             <div class="post-header">
               <img src="static/images/default-avatar.png" alt="author avatar" class="avatar">
               <div class="author-info">
-                <p class="author-name">${post.username}</p>
+                <p class="author-name">${escapeHtml(post.username)}</p>
                 <p class="post-date">${formatDate(post.created_at)}</p>
               </div>
             </div>
-            <h2 class="post-title">${post.title}</h2> 
-            <p class="post-text">${post.content}</p>
+            <h2 class="post-title">${escapeHtml(post.title)}</h2> 
+            <p class="post-text">${escapeHtml(post.content)}</p>
             <div class="categories">
               ${
                 post.categories?.length
                   ? post.categories
                       .map(
                         (category) =>
-                          `<span class="category">${category.name}</span>`
+                          `<span class="category">${escapeHtml(category.name)}</span>`
                       )
                       .join(" ")
                   : ""
@@ -264,11 +264,11 @@ const renderComments = (comments) => {
         <div class="post-header">
          <img src="static/images/default-avatar.png" alt="author avatar" class="avatar">
          <div class="author-info">
-            <p class="author-name">${comment.username}</p>
+            <p class="author-name">${escapeHtml(comment.username)}</p>
             <p class="post-date">${formatDate(comment.created_at)}</p>
           </div>
         </div>
-        <p class="post-text">${comment.text}</p>
+        <p class="post-text">${escapeHtml(comment.text)}</p>
         <footer class="post-actions">
           <button class="action-button upvote-btn ${
             comment.is_liked ? "active" : ""
@@ -308,9 +308,21 @@ const renderComments = (comments) => {
     .join("");
 };
 export const createpost = (categories) => `
+    <style>
+      .error-message {
+        color: red;
+        font-size: 14px;
+        margin-top: 4px;
+        display: none;
+      }
+      
+      .invalid-input {
+        border: 1px solid red;
+      }
+    </style>
     <form id="create-post-form" action="/posts/create" method="POST" enctype="multipart/form-data">
-      <input type="text" name="title" placeholder="Post Title" required />
-      <textarea name="content" placeholder="Post Content" required></textarea>
+      <input type="text" name="title" placeholder="Post Title" />
+      <textarea name="content" placeholder="Post Content"></textarea>
 
       <div class="categories-section">
         ${
@@ -322,8 +334,12 @@ export const createpost = (categories) => `
               .map(
                 (category) => `
               <div class="category-item">
-                <input type="checkbox" name="categories[]" value="${category.id}" id="category-${category.id}" class="category-checkbox" />
-                <label for="category-${category.id}">${category.name}</label>
+                <input type="checkbox" name="categories[]" value="${
+                  category.id
+                }" id="category-${category.id}" class="category-checkbox" />
+                <label for="category-${category.id}">${escapeHtml(
+                  category.name
+                )}</label>
               </div>
             `
               )
@@ -345,7 +361,7 @@ export const createpost = (categories) => `
 export const startchat = (username) => `
   <div class="chat-container">
     <div class="chathead">
-      <h2>Chat with ${username}</h2><br /><br />
+      <h2>Chat with ${escapeHtml(username)}</h2><br /><br />
       <div class="closediv">
         <button id="closechat" class="btn">Close</button>
       </div>
@@ -358,7 +374,7 @@ export const startchat = (username) => `
     <div class="typing-animation" id="typing-animation">
       <div class="message-wrapper received-wrapper">
         <div class="message received">
-          <div class="message-info"> <span class="sender">${username} is typing</span> </div>
+          <div class="message-info"> <span class="sender">${escapeHtml(username)} is typing</span> </div>
           <div class="content">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 40">
               <rect x="0" y="0" width="120" height="40" rx="20" fill="#E9E9EB">
@@ -388,3 +404,13 @@ export const startchat = (username) => `
     </div>
   </div>
 `;
+
+// Helper function to escape HTML content
+function escapeHtml(unsafe) {
+  return unsafe
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
