@@ -27,7 +27,7 @@ func (h *Handler) HandleComments(w http.ResponseWriter, r *http.Request) {
 
 	var comment Comment
 	if err := json.NewDecoder(r.Body).Decode(&comment); err != nil {
-		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		SendJSONError(w, http.StatusBadRequest, "Invalid Request Body")
 		return
 	}
 	content := models.Content{
@@ -39,25 +39,25 @@ func (h *Handler) HandleComments(w http.ResponseWriter, r *http.Request) {
 	}
 	tx, err := h.Users.DB.Begin()
 	if err != nil {
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		SendJSONError(w, http.StatusInternalServerError, "Internal Server Error")
 		return
 	}
 	defer tx.Rollback()
 
 	err = h.Users.InsertContent(tx, &content)
 	if err != nil {
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		SendJSONError(w, http.StatusInternalServerError, "Failed to insert comment")
 		return
 	}
 	var response CommentResponse
 
 	comment_count, err := h.Users.GetContentCommentCount(tx, comment.ContentID)
 	if err != nil {
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		SendJSONError(w, http.StatusInternalServerError, "Failed to get comment count")
 		return
 	}
 	if err = tx.Commit(); err != nil {
-		http.Error(w, "Failed to commit transaction", http.StatusInternalServerError)
+		SendJSONError(w, http.StatusInternalServerError, "Failed to commit transaction")
 		return
 	}
 	response.CommentsCount = comment_count

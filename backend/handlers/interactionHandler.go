@@ -29,7 +29,7 @@ func (h *Handler) HandleInteraction(w http.ResponseWriter, r *http.Request) {
 	}
 	var req InteractionRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		SendJSONError(w, http.StatusBadRequest, "Invalid request body")
 		return
 	}
 
@@ -40,12 +40,12 @@ func (h *Handler) HandleInteraction(w http.ResponseWriter, r *http.Request) {
 		InteractionType: req.InteractionType,
 	}
 	if err := h.Users.AddUserInteraction(interaction); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		SendJSONError(w, http.StatusInternalServerError, "Failed to add user interaction")
 		return
 	}
 	post, err := h.Users.GetPost(req.ContentID, user_id)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		SendJSONError(w, http.StatusInternalServerError, "Failed to get Post Details")
 		return
 	}
 	response := InteractionResponse{
