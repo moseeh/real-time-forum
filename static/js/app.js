@@ -13,6 +13,7 @@ export function signup() {
   const first = document.getElementById("first-name");
   const second = document.getElementById("second-name");
   const password = document.getElementById("signup-password");
+  const age = document.getElementById("age");
   const signupButton = document.getElementById("signup-form-button");
 
   let isUsernameValid = false;
@@ -20,12 +21,14 @@ export function signup() {
   let isFirstNameValid = false;
   let isSecondNameValid = false;
   let isPasswordValid = false;
+  let isOfAge = false;
 
   username.addEventListener("input", debounce(confirmName, 300));
   email.addEventListener("input", debounce(confirmEmail, 300));
   first.addEventListener("input", debounce(confirmfirst, 300));
   second.addEventListener("input", debounce(confirmsecond, 300));
   password.addEventListener("input", debounce(validatePassword, 300));
+  age.addEventListener("input", debounce(validateAge, 300));
 
   function validatePassword() {
     console.log("Checking password");
@@ -47,6 +50,20 @@ export function signup() {
       isPasswordValid = false;
     }
     checkAllValidations();
+  }
+  function validateAge() {
+    const validAge = document.getElementById("agecheck");
+    const ageValue = parseInt(age.value);
+    if (!isNaN(ageValue) && ageValue >= 16 && ageValue <= 150) {
+      validAge.style.display = "none";
+      isOfAge = true;
+    } else {
+      validAge.textContent =
+        "To access this website, you must be at least 16 years old";
+      validAge.style.fontSize = "12px";
+      validAge.style.display = "block";
+      isOfAge = false;
+    }
   }
 
   function confirmfirst() {
@@ -175,6 +192,7 @@ export function signup() {
     if (
       isUsernameValid &&
       isEmailValid &&
+      isOfAge &&
       isFirstNameValid &&
       isSecondNameValid &&
       isPasswordValid
@@ -216,7 +234,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 
-function debounce(func, delay) {
+function debounce(func, delay = 300) {
   let timeoutId;
   return function (...args) {
     clearTimeout(timeoutId);
