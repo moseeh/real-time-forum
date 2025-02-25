@@ -542,6 +542,11 @@ body {
   background-color: #444;
 }
 
+.button-1:hover,
+.button-2:hover{
+  cursor: pointer;
+}
+
 .submit-btn {
   background-color: #0066cc; /* Blue */
   color: #fff;
