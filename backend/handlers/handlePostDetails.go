@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 )
 
@@ -18,40 +17,40 @@ type ErrorResponse struct {
 	Message string `json:"message"`
 }
 
-func writeJSONError(w http.ResponseWriter, message string, statusCode int) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(statusCode)
-	json.NewEncoder(w).Encode(ErrorResponse{
-		Success: false,
-		Message: message,
-	})
-}
+// func writeJSONError(w http.ResponseWriter, message string, statusCode int) {
+// 	w.Header().Set("Content-Type", "application/json")
+// 	w.WriteHeader(statusCode)
+// 	json.NewEncoder(w).Encode(ErrorResponse{
+// 		Success: false,
+// 		Message: message,
+// 	})
+// }
 
 func (h *Handler) HandlePostDetails(w http.ResponseWriter, r *http.Request) {
 	// Check for session cookie
 	userID, ok := r.Context().Value(UserIDKey).(string)
 	if !ok {
-		SendJSONError(w, http.StatusInternalServerError, "User ID not found in context")
+		ServerErrorHandler(w, r)
 		return
 	}
 
 	// Get post ID from query parameters
 	postID := r.URL.Query().Get("postID")
 	if postID == "" {
-		writeJSONError(w, "Missing postID parameter", http.StatusBadRequest)
+		BadRequestHandler(w, r)
 		return
 	}
 
 	// Get post details
 	post, err := h.Users.GetPost(postID, userID)
 	if err != nil {
-		writeJSONError(w, fmt.Sprintf("Error retrieving post: %v", err), http.StatusInternalServerError)
+		ServerErrorHandler(w, r)
 		return
 	}
 
 	// Check if post exists
 	if post == nil {
-		writeJSONError(w, "Post not found", http.StatusNotFound)
+		NotFoundHandler(w, r)
 		return
 	}
 
@@ -64,7 +63,7 @@ func (h *Handler) HandlePostDetails(w http.ResponseWriter, r *http.Request) {
 	// Write response
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(response); err != nil {
-		writeJSONError(w, "Error encoding response", http.StatusInternalServerError)
+		ServerErrorHandler(w, r)
 		return
 	}
 }

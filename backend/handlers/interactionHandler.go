@@ -24,12 +24,12 @@ type InteractionResponse struct {
 func (h *Handler) HandleInteraction(w http.ResponseWriter, r *http.Request) {
 	user_id, ok := r.Context().Value(UserIDKey).(string)
 	if !ok {
-		SendJSONError(w, http.StatusInternalServerError, "User ID not found in context")
+		ServerErrorHandler(w,r)
 		return
 	}
 	var req InteractionRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		SendJSONError(w, http.StatusBadRequest, "Invalid request body")
+		BadRequestHandler(w,r)
 		return
 	}
 
@@ -40,12 +40,12 @@ func (h *Handler) HandleInteraction(w http.ResponseWriter, r *http.Request) {
 		InteractionType: req.InteractionType,
 	}
 	if err := h.Users.AddUserInteraction(interaction); err != nil {
-		SendJSONError(w, http.StatusInternalServerError, "Failed to add user interaction")
+		ServerErrorHandler(w,r)
 		return
 	}
 	post, err := h.Users.GetPost(req.ContentID, user_id)
 	if err != nil {
-		SendJSONError(w, http.StatusInternalServerError, "Failed to get Post Details")
+		ServerErrorHandler(w,r)
 		return
 	}
 	response := InteractionResponse{

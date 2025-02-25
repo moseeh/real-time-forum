@@ -36,22 +36,22 @@ func (app *App) AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 		sessionCookie, err := r.Cookie("session_id")
 		if err != nil {
 			if err == http.ErrNoCookie {
-				SendJSONError(w, http.StatusUnauthorized, "no session found")
+				handlers.NotAuthorized(w,r)
 				return
 			}
-			SendJSONError(w, http.StatusBadRequest, "Invalid request")
+			handlers.BadRequestHandler(w,r)
 			return
 		}
 
 		userID, err := app.Users.GetUserIdFromSession(sessionCookie.Value)
 		if err != nil {
-			SendJSONError(w, http.StatusUnauthorized, "Invalid session")
+			handlers.NotAuthorized(w,r)
 			return
 		}
 		// Check if session has expired
 		isValid, err := app.Users.IsSessionValid(sessionCookie.Value)
 		if err != nil {
-			SendJSONError(w, http.StatusInternalServerError, "Error validating session")
+			handlers.ServerErrorHandler(w, r)
 			return
 		}
 		if !isValid {
@@ -66,7 +66,7 @@ func (app *App) AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 				MaxAge:   -1,
 				Expires:  time.Now().Add(-24 * time.Hour),
 			})
-			SendJSONError(w, http.StatusUnauthorized, "Session expired")
+			handlers.NotAuthorized(w,r)
 			return
 		}
 		// Add user ID to request context for handlers to use

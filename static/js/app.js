@@ -1,6 +1,6 @@
 import { render } from "./ui.js";
 import { signupTemplate, loginTemplate } from "./templates.js";
-import { Homepage, LoginApi, SignupAPi } from "./api.js";
+import { Homepage, LoginApi, logouterr, SignupAPi } from "./api.js";
 import { validateEmail, validateUsername } from "./validators.js";
 import { getUserData } from "./states.js";
 
@@ -223,8 +223,19 @@ export function login() {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-  document.getElementById("signup-button").addEventListener("click", signup);
-  document.getElementById("login-button").addEventListener("click", login);
+  const sign = document.getElementById("signup-button")
+  if (sign) {
+    sign.addEventListener("click", signup);
+  }
+  const loginButton = document.getElementById("login-button")
+  if (loginButton) {
+    loginButton.addEventListener("click", login);
+  }
+  const logoutButton = document.getElementById("logout-btn")
+  if (logoutButton) {
+    logoutButton.addEventListener("click", logouterr);
+    return
+  }
   const userData = getUserData();
   if (userData) {
     console.log(userData);

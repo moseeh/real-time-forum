@@ -23,7 +23,7 @@ const typingTimers = {};
 export async function LoginApi(event) {
   if (event) event.preventDefault();
 
-  const username = document.getElementById("login-username").value;
+  const username = document.getElementById("login-username").value.toLowerCase();
   const password = document.getElementById("login-password").value;
 
   if (username.trim() == "" || password.trim() == "") {
@@ -140,6 +140,11 @@ export async function Homepage() {
   if (logoutBtn) {
     logoutBtn.addEventListener("click", logout);
   }
+}
+
+export function logouterr () {
+  logout()
+  
 }
 
 async function logout() {
@@ -467,7 +472,7 @@ function sendMessage() {
   const messageInput = document.getElementById("chat-textarea");
   const message = messageInput.value;
 
-  if (message) {
+  if (message && message.trim().length > 0) {
     const data = {
       senderId: Sender[1],
       sendername: Sender[0],

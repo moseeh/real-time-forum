@@ -119,7 +119,7 @@ func (h *Handler) HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 
 		tx, err := h.Users.DB.Begin()
 		if err != nil {
-			SendJSONError(w, http.StatusInternalServerError, "Failed to start transaction")
+			ServerErrorHandler(w, r)
 			return
 		}
 		defer tx.Rollback()
@@ -132,7 +132,7 @@ func (h *Handler) HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 			continue
 		}
 		if err := tx.Commit(); err != nil {
-			SendJSONError(w, http.StatusInternalServerError, "Failed to commit transaction")
+			ServerErrorHandler(w, r)
 			return
 		}
 
@@ -167,13 +167,13 @@ func (h *Handler) FetchMessages(w http.ResponseWriter, r *http.Request) {
 	var data Twousers
 	err := json.NewDecoder(r.Body).Decode(&data)
 	if err != nil {
-		SendJSONError(w, http.StatusBadRequest, "Invalid Request Format")
+		ServerErrorHandler(w,r)
 		return
 	}
 
 	messages, err := h.Users.GetAllMessages(data.User1, data.User2)
 	if err != nil {
-		SendJSONError(w, http.StatusInternalServerError, "Failed to get messsages")
+		ServerErrorHandler(w,r)
 		return
 	}
 

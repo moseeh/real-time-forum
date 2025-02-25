@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -21,13 +20,12 @@ func (h *Handler) CreatePost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	user_id, ok := r.Context().Value(UserIDKey).(string)
 	if !ok {
-		SendJSONError(w, http.StatusInternalServerError, "User ID not found in context")
+		ServerErrorHandler(w, r)
 		return
 	}
 	// r.Body = http.MaxBytesReader(w, r.Body, 25<<20)
 	if err := r.ParseMultipartForm(20 << 20); err != nil {
-		fmt.Println("her2")
-		SendJSONError(w, http.StatusBadRequest, "Error Parsing form Data")
+		BadRequestHandler(w, r)
 		return
 	}
 
@@ -36,16 +34,14 @@ func (h *Handler) CreatePost(w http.ResponseWriter, r *http.Request) {
 	categories := r.Form["categories[]"]
 
 	if title == "" || content == "" {
-		SendJSONError(w, http.StatusBadRequest, "Title and content are required")
+		BadRequestHandler(w, r)
 		return
 	}
 	postID := utils.UUIDGen()
 	var imagePath string
 	file, fileHeader, err := r.FormFile("image")
 	if err != nil && err != http.ErrMissingFile {
-		SendJSONError(w, http.StatusBadRequest, "Error Retrieving the file")
-		return
-
+		BadRequestHandler(w, r)
 	}
 
 	if file != nil {
@@ -68,13 +64,13 @@ func (h *Handler) CreatePost(w http.ResponseWriter, r *http.Request) {
 		// create the file
 		out, err := os.Create(filepath)
 		if err != nil {
-			SendJSONError(w, http.StatusInternalServerError, "Error creating file")
+			ServerErrorHandler(w, r)
 			return
 		}
 
 		defer out.Close()
 		if _, err := io.Copy(out, file); err != nil {
-			SendJSONError(w, http.StatusInternalServerError, "Error coping file")
+			ServerErrorHandler(w, r)
 			return
 		}
 
@@ -93,31 +89,31 @@ func (h *Handler) CreatePost(w http.ResponseWriter, r *http.Request) {
 	// Start database transaction
 	tx, err := h.Users.DB.Begin()
 	if err != nil {
-		SendJSONError(w, http.StatusInternalServerError, "Error starting transaction")
+		ServerErrorHandler(w,r)
 		return
 	}
 	defer tx.Rollback()
 
 	err = h.Users.InsertContent(tx, post)
 	if err != nil {
-		SendJSONError(w, http.StatusInternalServerError, "Error inserting post")
+		ServerErrorHandler(w,r)
 		return
 	}
 	// Insert categories
 	for _, categoryID := range categories {
 		err = h.Users.InsertPostCategory(tx, post.ID, categoryID)
 		if err != nil {
-			SendJSONError(w, http.StatusInternalServerError, "Error inserting category")
-			return
+			ServerErrorHandler(w,r)
+		return
 		}
 	}
 	if err := tx.Commit(); err != nil {
-		SendJSONError(w, http.StatusInternalServerError, "Failed to commit tranasction")
+		ServerErrorHandler(w,r)
 		return
 	}
 	responsePost, err := h.Users.GetPost(post.ID, post.AuthorID)
 	if err != nil {
-		SendJSONError(w, http.StatusInternalServerError, "Failed to get post details")
+		ServerErrorHandler(w,r)
 		return
 	}
 	// Prepare response
