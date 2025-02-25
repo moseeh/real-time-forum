@@ -116,6 +116,6 @@ async function handlePostClick(e, mainContent) {
 // Handle errors
 function handleError(error, message) {
   console.error(message, error);
-  const content = document.getElementById("body");
-  content.innerHTML += nullpost();
+  const content = document.getElementById("main");
+  content.innerHTML = nullpost();
 }
