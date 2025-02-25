@@ -237,14 +237,14 @@ body {
 .container {
   max-width: 1400px;
   display: grid;
-  grid-template-columns: 1fr 2fr 1fr;
-  /* Left, Middle, Right */
+  grid-template-columns: 1fr 2fr 1fr; /* Left, Middle, Right */
   gap: 1rem;
   background: black;
   margin: 2% auto;
   padding: 0.5rem;
   border-radius: 5px;
   color: white;
+  align-items: start; /* This ensures columns don't stretch to match heights */
 }
 
 .categories-section {
@@ -543,7 +543,7 @@ body {
 }
 
 .button-1:hover,
-.button-2:hover{
+.button-2:hover {
   cursor: pointer;
 }
 
@@ -993,6 +993,44 @@ body {
   animation: slideIn 0.5s ease-out, fadeOut 0.5s ease-in 1.5s;
 }
 
+/* Media queries for responsive layout */
+@media (max-width: 900px) {
+  .authentication {
+    width: 90%;
+    max-width: 800px;
+  }
+}
+
+@media (max-width: 768px) {
+  .authentication {
+    grid-template-columns: 1fr;
+    height: auto;
+    min-height: 500px;
+  }
+}
+
+@media (max-width: 480px) {
+  .authentication {
+    margin: 5% auto;
+    width: 95%;
+  }
+}
+
+/* Media queries for responsive layout */
+@media (max-width: 1200px) {
+  .container {
+    grid-template-columns: 1fr 2fr;
+    max-width: 95%;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    grid-template-columns: 1fr;
+    max-width: 90%;
+  }
+}
+
 @keyframes slideIn {
   from {
     transform: translateX(100%);
@@ -1012,5 +1050,32 @@ body {
 
   to {
     opacity: 0;
+  }
+}
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .user-menu {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.5rem;
+  }
+
+  .username {
+    width: 100%;
+    text-align: right;
+    margin-bottom: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-content {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .user-menu {
+    justify-content: center;
   }
 }
