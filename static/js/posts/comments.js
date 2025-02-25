@@ -18,7 +18,10 @@ export async function handleCommentSubmission(
   commentText,
   currentPostId
 ) {
-  if (!commentText.value.trim() || !currentPostId) return;
+  if (!commentText.value.trim() || !currentPostId) {
+    alert("Comment cannot be empty")
+    return;
+  }
 
   try {
     const data = await submitComment(currentPostId, commentText.value.trim());
