@@ -95,10 +95,9 @@ export const leftBar = (categories) => `
     </div>
 `;
 export const nullpost = () => `
-    <div class="main-content" id="main">
     <h2>No posts found.</h2>
-    </div>
 `;
+
 export const allposts = (posts) => `
     <h2>All Posts</h2>
     ${
@@ -203,6 +202,7 @@ export const singlepost = (post) => `
                       .join(" ")
                   : ""
               }
+              </div>
               ${
                 post.image_url
                   ? `<div class="post-image">
@@ -210,7 +210,6 @@ export const singlepost = (post) => `
                      </div>`
                   : ""
               }
-            </div>
             <footer class="post-actions">
               <button class="action-button upvote-btn ${
                 post.is_liked ? "active" : ""
@@ -347,6 +346,9 @@ export const startchat = (username) => `
   <div class="chat-container">
     <div class="chathead">
       <h2>Chat with ${username}</h2><br /><br />
+      <div class="closediv">
+        <button id="closechat" class="btn">Close</button>
+      </div>
     </div>
     <!-- Chat Messages Display -->
     <div class="chat-messages" id="chat-messages">
