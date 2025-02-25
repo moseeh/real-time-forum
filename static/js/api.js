@@ -467,7 +467,7 @@ function sendMessage() {
   const messageInput = document.getElementById("chat-textarea");
   const message = messageInput.value;
 
-  if (message) {
+  if (message && message.trim().length > 0) {
     const data = {
       senderId: Sender[1],
       sendername: Sender[0],
