@@ -1,11 +1,12 @@
-import { allposts, singlepost } from "../templates.js";
+import { allposts, singlepost, nullpost } from "../templates.js";
 import { fetchPosts, fetchPostDetails } from "./fetchposts.js";
-import { setupCommentModal } from "./comments.js";
 import { handleVoteClick } from "./likes.js";
-import { handleCommentClick } from "./comments.js";
+import { handleCommentClick, handleCommentSubmission, closeCommentModal } from "./comments.js";
 import { setupSidebarEventListener } from "./filter.js";
-import { Posts } from "../states.js";
+import { Posts, newPostsAvailable, setNewPostsAvailable } from "../states.js";
 // Main function to display posts
+
+let currentPostId = null;
 
 export async function displayPosts() {
   try {
@@ -22,8 +23,8 @@ export async function displayPosts() {
 
 // Render initial posts to the page
 function renderInitialPosts(posts) {
-  const content = document.getElementById("body");
-  content.innerHTML += allposts(posts);
+  const mainContent = document.getElementById("main");
+  mainContent.innerHTML = allposts(posts);
 }
 
 // Setup all event listeners
@@ -35,13 +36,12 @@ function setupEventListeners(posts) {
       console.error("Could not find main element");
       return;
     }
-    const { modal, commentText, currentPostId } = setupCommentModal();
-    setupMainContentListeners(mainContent, modal, commentText, currentPostId);
+    setupMainContentListeners(mainContent);
     setupSidebarEventListener(leftSidebar, posts, mainContent);
   });
 }
 
-function setupMainContentListeners(mainContent, modal, commentText) {
+function setupMainContentListeners(mainContent) {
   mainContent.addEventListener("click", async (e) => {
     console.log("clicked");
     // Stop handling if the click was on a link
@@ -60,7 +60,24 @@ function setupMainContentListeners(mainContent, modal, commentText) {
 
     // Handle comment button
     if (commentButton) {
-      handleCommentClick(e, modal, commentText);
+      const modal = document.getElementById("commentModal");
+      const commentText = document.getElementById("commentText");
+      const cancelComment = document.getElementById("cancelComment");
+      const submitComment = document.getElementById("submitComment");
+
+      const commentButton = e.target.closest(".comment-btn");
+      currentPostId = commentButton.dataset.postId;
+
+      cancelComment.addEventListener("click", () => {
+        closeCommentModal(modal, currentPostId, commentText);
+      });
+
+      submitComment.addEventListener("click", async () => {
+        await handleCommentSubmission(modal, commentText, currentPostId);
+      });
+
+      console.log(modal);
+      handleCommentClick(modal, commentText);
       return;
     }
 
@@ -70,6 +87,17 @@ function setupMainContentListeners(mainContent, modal, commentText) {
       return;
     }
   });
+
+  document
+    .getElementById("new-posts-notification")
+    .addEventListener("click", () => {
+      if (newPostsAvailable) {
+        document.getElementById("new-posts-notification").style.display =
+          "none";
+        setNewPostsAvailable(false);
+        mainContent.innerHTML = allposts(Posts);
+      }
+    });
 }
 async function handlePostClick(e, mainContent) {
   const postArticle = e.target.closest(".post");
@@ -88,6 +116,6 @@ async function handlePostClick(e, mainContent) {
 // Handle errors
 function handleError(error, message) {
   console.error(message, error);
-  const content = document.getElementById("body");
-  content.innerHTML += `<div class="error">Error loading posts: ${error.message}</div>`;
+  const content = document.getElementById("main");
+  content.innerHTML = nullpost();
 }

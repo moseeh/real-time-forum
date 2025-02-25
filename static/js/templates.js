@@ -37,6 +37,7 @@ export const signupTemplate = () => `
     <br /><br />
     <!-- Age Input -->
     <input type="number" id="age" class="input-field" placeholder="Enter age" required />
+    <div id="agecheck" style="display:none;color:red;"></div>
     <br /><br />
     <input type="password" id="signup-password" placeholder="Password" class="input-field" required/>
     <div id="passwordcheck" style="display:none;color:red;"></div>
@@ -62,7 +63,7 @@ export const headerTemplate = (username) => `
       </div>
       <div class="header-actions">
         <div class="user-menu">
-          <span class="username">Welcome, ${username}</span>
+          <span class="username">Welcome, ${escapeHtml(username)}</span>
           <img src="static/images/default-avatar.png" alt="author avatar" class="avatar">
           <button class="btn" id="create-post-btn">Create Post</button>
           <button class="btn" id="logout-btn">Logout</button>
@@ -93,9 +94,11 @@ export const leftBar = (categories) => `
         </div>
     </div>
 `;
+export const nullpost = () => `
+    <h2>No posts found.</h2>
+`;
 
 export const allposts = (posts) => `
-   <div class="main-content" id="main">
     <h2>All Posts</h2>
     ${
       posts?.length
@@ -107,6 +110,7 @@ export const allposts = (posts) => `
                 username,
                 likes_count,
                 dislikes_count,
+                image_url,
                 post_id,
                 comments_count,
                 categories,
@@ -118,24 +122,31 @@ export const allposts = (posts) => `
                 <div class="post-header">
                  <img src="static/images/default-avatar.png" alt="author avatar" class="avatar">
                   <div class="author-info">
-                    <p class="author-name">${username}</p>
+                    <p class="author-name">${escapeHtml(username)}</p>
                     <p class="post-date">${formatDate(created_at)}</p>
                   </div>
                 </div>
-                <h2 class="post-title">${title}</h2> 
-                <p class="post-text">${content}</p>
+                <h2 class="post-title">${escapeHtml(title)}</h2> 
+                <p class="post-text">${escapeHtml(content)}</p>
                   <div class="categories">
                     ${
                       categories?.length
                         ? categories
                             .map(
                               (category) =>
-                                `<span class="category">${category.name}</span>`
+                                `<span class="category">${escapeHtml(category.name)}</span>`
                             )
                             .join(" ")
                         : ""
                     }
                   </div>
+                  ${
+                    image_url
+                      ? `<div class="post-image">
+                          <img src="static/images/${image_url}" alt="Post image" class="post-image">
+                         </div>`
+                      : ""
+                  }
                   <footer class="post-actions">
                       <button class="action-button upvote-btn ${
                         is_liked ? "active" : ""
@@ -156,7 +167,6 @@ export const allposts = (posts) => `
             .join("")
         : '<p class="empty-state">No posts available</p>'
     }
-  </div>
 
   <div class="modal-overlay" id="commentModal">
     <div class="modal">
@@ -175,24 +185,31 @@ export const singlepost = (post) => `
             <div class="post-header">
               <img src="static/images/default-avatar.png" alt="author avatar" class="avatar">
               <div class="author-info">
-                <p class="author-name">${post.username}</p>
+                <p class="author-name">${escapeHtml(post.username)}</p>
                 <p class="post-date">${formatDate(post.created_at)}</p>
               </div>
             </div>
-            <h2 class="post-title">${post.title}</h2> 
-            <p class="post-text">${post.content}</p>
+            <h2 class="post-title">${escapeHtml(post.title)}</h2> 
+            <p class="post-text">${escapeHtml(post.content)}</p>
             <div class="categories">
               ${
                 post.categories?.length
                   ? post.categories
                       .map(
                         (category) =>
-                          `<span class="category">${category.name}</span>`
+                          `<span class="category">${escapeHtml(category.name)}</span>`
                       )
                       .join(" ")
                   : ""
               }
-            </div>
+              </div>
+              ${
+                post.image_url
+                  ? `<div class="post-image">
+                      <img src="static/images/${post.image_url}" alt="Post image" class="post-image">
+                     </div>`
+                  : ""
+              }
             <footer class="post-actions">
               <button class="action-button upvote-btn ${
                 post.is_liked ? "active" : ""
@@ -220,16 +237,20 @@ export const singlepost = (post) => `
 
   <!-- Comments Section -->
   <div class="comments-section">
-    <!-- Add Comment Form -->
-    <div class="add-comment">
-      <textarea placeholder="Join the conversation ..." rows="3"></textarea>
-      <button class="btn submit-btn" id="submitComment" data-post-id="${
-        post.post_id
-      }">Submit</button>
-    </div>
+    
     <h3>Comments (${post.comments_count})</h3>
     ${renderComments(post.comments)}
   </div>
+  <div class="modal-overlay" id="commentModal">
+  <div class="modal">
+    <h3>Add Comment</h3>
+    <textarea id="commentText" placeholder="Type your comment here..."></textarea>
+    <div class="modal-buttons">
+      <button class="btn cancel-btn" id="cancelComment">Cancel</button>
+      <button class="btn submit-btn" id="submitComment">Submit</button>
+    </div>
+  </div>
+</div>
 `;
 const renderComments = (comments) => {
   if (!comments || comments.length === 0) {
@@ -243,11 +264,11 @@ const renderComments = (comments) => {
         <div class="post-header">
          <img src="static/images/default-avatar.png" alt="author avatar" class="avatar">
          <div class="author-info">
-            <p class="author-name">${comment.username}</p>
+            <p class="author-name">${escapeHtml(comment.username)}</p>
             <p class="post-date">${formatDate(comment.created_at)}</p>
           </div>
         </div>
-        <p class="post-text">${comment.text}</p>
+        <p class="post-text">${escapeHtml(comment.text)}</p>
         <footer class="post-actions">
           <button class="action-button upvote-btn ${
             comment.is_liked ? "active" : ""
@@ -287,9 +308,21 @@ const renderComments = (comments) => {
     .join("");
 };
 export const createpost = (categories) => `
+    <style>
+      .error-message {
+        color: red;
+        font-size: 14px;
+        margin-top: 4px;
+        display: none;
+      }
+      
+      .invalid-input {
+        border: 1px solid red;
+      }
+    </style>
     <form id="create-post-form" action="/posts/create" method="POST" enctype="multipart/form-data">
-      <input type="text" name="title" placeholder="Post Title" required />
-      <textarea name="content" placeholder="Post Content" required></textarea>
+      <input type="text" name="title" placeholder="Post Title" />
+      <textarea name="content" placeholder="Post Content"></textarea>
 
       <div class="categories-section">
         ${
@@ -301,8 +334,12 @@ export const createpost = (categories) => `
               .map(
                 (category) => `
               <div class="category-item">
-                <input type="checkbox" name="categories[]" value="${category.id}" id="category-${category.id}" class="category-checkbox" />
-                <label for="category-${category.id}">${category.name}</label>
+                <input type="checkbox" name="categories[]" value="${
+                  category.id
+                }" id="category-${category.id}" class="category-checkbox" />
+                <label for="category-${category.id}">${escapeHtml(
+                  category.name
+                )}</label>
               </div>
             `
               )
@@ -324,22 +361,56 @@ export const createpost = (categories) => `
 export const startchat = (username) => `
   <div class="chat-container">
     <div class="chathead">
-      <h2>Chat with ${username}</h2><br /><br />
-      <div id="typing" class="typing-indicator">
-        <span class="typing-text">typing...</span>
-        <span class="blinking-cursor">|</span>
+      <h2>Chat with ${escapeHtml(username)}</h2><br /><br />
+      <div class="closediv">
+        <button id="closechat" class="btn">Close</button>
       </div>
     </div>
     <!-- Chat Messages Display -->
     <div class="chat-messages" id="chat-messages">
       <!-- Messages will be dynamically added here -->
     </div>
+    <!-- Typing animation container - moved outside the message list -->
+    <div class="typing-animation" id="typing-animation">
+      <div class="message-wrapper received-wrapper">
+        <div class="message received">
+          <div class="message-info"> <span class="sender">${escapeHtml(username)} is typing</span> </div>
+          <div class="content">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 40">
+              <rect x="0" y="0" width="120" height="40" rx="20" fill="#E9E9EB">
+                <animate attributeName="opacity" values="0.5;1;0.5" dur="1.5s" repeatCount="indefinite"/>
+              </rect>
+              <circle cx="40" cy="20" r="4" fill="#8E8E93">
+                <animate attributeName="cy" values="20;16;20" dur="1s" repeatCount="indefinite"/>
+              </circle>
+              <circle cx="60" cy="20" r="4" fill="#8E8E93">
+                <animate attributeName="cy" values="20;16;20" dur="1s" begin="0.2s" repeatCount="indefinite"/>
+              </circle>
+              <circle cx="80" cy="20" r="4" fill="#8E8E93">
+                <animate attributeName="cy" values="20;16;20" dur="1s" begin="0.4s" repeatCount="indefinite"/>
+              </circle>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 
     <!-- Typing Textarea -->
     <div class="chat-input">
-      <textarea id="chat-textarea" placeholder="Type your message..."></textarea>
+      <textarea id="chat-textarea" placeholder="Type your message ..."></textarea>
       <button id="send-btn" class="btn">Send</button>
     </div>
   </div>
 `;
 
+// Helper function to escape HTML content
+function escapeHtml(unsafe) {
+  return unsafe
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}

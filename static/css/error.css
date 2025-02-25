@@ -1,0 +1,153 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body Styling */
+body {
+    background-color: #0a192f; /* Dark blue background */
+    color: #ccd6f6; /* Light text color */
+    font-family: 'Arial', sans-serif;
+    /* display: flex; */
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    text-align: center;
+}
+
+/* Container Styling */
+.container {
+    background-color: #112240; /* Slightly lighter dark blue */
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Error Code Styling */
+.error-code {
+    font-size: 6rem;
+    color: #0628eb; /* Teal accent color */
+    margin-bottom: 1rem;
+}
+
+/* Message Styling */
+.message {
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+    color: #8892b0; /* Lighter text color */
+}
+
+/* Home Button Styling */
+.home-button {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background-color: #001aff; /* Teal accent color */
+    color: #0a192f; /* Dark blue text */
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.home-button:hover {
+    background-color: #52e3c2; /* Slightly lighter teal on hover */
+    transform: translateY(-2px); /* Slight lift on hover */
+}
+
+.home-button:active {
+    transform: translateY(0); /* Reset lift on click */
+}
+
+/* Header Styles */
+.card {
+    background: black;
+    padding: 0.5rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+  
+  .logo a {
+    text-decoration: none;
+  }
+  
+  .logo h1 {
+    color: #007bff;
+    font-family: "Poppins", sans-serif;
+    font-size: 3rem;
+    text-shadow: 2px 2px 3px rgba(14, 48, 122, 0.5);
+    letter-spacing: 1.5px;
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+  }
+  
+  .logo h1:hover {
+    color: #0056b3;
+    /* Darker blue */
+    text-shadow: 3px 3px 5px rgba(14, 48, 122, 0.7);
+  }
+  
+  .user-menu {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  
+  .username {
+    color: white;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+  }
+  
+  .btn {
+    padding: 10px 20px;
+    border-radius: 7px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    color: white;
+  }
+  
+  .post {
+    transition: transform 0.3s ease;
+  }
+  
+  .post:hover {
+    transform: translateX(5px);
+    cursor: pointer;
+  }
+  
+  #create-post-btn {
+    background-color: #007bff;
+  }
+  
+  .submit-btn,
+  .cancel-btn {
+    background-color: #007bff;
+  }
+  
+  .submit-btn:hover,
+  .cancel-btn:hover {
+    background-color: #0056b3;
+  }
+  
+  #create-post-btn:hover {
+    background-color: #0056b3;
+  }
+  
+  #logout-btn {
+    background-color: #007bff;
+  }
+  
+  #logout-btn:hover {
+    background-color: #0056b3;
+  }

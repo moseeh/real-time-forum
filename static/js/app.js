@@ -1,6 +1,6 @@
 import { render } from "./ui.js";
 import { signupTemplate, loginTemplate } from "./templates.js";
-import { Homepage, LoginApi, SignupAPi } from "./api.js";
+import { Homepage, LoginApi, logouterr, SignupAPi } from "./api.js";
 import { validateEmail, validateUsername } from "./validators.js";
 import { getUserData } from "./states.js";
 
@@ -13,6 +13,7 @@ export function signup() {
   const first = document.getElementById("first-name");
   const second = document.getElementById("second-name");
   const password = document.getElementById("signup-password");
+  const age = document.getElementById("age");
   const signupButton = document.getElementById("signup-form-button");
 
   let isUsernameValid = false;
@@ -20,12 +21,14 @@ export function signup() {
   let isFirstNameValid = false;
   let isSecondNameValid = false;
   let isPasswordValid = false;
+  let isOfAge = false;
 
   username.addEventListener("input", debounce(confirmName, 300));
   email.addEventListener("input", debounce(confirmEmail, 300));
   first.addEventListener("input", debounce(confirmfirst, 300));
   second.addEventListener("input", debounce(confirmsecond, 300));
   password.addEventListener("input", debounce(validatePassword, 300));
+  age.addEventListener("input", debounce(validateAge, 300));
 
   function validatePassword() {
     console.log("Checking password");
@@ -47,6 +50,20 @@ export function signup() {
       isPasswordValid = false;
     }
     checkAllValidations();
+  }
+  function validateAge() {
+    const validAge = document.getElementById("agecheck");
+    const ageValue = parseInt(age.value);
+    if (!isNaN(ageValue) && ageValue >= 16 && ageValue <= 150) {
+      validAge.style.display = "none";
+      isOfAge = true;
+    } else {
+      validAge.textContent =
+        "To access this website, you must be at least 16 years old";
+      validAge.style.fontSize = "12px";
+      validAge.style.display = "block";
+      isOfAge = false;
+    }
   }
 
   function confirmfirst() {
@@ -95,7 +112,7 @@ export function signup() {
       }
 
       const data = await response.json();
-      console.log(data, user);
+      console.log(data, user,1);
 
       const available = document.getElementById("nameavailable");
 
@@ -175,6 +192,7 @@ export function signup() {
     if (
       isUsernameValid &&
       isEmailValid &&
+      isOfAge &&
       isFirstNameValid &&
       isSecondNameValid &&
       isPasswordValid
@@ -205,8 +223,19 @@ export function login() {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-  document.getElementById("signup-button").addEventListener("click", signup);
-  document.getElementById("login-button").addEventListener("click", login);
+  const sign = document.getElementById("signup-button")
+  if (sign) {
+    sign.addEventListener("click", signup);
+  }
+  const loginButton = document.getElementById("login-button")
+  if (loginButton) {
+    loginButton.addEventListener("click", login);
+  }
+  const logoutButton = document.getElementById("logout-btn")
+  if (logoutButton) {
+    logoutButton.addEventListener("click", logouterr);
+    return
+  }
   const userData = getUserData();
   if (userData) {
     console.log(userData);
@@ -216,7 +245,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 
-function debounce(func, delay) {
+function debounce(func, delay = 300) {
   let timeoutId;
   return function (...args) {
     clearTimeout(timeoutId);

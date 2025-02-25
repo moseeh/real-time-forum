@@ -1,29 +1,8 @@
-let currentPostId = null;
-
 // Handle comment click event
-export function handleCommentClick(e, modal, commentText) {
-  const commentButton = e.target.closest(".comment-btn");
-  currentPostId = commentButton.dataset.postId;
+export function handleCommentClick(modal, commentText) {
   modal.style.display = "flex";
   commentText.value = "";
   commentText.focus();
-}
-
-export function setupCommentModal() {
-  const modal = document.getElementById("commentModal");
-  const commentText = document.getElementById("commentText");
-  const cancelComment = document.getElementById("cancelComment");
-  const submitComment = document.getElementById("submitComment");
-
-  cancelComment.addEventListener("click", () => {
-    closeCommentModal(modal, currentPostId, commentText);
-  });
-
-  submitComment.addEventListener("click", async () => {
-    await handleCommentSubmission(modal, commentText, currentPostId);
-  });
-
-  return { modal, commentText, currentPostId };
 }
 
 // Close comment modal and reset values
@@ -34,8 +13,15 @@ export function closeCommentModal(modal, currentPostId, commentText) {
 }
 
 // Handle comment submission
-async function handleCommentSubmission(modal, commentText, currentPostId) {
-  if (!commentText.value.trim() || !currentPostId) return;
+export async function handleCommentSubmission(
+  modal,
+  commentText,
+  currentPostId
+) {
+  if (!commentText.value.trim() || !currentPostId) {
+    alert("Comment cannot be empty")
+    return;
+  }
 
   try {
     const data = await submitComment(currentPostId, commentText.value.trim());

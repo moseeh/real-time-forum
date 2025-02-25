@@ -26,11 +26,7 @@ func (h *Handler) GetUsers(w http.ResponseWriter, r *http.Request) {
     // Fetch all users except the current user
     users, err := h.Users.GetAllUsers(user.ID)
     if err != nil {
-        w.WriteHeader(http.StatusInternalServerError)
-        json.NewEncoder(w).Encode(ApiResponse{
-            Success: false,
-            Message: "Server error occurred",
-        })
+        ServerErrorHandler(w,r)
         return
     }
 

@@ -1,26 +1,35 @@
 import { API_ENDPOINTS } from "./constants.js";
 import { login, signup } from "./app.js";
-import { render } from "./ui.js";
+import { headerTemplate, leftBar, startchat } from "./templates.js";
 import {
-  headerTemplate,
-  loggedInTemplate,
-  leftBar,
-  startchat,
-} from "./templates.js";
-import { Categories, getUserData, Users, Messages } from "./states.js";
+  Categories,
+  getUserData,
+  Users,
+  Messages,
+  Posts,
+  setNewPostsAvailable,
+} from "./states.js";
 import { displayCreate } from "./posts/createpost.js";
 import { displayPosts } from "./posts/posts.js";
+import { updateInteractionToAllUsers } from "./posts/likes.js";
+import { updateCommentCount } from "./posts/comments.js";
 
 let Sender = [];
 let Reciver = [];
 let Socket;
 let UserData;
+const typingTimers = {};
 
 export async function LoginApi(event) {
   if (event) event.preventDefault();
 
-  const username = document.getElementById("login-username").value;
+  const username = document.getElementById("login-username").value.toLowerCase();
   const password = document.getElementById("login-password").value;
+
+  if (username.trim() == "" || password.trim() == "") {
+    alert("Login Credentials required ");
+    return;
+  }
 
   try {
     const response = await fetchAPI(API_ENDPOINTS.login, {
@@ -118,6 +127,7 @@ export async function Homepage() {
 
   const content = document.getElementById("body");
   content.innerHTML += leftBar(Categories);
+  content.innerHTML += `<div class="main-content" id="main"></div>`;
   await displayPosts();
   content.innerHTML += rightBar(Users, UserData.username);
   content.style.display = "grid";
@@ -130,6 +140,11 @@ export async function Homepage() {
   if (logoutBtn) {
     logoutBtn.addEventListener("click", logout);
   }
+}
+
+export function logouterr () {
+  logout()
+  
 }
 
 async function logout() {
@@ -205,9 +220,6 @@ export async function fetchUsers(user) {
 
 async function startSocket() {
   Socket = new WebSocket(`ws://${window.location.host}/ws`);
-
-  // const Data = UserData
-  // console.log(data)
   Sender = [UserData.username, UserData.userID];
   Socket.onopen = () => {
     const data = {
@@ -221,12 +233,11 @@ async function startSocket() {
   Socket.onmessage = (event) => {
     const data = JSON.parse(event.data);
     if (data.istyping === true) {
-      // displayTyping(data.name);
       if (data.senderId === Reciver[1]) {
         displaytyping();
       }
       typingonlist(data.senderId);
-    } else if (data.senderId) {
+    } else if (data.senderId && !data.type) {
       // Display chat message
       if (data.senderId === Reciver[1]) {
         addMessage(Reciver[0], data.message);
@@ -243,15 +254,32 @@ async function startSocket() {
         newusers();
       }
       changestatus(data.userId, data.online);
+    } else if (data.type === "new_post") {
+      if (data.senderId !== Sender[1]) {
+        Posts.unshift(data.post);
+        showNewPostsNotification();
+      }
+    } else if (data.type === "interaction") {
+      if (data.senderId !== Sender[1]) {
+        updateInteractionToAllUsers(data);
+      }
+    } else if (data.type === "comment") {
+      if (data.senderId !== Sender[1]) {
+        updateCommentCount(data.post.content_id, data.post.comments_count);
+      }
     }
   };
+}
+function showNewPostsNotification() {
+  const notification = document.getElementById("new-posts-notification");
+  notification.style.display = "flex";
+  setNewPostsAvailable(true);
 }
 
 async function newusers() {
   await fetchUsers(UserData.userID);
   const user = document.getElementById("userlist");
-  user.innerHTML = reorder(Users, UserData.username)
-  
+  user.innerHTML = reorder(Users, UserData.username);
 }
 
 function changestatus(id, online) {
@@ -259,10 +287,16 @@ function changestatus(id, online) {
   if (list) {
     if (online) {
       list.style.color = "rgb(0, 255, 0)"; // Green for online
-      list.innerHTML = list.innerHTML.replace("(Offline)", "(Online)"); // Update status text
     } else {
       list.style.color = "rgb(255, 255, 255)"; // White for offline
-      list.innerHTML = list.innerHTML.replace("(Online)", "(Offline)"); // Update status text
+    }
+    const indicator = list.querySelector(".online-indicator");
+    if (indicator) {
+      if (online) {
+        indicator.classList.remove("offline");
+      } else {
+        indicator.classList.add("offline");
+      }
     }
   }
 }
@@ -281,20 +315,21 @@ const rightBar = (users, username) => `
               : "rgb(255, 255, 255)";
             return `
               <li>
-                <a href="#" id="${
+                <a href="#" class="chat-link" id="${
                   user.id
                 }" style="color: ${statusColor};" onclick="Chat('${
               user.name
             }','${user.id}')">
-                  ${user.name} ${user.online ? "(Online)" : "(Offline)"}
+              <div class="profile-container">
+                 <img src="static/images/default-avatar.png" alt="author avatar" class="avatar">
+                 <div class="online-indicator ${
+                   user.online ? "" : "offline"
+                 }"></div>
+              </div>
+                  <span id="user-${user.id}" class="user">${user.name}</span>
                 </a>
-                <span id="typing-${
-                  user.id
-                }" class="typing-indicator" style="display: none;">
-                  <span class="typing-text">typing...</span>
-                  <span class="blinking-cursor">|</span>
-                </span>
-              </li>`;
+              </li>
+              <hr>`;
           }
           return ""; // Skip this user
         })
@@ -316,26 +351,27 @@ const reorder = (users, username) => `
               : "rgb(255, 255, 255)";
             return `
               <li>
-                <a href="#" id="${
+                <a href="#" class="chat-link" id="${
                   user.id
                 }" style="color: ${statusColor};" onclick="Chat('${
               user.name
             }','${user.id}')">
-                  ${user.name} ${user.online ? "(Online)" : "(Offline)"}
+              <div class="profile-container">
+                 <img src="static/images/default-avatar.png" alt="author avatar" class="avatar">
+                 <div class="online-indicator ${
+                   user.online ? "" : "offline"
+                 }"></div>
+              </div>
+                  <span id="user-${user.id}" class="user">${user.name}</span>
                 </a>
-                <span id="typing-${
-                  user.id
-                }" class="typing-indicator" style="display: none;">
-                  <span class="typing-text">typing...</span>
-                  <span class="blinking-cursor">|</span>
-                </span>
-              </li>`;
+              </li>
+              <hr>`;
           }
           return ""; // Skip this user
         })
         .join("")}
     </ul>
-`
+`;
 
 window.Chat = async function (username, id) {
   console.log(`Starting chat with ${username}`);
@@ -363,14 +399,25 @@ window.Chat = async function (username, id) {
   if (sendBtn) {
     sendBtn.addEventListener("click", sendMessage);
   }
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault(); // Prevents new line in textarea
+      sendMessage(); // Call the function that sends the message
+    }
+  });
   const chatInput = document.getElementById("chat-textarea");
   if (chatInput) {
     chatInput.addEventListener("input", sendTyping);
   }
+  const closechat = document.getElementById("closechat");
+  if (closechat) {
+    closechat.addEventListener("click", async () => {
+      await displayPosts();
+    });
+  }
 };
 
 function sendTyping() {
-  console.log("send typing");
   const data = {
     senderId: Sender[1],
     sendername: Sender[0],
@@ -382,25 +429,42 @@ function sendTyping() {
 
 function displaytyping() {
   // Show the typing indicator in the chat container
-  const typingDiv = document.getElementById("typing");
-  if (typingDiv) {
-    typingDiv.classList.add("show");
-    setTimeout(() => {
-      typingDiv.classList.remove("show");
-    }, 2000);
+  const animation = document.querySelector(".typing-animation");
+  const chatMessages = document.getElementById("chat-messages");
+
+  if (animation) {
+    animation.classList.add("active");
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+    if (typingTimers["typing"]) {
+      clearTimeout(typingTimers["typing"]);
+    }
+    typingTimers["typing"] = setTimeout(() => {
+      animation.classList.remove("active");
+    }, 1000);
   }
 }
 
 function typingonlist(userId) {
   console.log("receive typing");
-  const list = document.getElementById(userId);
+  const list = document.getElementById(`user-${userId}`);
+
   if (list) {
-    list.style.color = "rgb(225, 236, 229)"; // Green for online
-    list.innerHTML = list.innerHTML.replace("(Online)", "(Typing)"); // Update status text
-    setTimeout(() => {
-      list.style.color = "rgb(49, 238, 11)"; // White for offline
-      list.innerHTML = list.innerHTML.replace("(Typing)", "(Online)"); // Update status text
-    }, 2000);
+    list.style.color = "rgb(49, 238, 11)";
+    if (!list.innerHTML.includes("(Typing ...)")) {
+      list.innerHTML += " (Typing ...)";
+    }
+
+    // Clear the previous timeout if typing continues
+    if (typingTimers[userId]) {
+      clearTimeout(typingTimers[userId]);
+    }
+
+    // Set a timeout to remove the indicator after inactivity
+    typingTimers[userId] = setTimeout(() => {
+      list.style.color = "rgb(49, 238, 11)"; // Reset to default color
+      list.innerHTML = list.innerHTML.replace(" (Typing ...)", "");
+      delete typingTimers[userId];
+    }, 1000);
   }
 }
 
@@ -408,7 +472,7 @@ function sendMessage() {
   const messageInput = document.getElementById("chat-textarea");
   const message = messageInput.value;
 
-  if (message) {
+  if (message && message.trim().length > 0) {
     const data = {
       senderId: Sender[1],
       sendername: Sender[0],
@@ -419,8 +483,8 @@ function sendMessage() {
     addMessage(Sender[0], message); // Display the message locally
     messageInput.value = ""; // Clear input field
   }
-  
-  newusers()
+
+  newusers();
 }
 
 async function fetchMessages() {
@@ -460,12 +524,19 @@ async function displayMessages(page) {
   // Store the current scroll height
   const scrollHeightBefore = chatMessages.scrollHeight;
   const start = (page - 1) * 10;
-  const end = start + 10;
+  const end = page * 10;
+  console.log(`Page: ${page}, Start: ${start}, End: ${end}`);
   const messages = Messages.slice(start, end);
+  console.log(messages);
 
   // Add messages to the chat
   messages.map((message) =>
-    addMessage(message.sender_username, message.message, message.timestamp)
+    addMessage(
+      message.sender_username,
+      message.message,
+      message.timestamp,
+      false
+    )
   );
 
   // Restore the scroll position to maintain the user's view
@@ -499,12 +570,21 @@ function showNotification(senderName, message, id) {
   }, 5000);
 }
 
-function addMessage(sender, message, time, single = false) {
+function addMessage(sender, message, time, single = true) {
   const chatMessages = document.getElementById("chat-messages");
   if (!chatMessages) return;
 
+  const isCurrentUser = sender === UserData.username;
+
+  // Create a wrapper for alignment
+  const wrapperDiv = document.createElement("div");
+  wrapperDiv.classList.add(
+    "message-wrapper",
+    isCurrentUser ? "sent-wrapper" : "received-wrapper"
+  );
+
   const messageDiv = document.createElement("div");
-  messageDiv.classList.add("message");
+  messageDiv.classList.add("message", isCurrentUser ? "sent" : "received");
 
   if (time === undefined) {
     time = new Date().getTime();
@@ -512,20 +592,25 @@ function addMessage(sender, message, time, single = false) {
 
   // Add message content
   messageDiv.innerHTML = `
-    <div>
+    <div class="message-info">
       <span class="sender">${sender}</span>
       <span class="time">${formatTimestamp(time)}</span>
     </div>
     <div class="content">${message}</div>
   `;
 
-  // Append the message to the chat
-  chatMessages.appendChild(messageDiv);
+  // Append message inside its wrapper
+  wrapperDiv.appendChild(messageDiv);
 
-  // Scroll to the bottom if it's a new message
-  // if (single !== true) {
+  // Append the message to the chat
+  if (single) {
+    chatMessages.appendChild(wrapperDiv);
+  } else {
+    chatMessages.prepend(wrapperDiv);
+  }
+
+  // Ensure smooth scrolling to the latest message
   chatMessages.scrollTop = chatMessages.scrollHeight;
-  // }
 }
 
 function formatTimestamp(timestamp) {

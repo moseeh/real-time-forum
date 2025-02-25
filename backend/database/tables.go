@@ -38,6 +38,7 @@ const CONTENTS_TABLE string = ` CREATE TABLE IF NOT EXISTS CONTENTS (
 	content_type VARCHAR(10) NOT NULL CHECK (content_type IN ('post', 'comment', 'subcomment')),
 	title TEXT,
 	text TEXT NOT NULL,
+	image_url TEXT,
 	likes_count INTEGER DEFAULT 0,
 	dislikes_count INTEGER DEFAULT 0, 
 	comments_count INTEGER DEFAULT 0,

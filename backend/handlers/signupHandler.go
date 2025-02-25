@@ -24,21 +24,12 @@ func (h *Handler) SignupHandler(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(ApiResponse{
-			Success: false,
-			Message: "Invalid request format",
-		})
+		BadRequestHandler(w,r)
 		return
 	}
 	exists, err := h.Users.UserExists(req.Email, req.Username)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-
-		json.NewEncoder(w).Encode(ApiResponse{
-			Success: false,
-			Message: "Server error occurred",
-		})
+		ServerErrorHandler(w,r)
 		return
 	}
 	if exists {
@@ -52,21 +43,13 @@ func (h *Handler) SignupHandler(w http.ResponseWriter, r *http.Request) {
 	userID := utils.UUIDGen()
 	hashedPassword, err := utils.HashPassword(req.Password)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(ApiResponse{
-			Success: false,
-			Message: "Server error occurred",
-		})
+		ServerErrorHandler(w,r)
 		return
 	}
 
 	err = h.Users.InsertUser(userID, req.FirstName, req.LastName, strings.ToLower(strings.TrimSpace(req.Username)), req.Email, req.Gender, hashedPassword, req.Age)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(ApiResponse{
-			Success: false,
-			Message: "Error creating user",
-		})
+		ServerErrorHandler(w,r)
 		return
 	}
 

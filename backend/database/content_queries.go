@@ -18,6 +18,7 @@ type Post struct {
 	UserID        string          `json:"author_id"`
 	Username      string          `json:"username"`
 	Categories    []Category      `json:"categories"`
+	ImageUrl      string          `json:"image_url"`
 	LikesCount    int             `json:"likes_count"`
 	DislikesCount int             `json:"dislikes_count"`
 	CommentsCount int             `json:"comments_count"`
@@ -42,8 +43,8 @@ type CommentThread struct {
 }
 
 func (m *UserModel) InsertContent(tx *sql.Tx, content *models.Content) error {
-	query := `INSERT INTO CONTENTS (content_id, user_id, parent_id, content_type, title, text) VALUES (?, ?, ?, ?, ?, ?)`
-	_, err := tx.Exec(query, content.ID, content.AuthorID, content.ParentID, content.ContentType, content.Title, content.Text)
+	query := `INSERT INTO CONTENTS (content_id, user_id, parent_id, content_type, title, text, image_url) VALUES (?, ?, ?, ?, ?, ?, ?)`
+	_, err := tx.Exec(query, content.ID, content.AuthorID, content.ParentID, content.ContentType, content.Title, content.Text, content.ImageUrl)
 	return err
 }
 
@@ -63,6 +64,7 @@ func (u *UserModel) GetAllPosts(currentUserID string) ([]Post, error) {
 			c.created_at,
 			u.username,
 			c.user_id,
+			c.image_url,
 			c.likes_count,
 			c.dislikes_count,
 			c.comments_count, 
@@ -104,6 +106,7 @@ func (u *UserModel) GetAllPosts(currentUserID string) ([]Post, error) {
 			&post.CreatedAt,
 			&post.Username,
 			&post.UserID,
+			&post.ImageUrl,
 			&post.LikesCount,
 			&post.DislikesCount,
 			&post.CommentsCount,
@@ -144,6 +147,7 @@ func (u *UserModel) GetPost(contentID string, currentUserID string) (*Post, erro
         c.created_at,
         u.username,
         c.user_id,
+		c.image_url,
         c.likes_count,
         c.dislikes_count,
         c.comments_count,
@@ -178,6 +182,7 @@ func (u *UserModel) GetPost(contentID string, currentUserID string) (*Post, erro
 		&post.CreatedAt,
 		&post.Username,
 		&post.UserID,
+		&post.ImageUrl,
 		&post.LikesCount,
 		&post.DislikesCount,
 		&post.CommentsCount,
@@ -209,4 +214,3 @@ func (u *UserModel) GetPost(contentID string, currentUserID string) (*Post, erro
 
 	return &post, nil
 }
-

@@ -10,8 +10,8 @@ body {
 }
 
 .avatar {
-  width: 40px;
-  height: 40px;
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
   object-fit: cover;
 }
@@ -22,6 +22,7 @@ body {
   gap: 12px;
   margin-bottom: 16px;
 }
+
 .author-info {
   display: flex;
   flex-direction: row;
@@ -33,10 +34,12 @@ body {
   font-weight: 600;
   margin: 0;
 }
+
 .post-date {
   font-size: 14px;
   margin: 0;
 }
+
 .post-title {
   font-size: 24px;
   font-weight: bold;
@@ -47,6 +50,18 @@ body {
   line-height: 1.6;
   margin: 0 0 16px 0;
 }
+
+.post-image {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.post-image img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
 .action-button {
   display: flex;
   align-items: center;
@@ -59,18 +74,46 @@ body {
   font-size: 16px;
   transition: color 0.2s ease;
 }
+
 .action-button:hover {
   color: grey;
   opacity: 0.8;
 }
+
+.profile-container {
+  width: 48px;
+  height: 48px;
+  display: inline-block;
+  position: relative;
+}
+
+.online-indicator {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 10px;
+  height: 10px;
+  background-color: #44b700;
+  border-radius: 50%;
+  border: 1.5px solid white;
+  box-shadow: 0 0 0 2px #44b70033;
+  animation: pulse 2s infinite;
+}
+
+.offline {
+  background-color: #bdbdbd;
+}
+
 /* Style for like button when active */
 .action-button.upvote-btn.active {
-  color: #007bff; /* Green color for likes */
+  color: #007bff;
+  /* Green color for likes */
 }
 
 /* Style for dislike button when active */
 .action-button.downvote-btn.active {
-  color: #f87171; /* Red color for dislikes */
+  color: #f87171;
+  /* Red color for dislikes */
 }
 
 .categories {
@@ -87,6 +130,7 @@ body {
   border-radius: 16px;
   font-size: 14px;
 }
+
 /* Header Styles */
 .card {
   background: black;
@@ -102,6 +146,7 @@ body {
   margin: 0 auto;
   padding: 0 1rem;
 }
+
 .logo a {
   text-decoration: none;
 }
@@ -116,7 +161,8 @@ body {
 }
 
 .logo h1:hover {
-  color: #0056b3; /* Darker blue */
+  color: #0056b3;
+  /* Darker blue */
   text-shadow: 3px 3px 5px rgba(14, 48, 122, 0.7);
 }
 
@@ -141,6 +187,7 @@ body {
   transition: all 0.3s ease;
   color: white;
 }
+
 .post {
   transition: transform 0.3s ease;
 }
@@ -154,12 +201,24 @@ body {
   background-color: #007bff;
 }
 
+.submit-btn,
+.cancel-btn {
+  background-color: #007bff;
+}
+
+.submit-btn:hover,
+.cancel-btn:hover {
+  background-color: #0056b3;
+}
+
 #create-post-btn:hover {
   background-color: #0056b3;
 }
+
 #logout-btn {
   background-color: #007bff;
 }
+
 #logout-btn:hover {
   background-color: #0056b3;
 }
@@ -167,7 +226,7 @@ body {
 .authentication {
   display: grid;
   grid-template-columns: 1fr 2fr;
-  background: linear-gradient(to bottom, rgb(6, 108, 100), rgb(14, 48, 122));
+  background: linear-gradient(to bottom, rgb(48, 15, 235), rgb(0, 34, 105));
   width: 800px;
   height: 500px;
   margin: 10% auto;
@@ -178,7 +237,8 @@ body {
 .container {
   max-width: 1400px;
   display: grid;
-  grid-template-columns: 1fr 2fr 1fr; /* Left, Middle, Right */
+  grid-template-columns: 1fr 2fr 1fr;
+  /* Left, Middle, Right */
   gap: 1rem;
   background: black;
   margin: 2% auto;
@@ -186,6 +246,7 @@ body {
   border-radius: 5px;
   color: white;
 }
+
 .categories-section {
   margin-top: 30px;
 }
@@ -215,6 +276,22 @@ body {
   margin: 0.5rem 0;
   margin-bottom: 10px;
 }
+
+.chat-link {
+  text-decoration: none;
+  display: flex;
+  border: 1px;
+  border-radius: 4px;
+  align-content: baseline;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.user {
+  padding-bottom: 0.8em;
+  font-size: 18px;
+}
+
 .filter-link {
   display: block;
   padding: 8px 12px;
@@ -255,10 +332,12 @@ body {
   color: white;
   font-size: 0.9rem;
 }
+
 .gender-container {
   display: inline-flex;
   align-items: center;
-  width: 400px; /* Same as input-field width */
+  width: 400px;
+  /* Same as input-field width */
   margin: 0 auto;
 }
 
@@ -280,6 +359,7 @@ body {
   outline: none;
   width: 100%;
 }
+
 /* Style the select dropdown options */
 .gender option {
   font-size: 14px;
@@ -289,21 +369,24 @@ body {
 
 /* Style the select when opened (the dropdown) */
 .gender:focus {
-  border-color: rgb(6, 108, 100); /* Matches your gradient start color */
+  border-color: rgb(31, 44, 230);
+  /* Matches your gradient start color */
   box-shadow: 0 0 3px rgba(6, 108, 100, 0.3);
 }
 
 /* Style for when hovering over options */
 .gender option:hover {
-  background-color: rgb(6, 108, 100);
+  background-color: rgb(20, 40, 219);
   color: white;
 }
 
 /* Style for when an option is checked/selected */
 .gender option:checked {
-  background-color: rgb(14, 48, 122); /* Matches your gradient end color */
+  background-color: #407cff;
+  /* Matches your gradient end color */
   color: white;
 }
+
 .content-holder {
   text-align: center;
   color: white;
@@ -358,13 +441,14 @@ body {
   width: 400px;
   outline: none;
 }
+
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.75); /* Darker overlay */
   display: none;
   justify-content: center;
   align-items: center;
@@ -372,27 +456,105 @@ body {
 }
 
 .modal {
-  background-color: white;
+  background-color: #1a1a1a; /* Dark background */
   padding: 20px;
   border-radius: 8px;
   width: 90%;
   max-width: 500px;
   position: relative;
+  border: 1px solid #333; /* Subtle border */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.modal h3 {
+  color: #fff;
+  margin-bottom: 15px;
 }
 
 .modal textarea {
-  width: 100%;
+  width: 95%;
   min-height: 100px;
   margin: 15px 0;
   padding: 10px;
-  border: 1px solid #ddd;
+  border: 1px solid #333;
   border-radius: 4px;
+  background-color: #212121; /* Slightly lighter than modal bg */
+  color: #fff;
+  resize: vertical;
+}
+.new-posts-notification {
+  background-color: #1a1a1a;
+  border: 1px solid #3b82f6;
+  color: #ffffff;
+  padding: 10px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.2s;
+}
+
+.new-posts-notification:hover {
+  background-color: #3b82f6;
+}
+
+.new-posts-notification i {
+  color: #3b82f6;
+}
+
+.new-posts-notification:hover i {
+  color: #ffffff;
+}
+.modal textarea:focus {
+  outline: none;
+  border-color: #0066cc; /* Blue highlight */
+  box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.2);
 }
 
 .modal-buttons {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
+}
+
+.btn {
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.cancel-btn {
+  background-color: #333;
+  color: #fff;
+}
+
+.cancel-btn:hover {
+  background-color: #444;
+}
+
+.submit-btn {
+  background-color: #0066cc; /* Blue */
+  color: #fff;
+}
+.typing-animation {
+  display: none; /* Hidden by default */
+}
+
+.typing-animation.active {
+  display: block; /* Show when active */
+}
+.submit-btn:hover {
+  background-color: #0052a3; /* Darker blue */
 }
 
 .login-form-button {
@@ -409,7 +571,8 @@ body {
 }
 
 .login-form-button:hover {
-  background-color: rgb(30, 80, 169); /* Example hover color change */
+  background-color: rgb(30, 80, 169);
+  /* Example hover color change */
 }
 
 .signup-form-container {
@@ -437,11 +600,13 @@ body {
   border: none;
   width: 250px;
   outline: none;
-  background-color: rgb(56, 189, 149);
+  background-color: rgb(8, 29, 212);
   cursor: pointer;
 }
+
 .signup-form-button:hover {
-  background-color: rgb(30, 150, 129); /* Example hover color change */
+  background-color: rgb(22, 18, 240);
+  /* Example hover color change */
 }
 
 /*test ppost pafe*/
@@ -498,7 +663,6 @@ body {
   color: rgba(255, 255, 255, 0.6);
 }
 
-/* Add Comment Form Styles */
 .add-comment {
   margin-top: 1rem;
 }
@@ -616,11 +780,11 @@ body {
 }
 
 #create-post-form .btn[type="submit"] {
-  background-color: rgb(56, 189, 149);
+  background-color: rgb(47, 11, 255);
 }
 
 #create-post-form .btn[type="submit"]:hover {
-  background-color: rgb(45, 158, 124);
+  background-color: rgba(2, 0, 124, 0.473);
 }
 
 #create-post-form #closeModal {
@@ -638,13 +802,42 @@ body {
   padding: 1rem;
   max-width: 600px;
   margin: 0 auto;
-  height: 400px;
+  height: 800;
   display: flex;
   flex-direction: column;
 }
 
 .chathead {
   display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.chathead {
+  position: relative; /* Ensures absolute positioning inside works */
+  padding: 10px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.closediv {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.btn {
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 4px;
+  background-color: #0066cc;
+}
+
+.btn:hover {
+  background-color: rgb(12, 169, 231);
 }
 
 /* Typing Indicator */
@@ -652,14 +845,17 @@ body {
   display: flex;
   align-items: center;
   gap: 5px;
-  font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.8);
-  opacity: 0; /* Start with opacity 0 */
-  transition: opacity 0.3s ease; /* Smooth fade-in/out */
+  font-size: 1.2rem;
+  color: rgb(49, 238, 11);
+  opacity: 0;
+  /* Start with opacity 0 */
+  transition: opacity 0.3s ease;
+  /* Smooth fade-in/out */
 }
 
 .typing-indicator.show {
-  opacity: 1; /* Fully visible when the "show" class is added */
+  opacity: 1;
+  /* Fully visible when the "show" class is added */
 }
 
 /* Blinking Cursor Animation */
@@ -668,51 +864,79 @@ body {
   100% {
     opacity: 1;
   }
+
   50% {
     opacity: 0;
   }
 }
 
 .blinking-cursor {
-  animation: blink 1s infinite; /* Blinking effect */
+  animation: blink 1s infinite;
+  /* Blinking effect */
   font-weight: bold;
 }
 
-/* Chat Messages Display */
-.chat-messages {
-  flex: 1;
-  overflow-y: auto;
-  padding: 0.5rem;
-  background-color: rgba(255, 255, 255, 0.05);
-  border-radius: 7px;
-  margin-bottom: 1rem;
+/* Message Wrapper */
+.message-wrapper {
+  display: flex;
+  width: 100%;
+  margin: 5px 0;
 }
 
-/* Individual Message */
+/* Sent messages (Right-aligned) */
+.sent-wrapper {
+  justify-content: flex-end;
+}
+
+/* Received messages (Left-aligned) */
+.received-wrapper {
+  justify-content: flex-start;
+}
+
+/* Message box styling */
 .message {
-  background-color: rgba(255, 255, 255, 0.1);
-  padding: 0.5rem;
-  border-radius: 7px;
-  margin-bottom: 0.5rem;
+  max-width: 70%;
+  padding: 10px;
+  border-radius: 10px;
+  display: inline-block;
+  word-wrap: break-word;
+}
+
+/* Sent message style */
+.message.sent {
+  background-color: #144172;
   color: white;
+  text-align: right;
 }
 
-.message .sender {
-  font-weight: bold;
-  color: rgb(56, 189, 149);
+/* Received message style */
+.message.received {
+  background-color: #1c1c1f;
+  color: white;
+  text-align: left;
 }
 
-.message .time {
+/* Message info */
+.message-info {
   font-size: 0.8rem;
   color: rgba(255, 255, 255, 0.6);
-  margin-left: 0.5rem;
 }
 
 .message .content {
   margin-top: 0.25rem;
   font-size: 0.9rem;
 }
-
+#chat-messages {
+  background-image: url("../images/chat.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 630px;
+  overflow-y: auto;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+}
 /* Chat Input */
 .chat-input {
   display: flex;
@@ -736,7 +960,7 @@ body {
 }
 
 #send-btn {
-  background-color: rgb(56, 189, 149);
+  background-color: rgb(75, 65, 221);
   color: white;
   border: none;
   border-radius: 7px;
@@ -746,7 +970,7 @@ body {
 }
 
 #send-btn:hover {
-  background-color: rgb(45, 158, 124);
+  background-color: rgb(50, 24, 199);
 }
 
 /* Notification Styles */
@@ -754,7 +978,8 @@ body {
   position: fixed;
   top: 20px;
   right: 20px;
-  background-color: rgba(56, 189, 149, 0.9); /* Teal with transparency */
+  background-color: rgba(41, 49, 170, 0.9);
+  /* Teal with transparency */
   color: white;
   padding: 10px 20px;
   border-radius: 7px;
@@ -768,6 +993,7 @@ body {
     transform: translateX(100%);
     opacity: 0;
   }
+
   to {
     transform: translateX(0);
     opacity: 1;
@@ -778,6 +1004,7 @@ body {
   from {
     opacity: 1;
   }
+
   to {
     opacity: 0;
   }
