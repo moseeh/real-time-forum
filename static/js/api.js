@@ -23,7 +23,7 @@ const typingTimers = {};
 export async function LoginApi(event) {
   if (event) event.preventDefault();
 
-  const username = document.getElementById("login-username").value;
+  const username = document.getElementById("login-username").value.toLowerCase();
   const password = document.getElementById("login-password").value;
 
   try {
