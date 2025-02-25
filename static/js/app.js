@@ -112,7 +112,7 @@ export function signup() {
       }
 
       const data = await response.json();
-      console.log(data, user);
+      console.log(data, user,1);
 
       const available = document.getElementById("nameavailable");
 

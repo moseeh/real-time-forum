@@ -26,6 +26,11 @@ export async function LoginApi(event) {
   const username = document.getElementById("login-username").value;
   const password = document.getElementById("login-password").value;
 
+  if (username.trim() == "" || password.trim() == "") {
+    alert("Login Credentials required ");
+    return;
+  }
+
   try {
     const response = await fetchAPI(API_ENDPOINTS.login, {
       username,
@@ -401,7 +406,7 @@ window.Chat = async function (username, id) {
   }
   const closechat = document.getElementById("closechat");
   if (closechat) {
-    closechat.addEventListener("click", async() => {
+    closechat.addEventListener("click", async () => {
       await displayPosts();
     });
   }
@@ -454,7 +459,7 @@ function typingonlist(userId) {
       list.style.color = "rgb(49, 238, 11)"; // Reset to default color
       list.innerHTML = list.innerHTML.replace(" (Typing ...)", "");
       delete typingTimers[userId];
-    }, 1000); 
+    }, 1000);
   }
 }
 
