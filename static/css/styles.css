@@ -258,6 +258,14 @@ body {
   background-color: rgba(255, 255, 255, 0.1);
   padding: 24px;
   border-radius: 7px;
+  max-height: 90vh;
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.sidebar-left::-webkit-scrollbar,
+.sidebar-right::-webkit-scrollbar {
+  display: none;
 }
 
 .sidebar-left h2,
@@ -322,7 +330,12 @@ body {
   border-radius: 7px;
   max-height: 90vh;
   overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
   padding-right: 0.5rem;
+}
+.main-content::-webkit-scrollbar {
+  display: none;
 }
 
 .main-content h2 {
