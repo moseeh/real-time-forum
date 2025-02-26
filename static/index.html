@@ -6,11 +6,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>FORUM</title>
   <link rel="stylesheet" href="/static/css/styles.css" />
+  <link rel="stylesheet" href="/static/css/responsive.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet" />
 </head>
 
 <body>
+  <button class="hamburger-menu" id="left-hamburger" aria-label="Open left menu">☰</button>
+  <button class="hamburger-menu" id="right-hamburger" aria-label="Open right menu">☰</button>
+  <div class="sidebar-overlay"></div>
   <header class="card"></header>
   <div id="new-posts-notification" class="new-posts-notification" style="display: none">
     <i class="fa-solid fa-arrow-up"></i> New posts available
@@ -27,6 +31,7 @@
     <div class="box-2"></div>
   </div>
   <script type="module" src="/static/js/app.js"></script>
+  <script type="module" src="/static/js/sidebar.js"></script>
 </body>
 
 </html>

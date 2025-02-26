@@ -593,10 +593,10 @@ function addMessage(sender, message, time, single = true) {
   // Add message content
   messageDiv.innerHTML = `
     <div class="message-info">
-      <span class="sender">${sender}</span>
+      <span class="sender">${escapeHtml(sender)}</span>
       <span class="time">${formatTimestamp(time)}</span>
     </div>
-    <div class="content">${message}</div>
+    <div class="content">${escapeHtml(message)}</div>
   `;
 
   // Append message inside its wrapper
@@ -650,4 +650,14 @@ function formatTimestamp(timestamp) {
     .replace(/\//g, "-");
 
   return `${formattedDate} at ${formattedTime}`;
+}
+
+// Helper function to escape HTML content
+function escapeHtml(unsafe) {
+  return unsafe
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }

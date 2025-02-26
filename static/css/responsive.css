@@ -1,0 +1,329 @@
+* {
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: black;
+    color: white;
+  }
+  
+  /* ======== HEADER STYLES ======== */
+  .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 1rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  
+  .logo h1 {
+    color: #007bff;
+    font-family: "Poppins", sans-serif;
+    font-size: clamp(2rem, 5vw, 3rem);
+    text-shadow: 2px 2px 3px rgba(14, 48, 122, 0.5);
+    letter-spacing: 1.5px;
+  }
+  
+  .user-menu {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  
+  /* ======== MAIN LAYOUT ======== */
+  .container {
+    max-width: 1400px;
+    margin: 2% auto;
+    padding: 0 1rem;
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    gap: 1.5rem;
+  }
+  
+  .sidebar-left,
+  .sidebar-right {
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 1.5rem;
+    border-radius: 7px;
+  }
+  
+  .main-content {
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 1.5rem;
+    border-radius: 7px;
+    min-height: 80vh;
+  }
+  
+  /* ======== POST STYLES ======== */
+  .post {
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 1.5rem;
+    border-radius: 7px;
+    margin-bottom: 1.5rem;
+  }
+  
+  .post-image img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+  
+  /* ======== RESPONSIVE BREAKPOINTS ======== */
+  @media (max-width: 1200px) {
+    .container {
+      grid-template-columns: 1fr 3fr;
+      max-width: 95%;
+    }
+    
+    .sidebar-right {
+      grid-column: 1 / -1;
+    }
+  }
+  
+  @media (max-width: 992px) {
+    .authentication {
+      width: 90%;
+      grid-template-columns: 1fr;
+    }
+    
+    .gender-container,
+    .input-field {
+      width: 100% !important;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .container {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+    
+    .sidebar-left,
+    .sidebar-right {
+      order: 3;
+      padding: 1rem;
+    }
+    
+    .user-menu {
+      justify-content: center;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .header-content {
+      flex-direction: column;
+      text-align: center;
+    }
+    
+    .post-title {
+      font-size: 1.2rem;
+    }
+    
+    .post-text {
+      font-size: 0.9rem;
+    }
+    
+    .modal {
+      width: 95%;
+      padding: 10px;
+    }
+    
+    .login-form-container,
+    .signup-form-container {
+      padding: 0 1rem;
+    }
+  }
+  
+  /* ======== COMPONENT STYLES ======== */
+  .btn {
+    padding: 0.8rem 1.2rem;
+    border-radius: 7px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+  }
+  
+  .action-button {
+    padding: 0.5rem;
+    min-width: 48px;
+  }
+  
+  .filter-link {
+    padding: 0.8rem;
+    margin: 0.5rem 0;
+  }
+  
+  /* ======== FORM STYLES ======== */
+  .input-field {
+    width: 100%;
+    max-width: 400px;
+    padding: 0.8rem;
+  }
+  
+  /* ======== CHAT STYLES ======== */
+  #chat-messages {
+    height: 50vh;
+    max-height: 600px;
+  }
+  
+  /* ======== KEEP EXISTING STYLES ======== */
+  .avatar {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  .category {
+    padding: 6px 12px;
+    font-size: 0.9rem;
+  }
+  
+  .modal-overlay {
+    background-color: rgba(0, 0, 0, 0.75);
+  }
+  
+  .notification {
+    padding: 10px 20px;
+    right: 10px;
+  }
+  
+  /* ======== ANIMATIONS ======== */
+  @keyframes pulse {
+    0% { transform: scale(0.95); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(0.95); }
+  }
+  
+  @keyframes slideIn {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+  }
+  
+  @keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+  }
+  
+  /* ======== PRESERVE EXISTING COLOR SCHEME ======== */
+  .btn-primary {
+    background-color: #007bff;
+  }
+  
+  .btn-primary:hover {
+    background-color: #0056b3;
+  }
+  
+  .text-muted {
+    color: rgba(255, 255, 255, 0.6);
+  }
+  
+  /* ======== MOBILE TOUCH OPTIMIZATION ======== */
+  @media (hover: none) {
+    .btn {
+      padding: 1rem 1.5rem;
+      min-width: 120px;
+    }
+    
+    .action-button {
+      padding: 1rem;
+    }
+  }
+
+  /* ======== Hamburger Menu Styles ======== */
+.hamburger-menu {
+    display: none;
+    position: fixed;
+    top: 20px;
+    z-index: 1000;
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.2rem;
+  }
+  
+  #left-hamburger { left: 20px; }
+  #right-hamburger { right: 20px; }
+  
+  /* ======== Mobile Sidebar Styles ======== */
+  @media (max-width: 768px) {
+    .container {
+      grid-template-columns: 1fr;
+      padding: 0 15px;
+    }
+    
+    .sidebar-left,
+    .sidebar-right {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      width: 280px;
+      max-width: 80%;
+      height: 100vh;
+      z-index: 1001;
+      background: rgba(0, 0, 0, 0.95);
+      padding: 20px;
+      transition: transform 0.3s ease;
+      overflow-y: auto;
+    }
+    
+    .sidebar-left {
+      left: 0;
+      transform: translateX(-100%);
+    }
+    
+    .sidebar-right {
+      right: 0;
+      transform: translateX(100%);
+    }
+    
+    .sidebar-left.active {
+      transform: translateX(0);
+    }
+    
+    .sidebar-right.active {
+      transform: translateX(0);
+    }
+    
+    .hamburger-menu {
+      display: block;
+    }
+    
+    /* Overlay when sidebar is active */
+    .sidebar-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+      display: none;
+    }
+    
+    .sidebar-overlay.active {
+      display: block;
+    }
+    
+    /* Close button inside sidebars */
+    .sidebar-close {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+  }
+  
