@@ -3,12 +3,13 @@
   document.getElementById('left-hamburger').addEventListener('click', () => {
     document.querySelector('.sidebar-left').classList.add('active');
     document.querySelector('.sidebar-overlay').classList.add('active');
+    document.getElementById('right-hamburger').style.display = 'none';
   });
 
   document.getElementById('right-hamburger').addEventListener('click', () => {
     document.querySelector('.sidebar-right').classList.add('active');
     document.querySelector('.sidebar-overlay').classList.add('active');
-    document.querySelector('.sidebar-close').classList.add('active');
+    document.getElementById('left-hamburger').style.display = 'none';
   });
 
   // Close sidebars
@@ -17,6 +18,8 @@
       sidebar.classList.remove('active');
     });
     document.querySelector('.sidebar-overlay').classList.remove('active');
+    document.getElementById('right-hamburger').style.display = 'block';
+    document.getElementById('left-hamburger').style.display = 'block';
   }
 
   // Close when clicking overlay or close button
