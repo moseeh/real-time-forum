@@ -219,7 +219,7 @@ export async function fetchUsers(user) {
 }
 
 async function startSocket() {
-  Socket = new WebSocket(`ws://${window.location.host}/ws`);
+  Socket = new WebSocket(`${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}${window.location.host}/ws`);
   Sender = [UserData.username, UserData.userID];
   Socket.onopen = () => {
     const data = {
